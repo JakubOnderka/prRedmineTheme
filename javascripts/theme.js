@@ -238,10 +238,10 @@ var ProofReasonRedmineTheme = {
       }).addClass('updateButton').attr('onclick', '');
 
       $('.updateButton').click(function(e) {
-        $('#update').show();
-        $('#notes').focus();
-        $('html, body').animate({scrollTop: $('#notes').closest('fieldset').offset().top}, 100);
         e.preventDefault();
+        $('#update').show();
+        $('#issue_notes').focus();
+        $('html, body').animate({scrollTop: $('#issue_notes').closest('fieldset').offset().top}, 100);
       });
 
 
