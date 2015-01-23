@@ -233,7 +233,10 @@ var ProofReasonRedmineTheme = {
       $("#update .timeLogging").closest('fieldset').hide();
 
       // better functioning update, mainly on mobile
-      $('.icon-edit[onclick="showAndScrollTo("update", "notes"); return false;"]').addClass('updateButton').attr('onclick', '');
+      $('.icon-edit').filter(function() {
+        return $(this).attr('onclick') !== 'showAndScrollTo("update", "notes"); return false;';
+      }).addClass('updateButton').attr('onclick', '');
+
       $('.updateButton').click(function(e) {
         $('#update').show();
         $('#notes').focus();
@@ -422,9 +425,11 @@ var ProofReasonRedmineTheme = {
       this.setFormatUp('table.issues .tracker', {'shortIssueType' : this.format.shortIssueType});
 
       // Short titles
+      /*
+      TODO: Disabled for now
       $('table.issues th[title="Sort by \"Priority\""] a').html('P');
       $('table.issues th[title="Sort by \"Tracker\""] a').html('Type');
-      $('table.issues th[title="Sort by \"Estimated time\""] a').html('Estimate');
+      $('table.issues th[title="Sort by \"Estimated time\""] a').html('Estimate');*/
     },
 
     setFormatUp: function(cellSelector, alternateFormats, originalFormat) {
