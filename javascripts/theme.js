@@ -234,7 +234,7 @@ var ProofReasonRedmineTheme = {
 
       // better functioning update, mainly on mobile
       $('.icon-edit').filter(function() {
-        return $(this).attr('onclick') !== 'showAndScrollTo("update", "notes"); return false;';
+        return $(this).attr('onclick') === 'showAndScrollTo("update", "issue_notes"); return false;';
       }).addClass('updateButton').attr('onclick', '');
 
       $('.updateButton').click(function(e) {
