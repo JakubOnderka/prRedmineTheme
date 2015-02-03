@@ -17,6 +17,7 @@ var ProofReasonRedmineTheme = {
     this.ClickableIssueNames.init();
     this.SingleClickSelect.init();
     this.CmdEnterFormSubmit.init();
+    this.RemoveIssueTypeFromTitle.init();
   },
 
   tools: {
@@ -996,6 +997,14 @@ var ProofReasonRedmineTheme = {
           event.preventDefault();
         }
       });
+    }
+  },
+
+  RemoveIssueTypeFromTitle: {
+    init: function() {
+      if (ProofReasonRedmineTheme.PagePropertyMiner.matchPage('issues', 'show')) {
+        document.title = document.title.replace(/^([^#]*)/, '');
+      }
     }
   }
 };
