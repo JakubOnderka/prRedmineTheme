@@ -1017,13 +1017,13 @@ var ProofReasonRedmineTheme = {
 
       if (window.devicePixelRatio === 2) {
         $('.gravatar').each(function() {
+          var img = this;
 
-          $(this).attr('width', this.width);
-          $(this).attr('height', this.height);
+          img.src = img.src.replace(/size=([0-9]*)/, function (match, contents, offset, s) {
+            img.width = contents;
+            img.height = contents;
 
-
-          this.src = this.src.replace(/size=([0-9]*)/, function (match, contents, offset, s) {
-            return 'size=' + (contents * 2)
+            return 'size=' + (contents * 2);
           });
         })
       }
