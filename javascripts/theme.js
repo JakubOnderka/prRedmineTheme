@@ -588,9 +588,17 @@ var ProofReasonRedmineTheme = {
       },
 
       shortIssueType: function(value) {
-        if (value == 'Požadavek') { return '<span style="opacity:.4">&fnof;</span>'; }
-        if (value == 'Feature Request') { return '<span style="opacity:.4">&fnof;</span>'; }
-        else { return value; }
+        var types = {
+          'Požadavek': '<span style="opacity:.4">&fnof;</span>',
+          'Feature Request': '<span style="opacity:.4">&fnof;</span>',
+          'Error': '<img src="/themes/prRedmineTheme/stylesheets/img/error.png" width="16" height="16" style="opacity:.4">'
+        };
+
+        if (value in types) {
+          return types[value];
+        } else {
+          return value;
+        }
       }
     }
   },
