@@ -18,6 +18,7 @@ var ProofReasonRedmineTheme = {
     this.SingleClickSelect.init();
     this.CmdEnterFormSubmit.init();
     this.RemoveIssueTypeFromTitle.init();
+    this.HighResGravatars.init();
   },
 
   tools: {
@@ -1004,6 +1005,27 @@ var ProofReasonRedmineTheme = {
     init: function() {
       if (ProofReasonRedmineTheme.PagePropertyMiner.matchPage('issues', 'show')) {
         document.title = document.title.replace(/^([^#]*)/, '');
+      }
+    }
+  },
+
+  HighResGravatars: {
+    init: function() {
+      if (window.devicePixelRatio === undefined) {
+        return;
+      }
+
+      if (window.devicePixelRatio === 2) {
+        $('.gravatar').each(function() {
+
+          $(this).attr('width', this.width);
+          $(this).attr('height', this.height);
+
+
+          this.src = this.src.replace(/size=([0-9]*)/, function (match, contents, offset, s) {
+            return 'size=' + (contents * 2)
+          });
+        })
       }
     }
   }
