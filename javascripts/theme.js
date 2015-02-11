@@ -193,7 +193,7 @@ var ProofReasonRedmineTheme = {
             self = this;
 
           redmineApi.getProject(textProjectId, function(data) {
-            self.projectId = data.projectId.id;
+            self.projectId = data.project.id;
             callback(self.projectId);
           });
         }
