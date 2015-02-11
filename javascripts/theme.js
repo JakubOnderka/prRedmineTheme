@@ -1,5 +1,102 @@
 "use strict";
 
+function RedmineApi() {
+  if (typeof jQuery === 'undefined') {
+    throw new Error('Redmine API require jQuery library');
+  }
+
+  var $ = jQuery;
+
+  function hashCode(string) {
+    var hash = 0;
+    if (string == 0) return hash;
+    for (var i = 0; i < string.length; i++) {
+      var char = string.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+  }
+
+  // Remove cache in 10 % of page load
+  if (Math.random() > 0.9) {
+    console.log('Deleted cached entries in localStorage.');
+    for (var key in localStorage) {
+      if (key.indexOf('rma:cache:') === 0) {
+        localStorage.removeItem(key);
+      }
+    }
+  }
+
+  // Load Redmine API key from my account page and save to local storage
+  this.getRedmineApiKey = function(callback) {
+    var redmineApiKey = localStorage.getItem('rma:redmineApiKey');
+    if (!redmineApiKey) {
+      $.get('/my/account').done(function(html) {
+        redmineApiKey = $(html).find('#api-access-key').text();
+
+        if (!redmineApiKey) {
+          throw new Error('Cannot find Redmine API access key in element #api-access-key on page /my/account.');
+        }
+
+        localStorage.setItem('rma:redmineApiKey', redmineApiKey);
+        callback(redmineApiKey);
+      }).fail(function() {
+        throw new Error('Cannot load page /my/account for getting Redmine API access key.');
+      });
+      return;
+    }
+    callback(redmineApiKey);
+  };
+
+  this.get = function(uri, params, callback) {
+    this.getRedmineApiKey(function(key) {
+      params.key = key;
+      uri += '?' + $.param(params);
+
+      $.ajax({
+        url: uri,
+        dataType: 'text',
+        global: false
+
+      }).done(function(data) {
+        callback(JSON.parse(data), data);
+
+      }).fail(function(jqXHR, textStatus) {
+        if (jqXHR.statusCode() === 401) {
+          throw new Error('Redmine API access key is invalid.');
+        } else {
+          throw new Error('Cannot load URL ' + uri + ' from Redmine API. ' + textStatus);
+        }
+      });
+    });
+  };
+
+  this.getWithCache = function(uri, params, callback) {
+    var cacheKey = 'rma:cache:' + hashCode(uri +  '?' + $.param(params)),
+      cached = window.localStorage.getItem(cacheKey);
+
+    if (cached) {
+      callback(JSON.parse(cached));
+    }
+
+    this.get(uri, params, function(json, data) {
+      if (cached != data) {
+        window.localStorage.setItem(cacheKey, data);
+        callback(json);
+      }
+    });
+  };
+
+  this.getIssuesWithCache = function(params, callback) {
+    this.getWithCache('/issues.json', params, callback);
+  };
+
+  this.getProject = function(projectId, callback) {
+    this.getWithCache('/projects/' + projectId + '.json', {}, callback);
+  }
+}
+
 var ProofReasonRedmineTheme = {
   init: function() {
     this.BetterHeader.init();
@@ -84,19 +181,25 @@ var ProofReasonRedmineTheme = {
       return false;
     },
 
-    getProjectId: function() {
+    getProjectId: function(callback) {
       if (this.projectId === null) {
         if (this.matchPage('issues', 'show')) {
           this.projectId = $('#issue_project_id option[selected="selected"]').val();
-        }
+          callback(this.projectId);
+        } else {
+          var redmineApi = new RedmineApi(),
+            url = $('#project_quick_jump_box option[selected="selected"]').val(),
+            textProjectId = url.split('/')[2].split('?')[0],
+            self = this;
 
-        if (this.matchPage('timelog', 'new')) {
-          this.projectId = $('#time_entry_project_id').val();
+          redmineApi.getProject(textProjectId, function(data) {
+            self.projectId = data.projectId.id;
+            callback(self.projectId);
+          });
         }
-
-        console.log('project id recognized: ' + this.projectId);
+      } else {
+        callback(this.projectId);
       }
-      return this.projectId;
     },
 
     getIssueId: function() {
@@ -146,7 +249,9 @@ var ProofReasonRedmineTheme = {
     },
 
     debug: function() {
-      this.getProjectId();
+      this.getProjectId(function (projectId) {
+        console.log('Project ID recognized: ' + projectId);
+      });
       this.getIssueId();
       this.getUserId();
       this.assessUsedLanguage();
@@ -384,29 +489,30 @@ var ProofReasonRedmineTheme = {
     },
 
     insertTimeyLogger: function() {
-      var projectId = this.ppm.getProjectId();
-      var issueId = this.ppm.getIssueId();
+      var self = this;
+      this.ppm.getProjectId(function (projectId) {
+        var issueId = self.ppm.getIssueId();
 
-      var url = 'https://timey.proofreason.com/';
-      if (projectId > 0) {
-        url = url+'?redmine[project_id]='+projectId;
-        if (issueId > 0) url = url+'&redmine[issue_id]='+issueId;
-      }
-      url = url+'#/logs/new';
+        var url = 'https://timey.proofreason.com/';
+        if (projectId > 0) {
+          url = url + '?redmine[project_id]=' + projectId;
+          if (issueId > 0) url = url + '&redmine[issue_id]=' + issueId;
+        }
+        url = url + '#/logs/new';
 
-      var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="'+
-      url+'"></iframe></div>';
+        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="'+
+        url+'"></iframe></div>';
 
-      if (this.ppm.matchPage('timelog', 'new')) {
-        $('#new_time_entry').after(timeyLogger);
-        $('#new_time_entry').hide();
-      }
-      if (this.ppm.matchPage('issues', 'show')) {
-        $('body').append(timeyLogger);
-        $('.timeyLoggerWrapper .close').click(function() {
-          ProofReasonRedmineTheme.TimeyIntegration.removeTimeyLogger();
-        });
-      }
+        if (self.ppm.matchPage('timelog', 'new')) {
+          $('#new_time_entry').after(timeyLogger).hide();
+
+        } else if (self.ppm.matchPage('issues', 'show')) {
+          $('body').append(timeyLogger);
+          $('.timeyLoggerWrapper .close').click(function() {
+            self.TimeyIntegration.removeTimeyLogger();
+          });
+        }
+      });
     },
 
     removeTimeyLogger: function() {
