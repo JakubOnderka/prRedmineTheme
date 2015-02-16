@@ -1,5 +1,7 @@
 "use strict";
 
+define.amd = undefined;
+
 require([
   'module/remove_issue_type_from_title',
   'module/high_res_gravatars',
