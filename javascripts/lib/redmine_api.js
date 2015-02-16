@@ -1,6 +1,6 @@
 "use strict";
 
-define(function () {
+define(['lib/local_storage'], function (ls) {
   if (typeof jQuery === 'undefined') {
     throw new Error('Redmine API require jQuery library');
   }
@@ -18,16 +18,6 @@ define(function () {
     return hash;
   }
 
-  // Remove cache in 10 % of page load
-  if (Math.random() > 0.9) {
-    console.log('Deleted cached entries in localStorage.');
-    for (var key in localStorage) {
-      if (key.indexOf('rma:cache:') === 0) {
-        localStorage.removeItem(key);
-      }
-    }
-  }
-
   // Load Redmine API key from my account page and save to local storage
   this.getRedmineApiKey = function(callback) {
     var redmineApiKey = localStorage.getItem('rma:redmineApiKey');
@@ -39,7 +29,7 @@ define(function () {
           throw new Error('Cannot find Redmine API access key in element #api-access-key on page /my/account.');
         }
 
-        localStorage.setItem('rma:redmineApiKey', redmineApiKey);
+        ls.set('rma:redmineApiKey', redmineApiKey);
         callback(redmineApiKey);
       }).fail(function() {
         throw new Error('Cannot load page /my/account for getting Redmine API access key.');
@@ -74,7 +64,7 @@ define(function () {
 
   this.getWithCache = function(uri, params, callback) {
     var cacheKey = 'rma:cache:' + hashCode(uri +  '?' + $.param(params)),
-      cached = window.localStorage.getItem(cacheKey);
+      cached = ls.get(cacheKey);
 
     if (cached) {
       callback(JSON.parse(cached));
@@ -82,7 +72,7 @@ define(function () {
 
     this.get(uri, params, function(json, data) {
       if (cached != data) {
-        window.localStorage.setItem(cacheKey, data);
+        ls.set(cacheKey, data, 1);
         callback(json);
       }
     });
