@@ -42,7 +42,8 @@ require([
   'module/remove_issue_type_from_title',
   'module/high_res_gravatars',
   'module/autologin',
-  'module/key_shortcuts'
+  'module/key_shortcuts',
+  'module/timey_integration'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -76,7 +77,6 @@ var ProofReasonRedmineTheme = {
     this.BetterHeader.init();
     this.BetterSidebar.init();
     this.BetterUpdateForm.init();
-    this.TimeyIntegration.init();
     this.BetterTimeline.init();
     this.AutoReturnToOwner.init();
     this.AlternateCellFormats.init();
@@ -434,61 +434,6 @@ var ProofReasonRedmineTheme = {
       var weekday = today.getDay() || 7;
       if (weekday !== 1) today.setDate(-(weekday) + 7);
       return today;
-    }
-  },
-
-  TimeyIntegration: {
-    ppm: null,
-
-    init: function () {
-      this.ppm = ProofReasonRedmineTheme.PagePropertyMiner;
-
-      $('<div id="enterTimey" style="float: right"><a href="https://timey.proofreason.com" target="_blank">Open Timey</a></div>').insertBefore('#loggedas');
-
-      if (this.ppm.matchPage('timelog', 'new')) {
-        ProofReasonRedmineTheme.TimeyIntegration.insertTimeyLogger();
-      }
-
-      if (this.ppm.matchPage('timelog', 'index')) {
-        $('#context-menu').remove();
-        $('td.buttons').hide();
-      }
-
-      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        ProofReasonRedmineTheme.TimeyIntegration.insertTimeyLogger();
-        return false;
-      });
-    },
-
-    insertTimeyLogger: function () {
-      var self = this;
-      this.ppm.getProjectId(function (projectId) {
-        var issueId = self.ppm.getIssueId();
-
-        var url = 'https://timey.proofreason.com/';
-        if (projectId > 0) {
-          url = url + '?redmine[project_id]=' + projectId;
-          if (issueId > 0) url = url + '&redmine[issue_id]=' + issueId;
-        }
-        url = url + '#/logs/new';
-
-        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
-          url + '"></iframe></div>';
-
-        if (self.ppm.matchPage('timelog', 'new')) {
-          $('#new_time_entry').after(timeyLogger).hide();
-
-        } else if (self.ppm.matchPage('issues', 'show')) {
-          $('body').append(timeyLogger);
-          $('.timeyLoggerWrapper .close').click(function () {
-            self.TimeyIntegration.removeTimeyLogger();
-          });
-        }
-      });
-    },
-
-    removeTimeyLogger: function () {
-      $('.timeyLoggerWrapper').remove();
     }
   },
 
@@ -2051,6 +1996,61 @@ define('module/key_shortcuts',['lib/page_property_miner', 'lib/keymaster'], func
        key('a', function() {
        return linkFromMainMenu('activity');
        });*/
+    }
+  }
+});
+
+
+define('module/timey_integration',['lib/page_property_miner'], function (ppp) {
+  return {
+
+    init: function () {
+      $('<div id="enterTimey" style="float: right"><a href="https://timey.proofreason.com" target="_blank">Open Timey</a></div>').insertBefore('#loggedas');
+
+      if (ppp.matchPage('timelog', 'new')) {
+        this.insertTimeyLogger();
+
+      } else if (ppp.matchPage('timelog', 'index')) {
+        $('#context-menu').remove();
+        $('td.buttons').hide();
+      }
+
+      var self = this;
+      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
+        self.insertTimeyLogger();
+        return false;
+      });
+    },
+
+    insertTimeyLogger: function () {
+      var self = this;
+      ppp.getProjectId(function (projectId) {
+        var issueId = ppp.getIssueId();
+
+        var url = 'https://timey.proofreason.com/';
+        if (projectId > 0) {
+          url = url + '?redmine[project_id]=' + projectId;
+          if (issueId > 0) url = url + '&redmine[issue_id]=' + issueId;
+        }
+        url = url + '#/logs/new';
+
+        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
+          url + '"></iframe></div>';
+
+        if (ppp.matchPage('timelog', 'new')) {
+          $('#new_time_entry').after(timeyLogger).hide();
+
+        } else if (ppp.matchPage('issues', 'show')) {
+          $('body').append(timeyLogger);
+          $('.timeyLoggerWrapper .close').click(function () {
+            self.removeTimeyLogger();
+          });
+        }
+      });
+    },
+
+    removeTimeyLogger: function () {
+      $('.timeyLoggerWrapper').remove();
     }
   }
 });
