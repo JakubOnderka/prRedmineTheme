@@ -21,7 +21,7 @@ define(['lib/local_storage'], function (ls) {
 
     // Load Redmine API key from my account page and save to local storage
     this.getRedmineApiKey = function (callback) {
-      var redmineApiKey = localStorage.getItem('rma:redmineApiKey');
+      var redmineApiKey = ls.get('rma:redmineApiKey');
       if (!redmineApiKey) {
         $.get('/my/account').done(function (html) {
           redmineApiKey = $(html).find('#api-access-key').text();

@@ -31,7 +31,7 @@ require([
 
 require(['lib/local_storage'], function (module) {
   if (Math.random() > 0.9) {
-    console.log('Deleted cached entries in localStorage.');
+    if (console) console.log('Deleted cached entries in localStorage.');
     module.removeExpired();
   }
 });

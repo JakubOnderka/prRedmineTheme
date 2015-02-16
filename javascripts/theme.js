@@ -67,7 +67,7 @@ require([
 
 require(['lib/local_storage'], function (module) {
   if (Math.random() > 0.9) {
-    console.log('Deleted cached entries in localStorage.');
+    if (console) console.log('Deleted cached entries in localStorage.');
     module.removeExpired();
   }
 });
@@ -1380,7 +1380,7 @@ define('lib/redmine_api',['lib/local_storage'], function (ls) {
 
     // Load Redmine API key from my account page and save to local storage
     this.getRedmineApiKey = function (callback) {
-      var redmineApiKey = localStorage.getItem('rma:redmineApiKey');
+      var redmineApiKey = ls.get('rma:redmineApiKey');
       if (!redmineApiKey) {
         $.get('/my/account').done(function (html) {
           redmineApiKey = $(html).find('#api-access-key').text();
