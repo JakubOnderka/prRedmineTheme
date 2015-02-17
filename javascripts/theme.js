@@ -1346,10 +1346,11 @@ define('lib/local_storage',[],function() {
     },
 
     removeExpired: function() {
-      for (var key in localStorage) {
-        var parts = key.split('.');
+      for (var lsItem in localStorage) {
+        var parts = lsItem.split('.');
         if (parts.length === 2 && parts[0] === NS) {
-          if (this._isExpired(parts[1])) {
+          var key = parts[1];
+          if (this._isExpired(key)) {
             this.remove(key);
           }
         }
