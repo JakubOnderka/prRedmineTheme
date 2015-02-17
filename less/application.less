@@ -230,6 +230,7 @@ body.controller-issues.action-show #content > .issue {
     &.status-1 .attributes td.status:before,
     &.status-2 .attributes td.status:before,
     &.status-3 .attributes td.status:before,
+    &.status-4 .attributes td.status:before,
     &.status-8 .attributes td.status:before {
         font-family: 'Glyphicons Halflings';
         padding: 3px 5px;
@@ -275,6 +276,18 @@ body.controller-issues.action-show #content > .issue {
     // Assigned
     &.status-2 .attributes td.status:before {
         content: "\e131";
+    }
+
+    // Gray group
+    &.status-4 .attributes td.status:before,
+    &.status-4 .attributes td.status:before {
+        background-color: #666666;
+        color: white;
+    }
+
+    // Waiting
+    &.status-4 .attributes td.status:before {
+        content: "\e031";
     }
 }
 
