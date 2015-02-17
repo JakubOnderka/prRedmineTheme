@@ -225,6 +225,56 @@ body.controller-issues.action-show #content > .issue {
         font-weight: bold;
         line-height: 1
     }
+
+    /* Issue status icons */
+    &.status-1 td.status:before,
+    &.status-3 td.status:before,
+    &.status-8 td.status:before {
+        font-family: 'Glyphicons Halflings';
+        padding: 3px 5px;
+        margin-right: 5px;
+        border-radius: 3px;
+    }
+
+    // Red group
+    &.status-1 td.status:before {
+        background-color: red;
+        color: white;
+    }
+
+    // New
+    &.status-1 td.status:before {
+        content: "\e028";
+    }
+
+    // Blue group
+    &.status-3 td.status:before,
+    &.status-8 td.status:before {
+        background-color: blue;
+        color: white;
+    }
+
+    // Solved
+    &.status-3 td.status:before {
+        content: "\e013";
+    }
+
+    // Feedback
+    &.status-8 td.status:before {
+        content: "\e111";
+    }
+
+    // Green group
+    &.status-2 td.status:before,
+    &.status-2 td.status:before {
+        background-color: green;
+        color: white;
+    }
+
+    // Assigned
+    &.status-2 td.status:before {
+        content: "\e131";
+    }
 }
 
 /* Progressbar */
