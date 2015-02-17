@@ -2,7 +2,7 @@
 
 define(['lib/page_property_miner'], function (ppp) {
   return {
-    constructor: function () {
+    init: function () {
       if (ppp.matchPage('issues', 'show')) {
         document.title = document.title.replace(/^([^#]*)/, '');
       }

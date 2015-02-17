@@ -1554,7 +1554,7 @@ define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
 
 define('module/remove_issue_type_from_title',['lib/page_property_miner'], function (ppp) {
   return {
-    constructor: function () {
+    init: function () {
       if (ppp.matchPage('issues', 'show')) {
         document.title = document.title.replace(/^([^#]*)/, '');
       }
