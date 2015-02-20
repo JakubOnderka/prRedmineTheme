@@ -31,7 +31,7 @@ require([
 
 require(['lib/local_storage'], function (module) {
   if (Math.random() > 0.9) {
-    if (console) console.log('Deleted cached entries in localStorage.');
+    if (console) console.log('Deleted expired cached entries in localStorage.');
     module.removeExpired();
   }
 });
@@ -288,7 +288,7 @@ var ProofReasonRedmineTheme = {
       });
 
 
-      $('#update').prepend('<span class="minimize"><i class="bootstrap-icon-minus"></i> <i class="bootstrap-icon-plus"></i></span>');
+      $('#update').prepend('<span class="minimize"><span class="glyphicon glyphicon-minus"></span> <span class="glyphicon glyphicon-plus"></span></span>');
       $('#update span.minimize').click(function () {
         ProofReasonRedmineTheme.BetterUpdateForm.toggleUpdateForm();
         return false;
@@ -519,8 +519,8 @@ var ProofReasonRedmineTheme = {
         for (var i = 0; i < statusReplacements[value].length; i++) {
           var icon = statusReplacements[value][i];
           var color = statusReplacementColors[value] ? statusReplacementColors[value][i] : null;
-          var colorReplacement = color ? 'style="background-color: ' + color + '; border-color: ' + color + '"' : '';
-          replacementCell += '<i ' + colorReplacement + ' class="bootstrap-icon-white bootstrap-icon-' + icon + '"></i>';
+          var colorReplacement = color ? 'style="background-color: ' + color + '"' : '';
+          replacementCell += '<span ' + colorReplacement + ' class="glyphicon glyphicon-' + icon + '"></span>';
         }
 
         return replacementCell;

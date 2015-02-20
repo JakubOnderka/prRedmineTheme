@@ -1,5 +1,5 @@
 @import url(../../../stylesheets/application.css);
-@import 'bootstrap_glyphicons';
+//@import 'bootstrap_glyphicons';
 @import 'icons';
 
 html, body, #wrapper { background-color: #112631; height: 100%; }
@@ -233,18 +233,20 @@ body.controller-issues.action-show #content > .issue {
     &.status-4 .attributes td.status:before,
     &.status-7 .attributes td.status:before,
     &.status-8 .attributes td.status:before,
+    &.status-10 .attributes td.status:before,
     &.status-16 .attributes td.status:before {
         font-family: 'Glyphicons Halflings';
         padding: 3px 4px;
         margin-right: 6px;
         border-radius: 3px;
         font-size: 11px;
+        background-color: gray; // default
+        color: white;
     }
 
-    // Red group
+    // --- Red group
     &.status-1 .attributes td.status:before {
         background-color: red;
-        color: white;
     }
 
     // New
@@ -252,11 +254,11 @@ body.controller-issues.action-show #content > .issue {
         content: "\e028";
     }
 
-    // Blue group
+    // --- Blue group
     &.status-3 .attributes td.status:before,
-    &.status-8 .attributes td.status:before {
+    &.status-8 .attributes td.status:before,
+    &.status-10 .attributes td.status:before {
         background-color: blue;
-        color: white;
     }
 
     // Solved
@@ -269,11 +271,15 @@ body.controller-issues.action-show #content > .issue {
         content: "\e111";
     }
 
-    // Green group
+    // Needs explanation
+    &.status-10 .attributes td.status:before {
+        content: "\e085";
+    }
+
+    // --- Green group
     &.status-2 .attributes td.status:before,
     &.status-2 .attributes td.status:before {
         background-color: green;
-        color: white;
     }
 
     // Assigned
@@ -281,14 +287,7 @@ body.controller-issues.action-show #content > .issue {
         content: "\e092";
     }
 
-    // Gray group
-    &.status-4 .attributes td.status:before,
-    &.status-7 .attributes td.status:before,
-    &.status-16 .attributes td.status:before {
-        background-color: #666666;
-        color: white;
-    }
-
+    // --- Gray group
     // Waiting
     &.status-4 .attributes td.status:before {
         content: "\e031";
@@ -412,8 +411,8 @@ form {
 	top: 15px; right: 0;
 	z-index: 10;
 
-	.bootstrap-icon-minus { display: inline-block }
-	.bootstrap-icon-plus { display: none; }
+	.glyphicon-minus { display: inline-block }
+	.glyphicon-plus { display: none; }
 }
 
 .timeyLoggerWrapper span.close {
@@ -425,8 +424,8 @@ form {
 	margin-top: 15px;
 
 	span.minimize {
-		.bootstrap-icon-minus { display: none; }
-		.bootstrap-icon-plus { display: inline-block; }
+		.glyphicon-minus { display: none; }
+		.glyphicon-plus { display: inline-block; }
 	}
 
 	fieldset {
@@ -640,7 +639,14 @@ table.issues {
 
 	td.project { text-align: left; max-width: 100px; overflow: hidden; font-weight: bold !important; }
 	th[title='Sort by "Status"'], td.status { width: 30px; overflow: hidden; }
-	td.status i.bootstrap-icon-white { border: 1px solid #666; background-color: #666; border-radius: 20%; opacity: .7; }
+
+	td.status i.glyphicon {
+        padding: 3px 4px;
+        margin-right: 6px;
+        border-radius: 3px;
+        font-size: 11px;
+        background-color: gray; // default
+    }
 }
 
 /* Buttons */
