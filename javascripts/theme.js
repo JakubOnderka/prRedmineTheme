@@ -332,6 +332,12 @@ var ProofReasonRedmineTheme = {
       if (this.tools.cookie('updateFormMinimized')) {
         $('#update span.minimize').click();
       }
+
+      $('#issue-form')
+        .contents()
+        .filter(function() { return this.nodeType === 3 && this.textContent.trim() === '|'})
+        .remove();
+      $('<span class="delimiter"> | </span>').insertBefore('#issue-form a:last');
     },
 
     toggleUpdateForm: function () {
