@@ -7,7 +7,8 @@ require([
   'module/high_res_gravatars',
   'module/autologin',
   'module/key_shortcuts',
-  'module/timey_integration'
+  'module/timey_integration',
+  'module/related_issues_header'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

@@ -43,7 +43,8 @@ require([
   'module/high_res_gravatars',
   'module/autologin',
   'module/key_shortcuts',
-  'module/timey_integration'
+  'module/timey_integration',
+  'module/related_issues_header'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -2060,6 +2061,61 @@ define('module/timey_integration',['lib/page_property_miner'], function (ppp) {
 
     removeTimeyLogger: function () {
       $('.timeyLoggerWrapper').remove();
+    }
+  }
+});
+define('translation/cs',{
+  Subject: 'Předmět',
+  Assignee: 'Přiřazeno',
+  Status: 'Stav',
+  Done: 'Hotovo',
+  'Due date': 'Uzavřít do'
+});
+define('lib/translate',['translation/cs'], function(cs) {
+  var language = $('html').attr('lang');
+
+  return function(key) {
+    if (language === 'cs' && key in cs) {
+      return cs[key];
+    } else {
+      return key;
+    }
+  }
+});
+
+
+define('module/related_issues_header',['lib/page_property_miner', 'lib/translate'], function (ppp, _) {
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      var $issue = $('#content .issue');
+
+      var subject = _('Subject'),
+        status = _('Status'),
+        assignee = _('Assignee'),
+        done = _('Done'),
+        dueDate = _('Due date');
+
+      var issueTree = [
+          '<th>' + subject +'</th>',
+          '<th>' + status +'</th>',
+          '<th>' + assignee +'</th>',
+          '<th>' + done +'</th>'
+      ];
+
+      var relations = [
+        '<th>' + subject +'</th>',
+        '<th>' + status +'</th>',
+        '<th>' + assignee +'</th>',
+        '<th>' + dueDate +'</th>',
+        '<th></th>'
+      ];
+
+      $issue.find('#issue_tree table.list.issues').prepend('<thead><tr>' + issueTree.join('') + '</tr></thead>');
+      $issue.find('#relations table.list.issues').prepend('<thead><tr>' + relations.join('') + '</tr></thead>');
     }
   }
 });
