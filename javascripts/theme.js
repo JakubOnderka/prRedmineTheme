@@ -2011,6 +2011,10 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
   }
 
   function getIdAndName($link) {
+    if ($link.length === 0) {
+      return null;
+    }
+
     var href = $link.attr('href'),
       id = href.split('/')[2];
 
