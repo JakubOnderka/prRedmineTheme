@@ -1,0 +1,37 @@
+<h3 style="margin-top: 30px">{{_ "Planned absences"}} (<a href="#" class="refresh">{{_ "refresh"}}</a>)</h3>
+
+{{#each months}}
+    <h4 style="margin: 10px 0 0">{{monthFromDate month}}</h4>
+    <ul>
+        {{#each persons}}
+            <li style="margin: 0 0;"><b>{{name}}</b>:
+
+                {{#each absences}}
+                    {{#if actual}}<span style="color:red">{{/if}}
+
+                    {{#is from to}}
+                        {{dayFromDate from}}.
+                    {{else}}
+                        {{dayFromDate from}}.–{{dayFromDate to}}.
+                    {{/is}}
+
+                    {{#if type ~}}
+                    {{#is type "-" ~}}
+                    {{else ~}}
+                    {{#is type "/" ~}}
+                    {{else ~}}
+                        {{#is type "?" ~}}({{_ "maybe" ~}}){{else ~}}({{trim type ~}}){{/is ~}}
+                    {{/is ~}}
+                    {{/is ~}}
+                    {{/if ~}}
+
+                    {{#if actual ~}}</span>{{/if ~}}
+                    {{#unless @last}}, {{/unless}}
+                {{/each}}
+
+            </li>
+        {{/each}}
+    </ul>
+{{/each}}
+
+<p><a href="{{ detailsUri }}">{{_ "Show details"}}</a></p>

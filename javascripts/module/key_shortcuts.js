@@ -1,4 +1,4 @@
-define(['lib/page_property_miner', 'lib/keymaster'], function (ppp, key) {
+define(['lib/page_property_miner', 'vendor/keymaster'], function (ppp, key) {
   return {
     init: function () {
       var $mainMenu = $('#main-menu');

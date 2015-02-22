@@ -1,37 +1,23 @@
 "use strict";
 
-define(['lib/page_property_miner', 'lib/translate'], function (ppp, _) {
+define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
   return {
     init: function () {
       if (!ppp.matchPage('issues', 'show')) {
         return;
       }
 
-      var $issue = $('#content .issue');
+      var $issue = $('#content .issue'),
+        $issueTree = $issue.find('#issue_tree table.list.issues'),
+        $issueRelations = $issue.find('#relations table.list.issues');
 
-      var subject = _('Subject'),
-        status = _('Status'),
-        assignee = _('Assignee'),
-        done = _('Done'),
-        dueDate = _('Due date');
+      if ($issueTree.length) {
+        $issueTree.prepend(templates['issue_tree_header']());
+      }
 
-      var issueTree = [
-          '<th>' + subject +'</th>',
-          '<th>' + status +'</th>',
-          '<th>' + assignee +'</th>',
-          '<th>' + done +'</th>'
-      ];
-
-      var relations = [
-        '<th>' + subject +'</th>',
-        '<th>' + status +'</th>',
-        '<th>' + assignee +'</th>',
-        '<th>' + dueDate +'</th>',
-        '<th></th>'
-      ];
-
-      $issue.find('#issue_tree table.list.issues').prepend('<thead><tr>' + issueTree.join('') + '</tr></thead>');
-      $issue.find('#relations table.list.issues').prepend('<thead><tr>' + relations.join('') + '</tr></thead>');
+      if ($issueRelations.length) {
+        $issueRelations.prepend(templates['relations_header']());
+      }
     }
   }
 });

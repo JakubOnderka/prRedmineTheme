@@ -1,10 +1,10 @@
 "use strict";
 
-define(['lib/page_property_miner'], function (ppp) {
+define(['lib/page_property_miner', 'templates'], function (ppp, themes) {
   return {
 
     init: function () {
-      $('<div id="enterTimey" style="float: right"><a href="https://timey.proofreason.com" target="_blank">Open Timey</a></div>').insertBefore('#loggedas');
+      $(themes['open_timey']()).insertBefore('#loggedas');
 
       if (ppp.matchPage('timelog', 'new')) {
         this.insertTimeyLogger();

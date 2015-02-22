@@ -34,9 +34,1984 @@ x.head=D.parentNode;g.onError=ca;g.createNode=function(b){var c=b.xhtml?document
 !Y?(M=!0,e.attachEvent("onreadystatechange",b.onScriptLoad)):(e.addEventListener("load",b.onScriptLoad,!1),e.addEventListener("error",b.onScriptError,!1)),e.src=d,J=e,D?y.insertBefore(e,D):y.appendChild(e),J=null,e;if(ea)try{importScripts(d),b.completeLoad(c)}catch(m){b.onError(C("importscripts","importScripts failed for "+c+" at "+d,m,[c]))}};z&&!q.skipDataMain&&T(document.getElementsByTagName("script"),function(b){y||(y=b.parentNode);if(I=b.getAttribute("data-main"))return s=I,q.baseUrl||(E=s.split("/"),
 s=E.pop(),O=E.length?E.join("/")+"/":"./",q.baseUrl=O),s=s.replace(Q,""),g.jsExtRegExp.test(s)&&(s=I),q.deps=q.deps?q.deps.concat(s):[s],!0});define=function(b,c,d){var e,g;"string"!==typeof b&&(d=c,c=b,b=null);H(c)||(d=c,c=null);!c&&G(d)&&(c=[],d.length&&(d.toString().replace(ka,"").replace(la,function(b,d){c.push(d)}),c=(1===d.length?["require"]:["require","exports","module"]).concat(c)));if(M){if(!(e=J))N&&"interactive"===N.readyState||T(document.getElementsByTagName("script"),function(b){if("interactive"===
 b.readyState)return N=b}),e=N;e&&(b||(b=e.getAttribute("data-requiremodule")),g=F[e.getAttribute("data-requirecontext")])}(g?g.defQueue:R).push([b,c,d])};define.amd={jQuery:!0};g.exec=function(b){return eval(b)};g(q)}})(this);
+/*!
+
+ handlebars v3.0.0
+
+Copyright (C) 2011-2014 by Yehuda Katz
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+@license
+*/
+/* exported Handlebars */
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define('vendor/handlebars.runtime',[], factory);
+  } else if (typeof exports === 'object') {
+    module.exports = factory();
+  } else {
+    root.Handlebars = factory();
+  }
+}(this, function () {
+// handlebars/utils.js
+var __module2__ = (function() {
+  
+  var __exports__ = {};
+  /*jshint -W004 */
+  var escape = {
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#x27;",
+    "`": "&#x60;"
+  };
+
+  var badChars = /[&<>"'`]/g;
+  var possible = /[&<>"'`]/;
+
+  function escapeChar(chr) {
+    return escape[chr];
+  }
+
+  function extend(obj /* , ...source */) {
+    for (var i = 1; i < arguments.length; i++) {
+      for (var key in arguments[i]) {
+        if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
+          obj[key] = arguments[i][key];
+        }
+      }
+    }
+
+    return obj;
+  }
+
+  __exports__.extend = extend;var toString = Object.prototype.toString;
+  __exports__.toString = toString;
+  // Sourced from lodash
+  // https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
+  var isFunction = function(value) {
+    return typeof value === 'function';
+  };
+  // fallback for older versions of Chrome and Safari
+  /* istanbul ignore next */
+  if (isFunction(/x/)) {
+    isFunction = function(value) {
+      return typeof value === 'function' && toString.call(value) === '[object Function]';
+    };
+  }
+  var isFunction;
+  __exports__.isFunction = isFunction;
+  /* istanbul ignore next */
+  var isArray = Array.isArray || function(value) {
+    return (value && typeof value === 'object') ? toString.call(value) === '[object Array]' : false;
+  };
+  __exports__.isArray = isArray;
+  // Older IE versions do not directly support indexOf so we must implement our own, sadly.
+  function indexOf(array, value) {
+    for (var i = 0, len = array.length; i < len; i++) {
+      if (array[i] === value) {
+        return i;
+      }
+    }
+    return -1;
+  }
+
+  __exports__.indexOf = indexOf;
+  function escapeExpression(string) {
+    // don't escape SafeStrings, since they're already safe
+    if (string && string.toHTML) {
+      return string.toHTML();
+    } else if (string == null) {
+      return "";
+    } else if (!string) {
+      return string + '';
+    }
+
+    // Force a string conversion as this will be done by the append regardless and
+    // the regex test will do this transparently behind the scenes, causing issues if
+    // an object's to string has escaped characters in it.
+    string = "" + string;
+
+    if(!possible.test(string)) { return string; }
+    return string.replace(badChars, escapeChar);
+  }
+
+  __exports__.escapeExpression = escapeExpression;function isEmpty(value) {
+    if (!value && value !== 0) {
+      return true;
+    } else if (isArray(value) && value.length === 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  __exports__.isEmpty = isEmpty;function blockParams(params, ids) {
+    params.path = ids;
+    return params;
+  }
+
+  __exports__.blockParams = blockParams;function appendContextPath(contextPath, id) {
+    return (contextPath ? contextPath + '.' : '') + id;
+  }
+
+  __exports__.appendContextPath = appendContextPath;
+  return __exports__;
+})();
+
+// handlebars/exception.js
+var __module3__ = (function() {
+  
+  var __exports__;
+
+  var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
+  function Exception(message, node) {
+    var loc = node && node.loc,
+        line,
+        column;
+    if (loc) {
+      line = loc.start.line;
+      column = loc.start.column;
+
+      message += ' - ' + line + ':' + column;
+    }
+
+    var tmp = Error.prototype.constructor.call(this, message);
+
+    // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+    for (var idx = 0; idx < errorProps.length; idx++) {
+      this[errorProps[idx]] = tmp[errorProps[idx]];
+    }
+
+    if (loc) {
+      this.lineNumber = line;
+      this.column = column;
+    }
+  }
+
+  Exception.prototype = new Error();
+
+  __exports__ = Exception;
+  return __exports__;
+})();
+
+// handlebars/base.js
+var __module1__ = (function(__dependency1__, __dependency2__) {
+  
+  var __exports__ = {};
+  var Utils = __dependency1__;
+  var Exception = __dependency2__;
+
+  var VERSION = "3.0.0";
+  __exports__.VERSION = VERSION;var COMPILER_REVISION = 6;
+  __exports__.COMPILER_REVISION = COMPILER_REVISION;
+  var REVISION_CHANGES = {
+    1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
+    2: '== 1.0.0-rc.3',
+    3: '== 1.0.0-rc.4',
+    4: '== 1.x.x',
+    5: '== 2.0.0-alpha.x',
+    6: '>= 2.0.0-beta.1'
+  };
+  __exports__.REVISION_CHANGES = REVISION_CHANGES;
+  var isArray = Utils.isArray,
+      isFunction = Utils.isFunction,
+      toString = Utils.toString,
+      objectType = '[object Object]';
+
+  function HandlebarsEnvironment(helpers, partials) {
+    this.helpers = helpers || {};
+    this.partials = partials || {};
+
+    registerDefaultHelpers(this);
+  }
+
+  __exports__.HandlebarsEnvironment = HandlebarsEnvironment;HandlebarsEnvironment.prototype = {
+    constructor: HandlebarsEnvironment,
+
+    logger: logger,
+    log: log,
+
+    registerHelper: function(name, fn) {
+      if (toString.call(name) === objectType) {
+        if (fn) { throw new Exception('Arg not supported with multiple helpers'); }
+        Utils.extend(this.helpers, name);
+      } else {
+        this.helpers[name] = fn;
+      }
+    },
+    unregisterHelper: function(name) {
+      delete this.helpers[name];
+    },
+
+    registerPartial: function(name, partial) {
+      if (toString.call(name) === objectType) {
+        Utils.extend(this.partials,  name);
+      } else {
+        if (typeof partial === 'undefined') {
+          throw new Exception('Attempting to register a partial as undefined');
+        }
+        this.partials[name] = partial;
+      }
+    },
+    unregisterPartial: function(name) {
+      delete this.partials[name];
+    }
+  };
+
+  function registerDefaultHelpers(instance) {
+    instance.registerHelper('helperMissing', function(/* [args, ]options */) {
+      if(arguments.length === 1) {
+        // A missing field in a {{foo}} constuct.
+        return undefined;
+      } else {
+        // Someone is actually trying to call something, blow up.
+        throw new Exception("Missing helper: '" + arguments[arguments.length-1].name + "'");
+      }
+    });
+
+    instance.registerHelper('blockHelperMissing', function(context, options) {
+      var inverse = options.inverse,
+          fn = options.fn;
+
+      if(context === true) {
+        return fn(this);
+      } else if(context === false || context == null) {
+        return inverse(this);
+      } else if (isArray(context)) {
+        if(context.length > 0) {
+          if (options.ids) {
+            options.ids = [options.name];
+          }
+
+          return instance.helpers.each(context, options);
+        } else {
+          return inverse(this);
+        }
+      } else {
+        if (options.data && options.ids) {
+          var data = createFrame(options.data);
+          data.contextPath = Utils.appendContextPath(options.data.contextPath, options.name);
+          options = {data: data};
+        }
+
+        return fn(context, options);
+      }
+    });
+
+    instance.registerHelper('each', function(context, options) {
+      if (!options) {
+        throw new Exception('Must pass iterator to #each');
+      }
+
+      var fn = options.fn, inverse = options.inverse;
+      var i = 0, ret = "", data;
+
+      var contextPath;
+      if (options.data && options.ids) {
+        contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]) + '.';
+      }
+
+      if (isFunction(context)) { context = context.call(this); }
+
+      if (options.data) {
+        data = createFrame(options.data);
+      }
+
+      function execIteration(key, i, last) {
+        if (data) {
+          data.key = key;
+          data.index = i;
+          data.first = i === 0;
+          data.last  = !!last;
+
+          if (contextPath) {
+            data.contextPath = contextPath + key;
+          }
+        }
+
+        ret = ret + fn(context[key], {
+          data: data,
+          blockParams: Utils.blockParams([context[key], key], [contextPath + key, null])
+        });
+      }
+
+      if(context && typeof context === 'object') {
+        if (isArray(context)) {
+          for(var j = context.length; i<j; i++) {
+            execIteration(i, i, i === context.length-1);
+          }
+        } else {
+          var priorKey;
+
+          for(var key in context) {
+            if(context.hasOwnProperty(key)) {
+              // We're running the iterations one step out of sync so we can detect
+              // the last iteration without have to scan the object twice and create
+              // an itermediate keys array. 
+              if (priorKey) {
+                execIteration(priorKey, i-1);
+              }
+              priorKey = key;
+              i++;
+            }
+          }
+          if (priorKey) {
+            execIteration(priorKey, i-1, true);
+          }
+        }
+      }
+
+      if(i === 0){
+        ret = inverse(this);
+      }
+
+      return ret;
+    });
+
+    instance.registerHelper('if', function(conditional, options) {
+      if (isFunction(conditional)) { conditional = conditional.call(this); }
+
+      // Default behavior is to render the positive path if the value is truthy and not empty.
+      // The `includeZero` option may be set to treat the condtional as purely not empty based on the
+      // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
+      if ((!options.hash.includeZero && !conditional) || Utils.isEmpty(conditional)) {
+        return options.inverse(this);
+      } else {
+        return options.fn(this);
+      }
+    });
+
+    instance.registerHelper('unless', function(conditional, options) {
+      return instance.helpers['if'].call(this, conditional, {fn: options.inverse, inverse: options.fn, hash: options.hash});
+    });
+
+    instance.registerHelper('with', function(context, options) {
+      if (isFunction(context)) { context = context.call(this); }
+
+      var fn = options.fn;
+
+      if (!Utils.isEmpty(context)) {
+        if (options.data && options.ids) {
+          var data = createFrame(options.data);
+          data.contextPath = Utils.appendContextPath(options.data.contextPath, options.ids[0]);
+          options = {data:data};
+        }
+
+        return fn(context, options);
+      } else {
+        return options.inverse(this);
+      }
+    });
+
+    instance.registerHelper('log', function(message, options) {
+      var level = options.data && options.data.level != null ? parseInt(options.data.level, 10) : 1;
+      instance.log(level, message);
+    });
+
+    instance.registerHelper('lookup', function(obj, field) {
+      return obj && obj[field];
+    });
+  }
+
+  var logger = {
+    methodMap: { 0: 'debug', 1: 'info', 2: 'warn', 3: 'error' },
+
+    // State enum
+    DEBUG: 0,
+    INFO: 1,
+    WARN: 2,
+    ERROR: 3,
+    level: 1,
+
+    // Can be overridden in the host environment
+    log: function(level, message) {
+      if (typeof console !== 'undefined' && logger.level <= level) {
+        var method = logger.methodMap[level];
+        (console[method] || console.log).call(console, message);
+      }
+    }
+  };
+  __exports__.logger = logger;
+  var log = logger.log;
+  __exports__.log = log;
+  var createFrame = function(object) {
+    var frame = Utils.extend({}, object);
+    frame._parent = object;
+    return frame;
+  };
+  __exports__.createFrame = createFrame;
+  return __exports__;
+})(__module2__, __module3__);
+
+// handlebars/safe-string.js
+var __module4__ = (function() {
+  
+  var __exports__;
+  // Build out our basic SafeString type
+  function SafeString(string) {
+    this.string = string;
+  }
+
+  SafeString.prototype.toString = SafeString.prototype.toHTML = function() {
+    return "" + this.string;
+  };
+
+  __exports__ = SafeString;
+  return __exports__;
+})();
+
+// handlebars/runtime.js
+var __module5__ = (function(__dependency1__, __dependency2__, __dependency3__) {
+  
+  var __exports__ = {};
+  var Utils = __dependency1__;
+  var Exception = __dependency2__;
+  var COMPILER_REVISION = __dependency3__.COMPILER_REVISION;
+  var REVISION_CHANGES = __dependency3__.REVISION_CHANGES;
+  var createFrame = __dependency3__.createFrame;
+
+  function checkRevision(compilerInfo) {
+    var compilerRevision = compilerInfo && compilerInfo[0] || 1,
+        currentRevision = COMPILER_REVISION;
+
+    if (compilerRevision !== currentRevision) {
+      if (compilerRevision < currentRevision) {
+        var runtimeVersions = REVISION_CHANGES[currentRevision],
+            compilerVersions = REVISION_CHANGES[compilerRevision];
+        throw new Exception("Template was precompiled with an older version of Handlebars than the current runtime. "+
+              "Please update your precompiler to a newer version ("+runtimeVersions+") or downgrade your runtime to an older version ("+compilerVersions+").");
+      } else {
+        // Use the embedded version info since the runtime doesn't know about this revision yet
+        throw new Exception("Template was precompiled with a newer version of Handlebars than the current runtime. "+
+              "Please update your runtime to a newer version ("+compilerInfo[1]+").");
+      }
+    }
+  }
+
+  __exports__.checkRevision = checkRevision;// TODO: Remove this line and break up compilePartial
+
+  function template(templateSpec, env) {
+    /* istanbul ignore next */
+    if (!env) {
+      throw new Exception("No environment passed to template");
+    }
+    if (!templateSpec || !templateSpec.main) {
+      throw new Exception('Unknown template object: ' + typeof templateSpec);
+    }
+
+    // Note: Using env.VM references rather than local var references throughout this section to allow
+    // for external users to override these as psuedo-supported APIs.
+    env.VM.checkRevision(templateSpec.compiler);
+
+    var invokePartialWrapper = function(partial, context, options) {
+      if (options.hash) {
+        context = Utils.extend({}, context, options.hash);
+      }
+
+      partial = env.VM.resolvePartial.call(this, partial, context, options);
+      var result = env.VM.invokePartial.call(this, partial, context, options);
+
+      if (result == null && env.compile) {
+        options.partials[options.name] = env.compile(partial, templateSpec.compilerOptions, env);
+        result = options.partials[options.name](context, options);
+      }
+      if (result != null) {
+        if (options.indent) {
+          var lines = result.split('\n');
+          for (var i = 0, l = lines.length; i < l; i++) {
+            if (!lines[i] && i + 1 === l) {
+              break;
+            }
+
+            lines[i] = options.indent + lines[i];
+          }
+          result = lines.join('\n');
+        }
+        return result;
+      } else {
+        throw new Exception("The partial " + options.name + " could not be compiled when running in runtime-only mode");
+      }
+    };
+
+    // Just add water
+    var container = {
+      strict: function(obj, name) {
+        if (!(name in obj)) {
+          throw new Exception('"' + name + '" not defined in ' + obj);
+        }
+        return obj[name];
+      },
+      lookup: function(depths, name) {
+        var len = depths.length;
+        for (var i = 0; i < len; i++) {
+          if (depths[i] && depths[i][name] != null) {
+            return depths[i][name];
+          }
+        }
+      },
+      lambda: function(current, context) {
+        return typeof current === 'function' ? current.call(context) : current;
+      },
+
+      escapeExpression: Utils.escapeExpression,
+      invokePartial: invokePartialWrapper,
+
+      fn: function(i) {
+        return templateSpec[i];
+      },
+
+      programs: [],
+      program: function(i, data, declaredBlockParams, blockParams, depths) {
+        var programWrapper = this.programs[i],
+            fn = this.fn(i);
+        if (data || depths || blockParams || declaredBlockParams) {
+          programWrapper = program(this, i, fn, data, declaredBlockParams, blockParams, depths);
+        } else if (!programWrapper) {
+          programWrapper = this.programs[i] = program(this, i, fn);
+        }
+        return programWrapper;
+      },
+
+      data: function(data, depth) {
+        while (data && depth--) {
+          data = data._parent;
+        }
+        return data;
+      },
+      merge: function(param, common) {
+        var ret = param || common;
+
+        if (param && common && (param !== common)) {
+          ret = Utils.extend({}, common, param);
+        }
+
+        return ret;
+      },
+
+      noop: env.VM.noop,
+      compilerInfo: templateSpec.compiler
+    };
+
+    var ret = function(context, options) {
+      options = options || {};
+      var data = options.data;
+
+      ret._setup(options);
+      if (!options.partial && templateSpec.useData) {
+        data = initData(context, data);
+      }
+      var depths,
+          blockParams = templateSpec.useBlockParams ? [] : undefined;
+      if (templateSpec.useDepths) {
+        depths = options.depths ? [context].concat(options.depths) : [context];
+      }
+
+      return templateSpec.main.call(container, context, container.helpers, container.partials, data, blockParams, depths);
+    };
+    ret.isTop = true;
+
+    ret._setup = function(options) {
+      if (!options.partial) {
+        container.helpers = container.merge(options.helpers, env.helpers);
+
+        if (templateSpec.usePartial) {
+          container.partials = container.merge(options.partials, env.partials);
+        }
+      } else {
+        container.helpers = options.helpers;
+        container.partials = options.partials;
+      }
+    };
+
+    ret._child = function(i, data, blockParams, depths) {
+      if (templateSpec.useBlockParams && !blockParams) {
+        throw new Exception('must pass block params');
+      }
+      if (templateSpec.useDepths && !depths) {
+        throw new Exception('must pass parent depths');
+      }
+
+      return program(container, i, templateSpec[i], data, 0, blockParams, depths);
+    };
+    return ret;
+  }
+
+  __exports__.template = template;function program(container, i, fn, data, declaredBlockParams, blockParams, depths) {
+    var prog = function(context, options) {
+      options = options || {};
+
+      return fn.call(container,
+          context,
+          container.helpers, container.partials,
+          options.data || data,
+          blockParams && [options.blockParams].concat(blockParams),
+          depths && [context].concat(depths));
+    };
+    prog.program = i;
+    prog.depth = depths ? depths.length : 0;
+    prog.blockParams = declaredBlockParams || 0;
+    return prog;
+  }
+
+  __exports__.program = program;function resolvePartial(partial, context, options) {
+    if (!partial) {
+      partial = options.partials[options.name];
+    } else if (!partial.call && !options.name) {
+      // This is a dynamic partial that returned a string
+      options.name = partial;
+      partial = options.partials[partial];
+    }
+    return partial;
+  }
+
+  __exports__.resolvePartial = resolvePartial;function invokePartial(partial, context, options) {
+    options.partial = true;
+
+    if(partial === undefined) {
+      throw new Exception("The partial " + options.name + " could not be found");
+    } else if(partial instanceof Function) {
+      return partial(context, options);
+    }
+  }
+
+  __exports__.invokePartial = invokePartial;function noop() { return ""; }
+
+  __exports__.noop = noop;function initData(context, data) {
+    if (!data || !('root' in data)) {
+      data = data ? createFrame(data) : {};
+      data.root = context;
+    }
+    return data;
+  }
+  return __exports__;
+})(__module2__, __module3__, __module1__);
+
+// handlebars.runtime.js
+var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, __dependency4__, __dependency5__) {
+  
+  var __exports__;
+  /*globals Handlebars: true */
+  var base = __dependency1__;
+
+  // Each of these augment the Handlebars object. No need to setup here.
+  // (This is done to easily share code between commonjs and browse envs)
+  var SafeString = __dependency2__;
+  var Exception = __dependency3__;
+  var Utils = __dependency4__;
+  var runtime = __dependency5__;
+
+  // For compatibility and usage outside of module systems, make the Handlebars object a namespace
+  var create = function() {
+    var hb = new base.HandlebarsEnvironment();
+
+    Utils.extend(hb, base);
+    hb.SafeString = SafeString;
+    hb.Exception = Exception;
+    hb.Utils = Utils;
+    hb.escapeExpression = Utils.escapeExpression;
+
+    hb.VM = runtime;
+    hb.template = function(spec) {
+      return runtime.template(spec, hb);
+    };
+
+    return hb;
+  };
+
+  var Handlebars = create();
+  Handlebars.create = create;
+
+  /*jshint -W040 */
+  /* istanbul ignore next */
+  var root = typeof global !== 'undefined' ? global : window,
+      $Handlebars = root.Handlebars;
+  /* istanbul ignore next */
+  Handlebars.noConflict = function() {
+    if (root.Handlebars === Handlebars) {
+      root.Handlebars = $Handlebars;
+    }
+  };
+
+  Handlebars['default'] = Handlebars;
+
+  __exports__ = Handlebars;
+  return __exports__;
+})(__module1__, __module4__, __module3__, __module2__, __module5__);
+
+  return __module0__;
+}));
+
+define('translation/cs',{
+
+  Subject: 'Předmět',
+  Assignee: 'Přiřazeno',
+  Status: 'Stav',
+  Done: 'Hotovo',
+  'Due date': 'Uzavřít do',
+
+  // Timey
+  'Open Timey': 'Otevřít Timey',
+
+  // Absences
+  maybe: 'možná',
+  'Show details': 'Zobrazit detaily',
+  'Planned absences': 'Plánované absence',
+  refresh: 'obnovit',
+
+  months : {
+    1: 'Leden',
+    2: 'Únor',
+    3: 'Březen',
+    4: 'Duben',
+    5: 'Květen',
+    6: 'Červen',
+    7: 'Červenec',
+    8: 'Srpen',
+    9: 'Zaří',
+    10: 'Říjen',
+    11: 'Listopad',
+    12: 'Prosinec'
+  }
+});
+define('translation/en',{
+  months : {
+    1: 'January',
+    2: 'February',
+    3: 'March',
+    4: 'April',
+    5: 'May',
+    6: 'Jun',
+    7: 'July',
+    8: 'August',
+    9: 'September',
+    10: 'October',
+    11: 'November',
+    12: 'December'
+  }
+});
+define('lib/translate',['translation/cs', 'translation/en'], function(cs, en) {
+  var language = $('html').attr('lang');
+
+  return function(key) {
+    if (language === 'cs' && key in cs) {
+      return cs[key];
+    } else if (language === 'en' && key in en) {
+      return en[key];
+    } else {
+      return key;
+    }
+  }
+});
+define('template/helper/translate',['vendor/handlebars.runtime', 'lib/translate'], function (handlebars, _) {
+  handlebars.registerHelper('_', function(key) {
+    return _(key);
+  });
+});
+define('template/helper/dayFromDate',['vendor/handlebars.runtime'], function (handlebars) {
+  handlebars.registerHelper('dayFromDate', function(key) {
+    return key.split('-')[2];
+  });
+});
+define('template/helper/trim',['vendor/handlebars.runtime'], function (handlebars) {
+  handlebars.registerHelper('trim', function(key) {
+    return key.trim();
+  });
+});
+define('template/helper/is',['vendor/handlebars.runtime'], function (handlebars) {
+  handlebars.registerHelper('is', function(first, second,  options) {
+    if (first === second) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+});
+define('template/helper/monthFromDate',['vendor/handlebars.runtime', 'lib/translate'], function (handlebars, _) {
+  handlebars.registerHelper('monthFromDate', function(key) {
+    var id = key.split('-')[1];
+    return _('months')[id];
+  });
+});
 
 
-define.amd = undefined;
+define('lib/local_storage',[],function() {
+  var ls = window.localStorage,
+    NS = 'theme';
+
+  return {
+    _key: function (key, sub) {
+      if (key.indexOf('.') !== -1) {
+        throw new Error('Key cannot contains dot character, "' + key + '" given.');
+      }
+
+      if (sub !== undefined) {
+        return NS + '.' + key + '.' + sub;
+      } else {
+        return NS + '.' + key;
+      }
+    },
+
+    _isExpired: function (key) {
+      var expirationTime;
+
+      if ((expirationTime = ls.getItem(this._key(key, 'expire'))) !== null) {
+        if (new Date() > new Date(expirationTime)) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    set: function (key, value, expireInHours) {
+      if (expireInHours !== undefined) {
+        var expirationTime = new Date().getTime() + expireInHours * 3600 * 1000;
+        ls.setItem(this._key(key, 'expire'), new Date(expirationTime));
+      }
+
+      return ls.setItem(this._key(key), value);
+    },
+
+    get: function (key) {
+      if (this._isExpired(key)) {
+        ls.removeItem(this._key(key, 'expire'));
+        ls.removeItem(this._key(key));
+        return null;
+      }
+
+      return ls.getItem(this._key(key));
+    },
+
+    remove: function (key) {
+      ls.removeItem(this._key(key, 'expire'));
+      return ls.removeItem(this._key(key));
+    },
+
+    removeExpired: function() {
+      for (var lsItem in localStorage) {
+        var parts = lsItem.split('.');
+        if (parts.length === 2 && parts[0] === NS) {
+          var key = parts[1];
+          if (this._isExpired(key)) {
+            this.remove(key);
+          }
+        }
+      }
+    }
+  }
+});
+
+
+define('lib/redmine_api',['lib/local_storage'], function (ls) {
+  return function() {
+    if (typeof jQuery === 'undefined') {
+      throw new Error('Redmine API require jQuery library');
+    }
+
+    var $ = jQuery;
+
+    function hashCode(string) {
+      var hash = 0;
+      if (string == 0) return hash;
+      for (var i = 0; i < string.length; i++) {
+        var char = string.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash; // Convert to 32bit integer
+      }
+      return hash;
+    }
+
+    // Load Redmine API key from my account page and save to local storage
+    this.getRedmineApiKey = function (callback) {
+      var redmineApiKey = ls.get('rma:redmineApiKey');
+      if (!redmineApiKey) {
+        $.get('/my/account').done(function (html) {
+          redmineApiKey = $(html).find('#api-access-key').text();
+
+          if (!redmineApiKey) {
+            throw new Error('Cannot find Redmine API access key in element #api-access-key on page /my/account.');
+          }
+
+          ls.set('rma:redmineApiKey', redmineApiKey);
+          callback(redmineApiKey);
+        }).fail(function () {
+          throw new Error('Cannot load page /my/account for getting Redmine API access key.');
+        });
+        return;
+      }
+      callback(redmineApiKey);
+    };
+
+    this.get = function (uri, params, callback) {
+      this.getRedmineApiKey(function (key) {
+        params.key = key;
+        uri += '?' + $.param(params);
+
+        $.ajax({
+          url: uri,
+          dataType: 'text',
+          global: false
+
+        }).done(function (data) {
+          callback(JSON.parse(data), data);
+
+        }).fail(function (jqXHR, textStatus) {
+          if (jqXHR.statusCode() === 401) {
+            throw new Error('Redmine API access key is invalid.');
+          } else {
+            throw new Error('Cannot load URL ' + uri + ' from Redmine API. ' + textStatus);
+          }
+        });
+      });
+    };
+
+    this.getWithCache = function (uri, params, callback) {
+      var cacheKey = 'rma:cache:' + hashCode(uri + '?' + $.param(params)),
+        cached = ls.get(cacheKey);
+
+      if (cached) {
+        callback(JSON.parse(cached));
+      }
+
+      this.get(uri, params, function (json, data) {
+        if (cached != data) {
+          ls.set(cacheKey, data, 1);
+          callback(json);
+        }
+      });
+    };
+
+    this.getIssuesWithCache = function (params, callback) {
+      this.getWithCache('/issues.json', params, callback);
+    };
+
+    this.getProject = function (projectId, callback) {
+      this.getWithCache('/projects/' + projectId + '.json', {}, callback);
+    }
+  }
+});
+
+
+define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
+  return {
+    projectId: null,
+    issueId: null,
+    userId: null,
+    lang: null,
+
+    matchPage: function (controller, action) {
+      var $body = $('body');
+
+      return $body.hasClass('controller-' + controller) && $body.hasClass('action-' + action);
+    },
+
+    getProjectName: function() {
+      var bodyClassList = document.body.className.split(/\s+/);
+      for (var i = 0; i < bodyClassList.length; i++) {
+        var className = bodyClassList[i];
+        if (className.indexOf('project-') === 0) {
+          return className.substr(8);
+        }
+      }
+
+      return false;
+    },
+
+    getProjectId: function (callback) {
+      if (this.projectId === null) {
+        if (this.matchPage('issues', 'show')) {
+          this.projectId = $('#issue_project_id option[selected="selected"]').val();
+          callback(this.projectId);
+        } else {
+          var redmineApi = new RedmineApi(),
+            self = this;
+
+          redmineApi.getProject(this.getProjectName(), function (data) {
+            self.projectId = data.project.id;
+            callback(self.projectId);
+          });
+        }
+      } else {
+        callback(this.projectId);
+      }
+    },
+
+    getIssueId: function () {
+      if (this.issueId === null) {
+
+        if (this.matchPage('issues', 'show')) {
+          if ($('h2').eq(0).text().match(/^.+\#([0-9]+)/)) {
+            this.issueId = /^.+\#([0-9]+)/.exec($('h2').eq(0).text()).pop();
+          }
+        }
+
+        if (this.matchPage('timelog', 'new')) {
+          if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
+            this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
+          }
+        }
+
+        if (console) console.log('issue id recognized: ' + this.issueId);
+      }
+
+      return this.issueId;
+    },
+
+    getUserId: function () {
+      if (this.userId === null) {
+        this.userId = /users\/([0-9]+)$/.exec($('#loggedas a').attr('href')).pop();
+
+        if (console) console.log('user id recognized: ' + this.userId);
+      }
+
+      return this.userId;
+    },
+
+    assessUsedLanguage: function () {
+      if (this.lang === null) {
+
+        if ($('#top-menu a.home').text() == 'Úvodní') {
+          this.lang = 'cs';
+        } else {
+          this.lang = 'en';
+        }
+
+        if (console) console.log('used language recognized: ' + this.lang);
+      }
+
+      return this.lang;
+    },
+
+    debug: function () {
+      this.getProjectId(function (projectId) {
+        if (console) console.log('Project ID recognized: ' + projectId);
+      });
+      this.getIssueId();
+      this.getUserId();
+      this.assessUsedLanguage();
+    }
+  }
+});
+
+
+
+define('module/remove_issue_type_from_title',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function () {
+      if (ppp.matchPage('issues', 'show')) {
+        document.title = document.title.replace(/^([^#]*)/, '');
+      }
+    }
+  }
+});
+
+
+define('module/high_res_gravatars',{
+  init: function () {
+    // devicePixelRatio is not supported
+    if (window.devicePixelRatio === undefined) {
+      return;
+    }
+
+    if (window.devicePixelRatio === 2) {
+      $('.gravatar').each(function () {
+        var img = this;
+
+        img.src = img.src.replace(/size=([0-9]*)/, function (match, contents) {
+          img.width = contents;
+          img.height = contents;
+
+          return 'size=' + (contents * 2);
+        });
+      })
+    }
+  }
+});
+
+
+/**
+ * Auto login when password is filled in login form when page is loaded
+ */
+define('module/autologin',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function() {
+      if (!ppp.matchPage('account', 'login')) {
+        return;
+      }
+
+      // Login credentials are invalid, do not log again
+      if (document.getElementById('flash_error')) {
+        return;
+      }
+
+      if (
+        document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
+        document.getElementById('password').value
+      ) {
+        document.querySelector('#login-form form').submit();
+      }
+    }
+  }
+});
+//     keymaster.js
+//     (c) 2011-2013 Thomas Fuchs
+//     keymaster.js may be freely distributed under the MIT license.
+define('vendor/keymaster',['require','exports','module'],function(require, exports, module) {
+  (function (global) {
+    var k,
+      _handlers = {},
+      _mods = {16: false, 18: false, 17: false, 91: false},
+      _scope = 'all',
+    // modifier keys
+      _MODIFIERS = {
+        '⇧': 16, shift: 16,
+        '⌥': 18, alt: 18, option: 18,
+        '⌃': 17, ctrl: 17, control: 17,
+        '⌘': 91, command: 91
+      },
+    // special keys
+      _MAP = {
+        backspace: 8, tab: 9, clear: 12,
+        enter: 13, 'return': 13,
+        esc: 27, escape: 27, space: 32,
+        left: 37, up: 38,
+        right: 39, down: 40,
+        del: 46, 'delete': 46,
+        home: 36, end: 35,
+        pageup: 33, pagedown: 34,
+        ',': 188, '.': 190, '/': 191,
+        '`': 192, '-': 189, '=': 187,
+        ';': 186, '\'': 222,
+        '[': 219, ']': 221, '\\': 220
+      },
+      code = function (x) {
+        return _MAP[x] || x.toUpperCase().charCodeAt(0);
+      },
+      _downKeys = [];
+
+    for (k = 1; k < 20; k++) _MAP['f' + k] = 111 + k;
+
+    // IE doesn't support Array#indexOf, so have a simple replacement
+    function index(array, item) {
+      var i = array.length;
+      while (i--) if (array[i] === item) return i;
+      return -1;
+    }
+
+    // for comparing mods before unassignment
+    function compareArray(a1, a2) {
+      if (a1.length != a2.length) return false;
+      for (var i = 0; i < a1.length; i++) {
+        if (a1[i] !== a2[i]) return false;
+      }
+      return true;
+    }
+
+    var modifierMap = {
+      16: 'shiftKey',
+      18: 'altKey',
+      17: 'ctrlKey',
+      91: 'metaKey'
+    };
+
+    function updateModifierKey(event) {
+      for (k in _mods) _mods[k] = event[modifierMap[k]];
+    };
+
+    // handle keydown event
+    function dispatch(event) {
+      var key, handler, k, i, modifiersMatch, scope;
+      key = event.keyCode;
+
+      if (index(_downKeys, key) == -1) {
+        _downKeys.push(key);
+      }
+
+      // if a modifier key, set the key.<modifierkeyname> property to true and return
+      if (key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
+      if (key in _mods) {
+        _mods[key] = true;
+        // 'assignKey' from inside this closure is exported to window.key
+        for (k in _MODIFIERS) if (_MODIFIERS[k] == key) assignKey[k] = true;
+        return;
+      }
+      updateModifierKey(event);
+
+      // see if we need to ignore the keypress (filter() can can be overridden)
+      // by default ignore key presses if a select, textarea, or input is focused
+      if (!assignKey.filter.call(this, event)) return;
+
+      // abort if no potentially matching shortcuts found
+      if (!(key in _handlers)) return;
+
+      scope = getScope();
+
+      // for each potential shortcut
+      for (i = 0; i < _handlers[key].length; i++) {
+        handler = _handlers[key][i];
+
+        // see if it's in the current scope
+        if (handler.scope == scope || handler.scope == 'all') {
+          // check if modifiers match if any
+          modifiersMatch = handler.mods.length > 0;
+          for (k in _mods)
+            if ((!_mods[k] && index(handler.mods, +k) > -1) ||
+              (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
+          // call the handler and stop the event if neccessary
+          if ((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch) {
+            if (handler.method(event, handler) === false) {
+              if (event.preventDefault) event.preventDefault();
+              else event.returnValue = false;
+              if (event.stopPropagation) event.stopPropagation();
+              if (event.cancelBubble) event.cancelBubble = true;
+            }
+          }
+        }
+      }
+    };
+
+    // unset modifier keys on keyup
+    function clearModifier(event) {
+      var key = event.keyCode, k,
+        i = index(_downKeys, key);
+
+      // remove key from _downKeys
+      if (i >= 0) {
+        _downKeys.splice(i, 1);
+      }
+
+      if (key == 93 || key == 224) key = 91;
+      if (key in _mods) {
+        _mods[key] = false;
+        for (k in _MODIFIERS) if (_MODIFIERS[k] == key) assignKey[k] = false;
+      }
+    };
+
+    function resetModifiers() {
+      for (k in _mods) _mods[k] = false;
+      for (k in _MODIFIERS) assignKey[k] = false;
+    };
+
+    // parse and assign shortcut
+    function assignKey(key, scope, method) {
+      var keys, mods;
+      keys = getKeys(key);
+      if (method === undefined) {
+        method = scope;
+        scope = 'all';
+      }
+
+      // for each shortcut
+      for (var i = 0; i < keys.length; i++) {
+        // set modifier keys if any
+        mods = [];
+        key = keys[i].split('+');
+        if (key.length > 1) {
+          mods = getMods(key);
+          key = [key[key.length - 1]];
+        }
+        // convert to keycode and...
+        key = key[0]
+        key = code(key);
+        // ...store handler
+        if (!(key in _handlers)) _handlers[key] = [];
+        _handlers[key].push({shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods});
+      }
+    };
+
+    // unbind all handlers for given key in current scope
+    function unbindKey(key, scope) {
+      var multipleKeys, keys,
+        mods = [],
+        i, j, obj;
+
+      multipleKeys = getKeys(key);
+
+      for (j = 0; j < multipleKeys.length; j++) {
+        keys = multipleKeys[j].split('+');
+
+        if (keys.length > 1) {
+          mods = getMods(keys);
+        }
+
+        key = keys[keys.length - 1];
+        key = code(key);
+
+        if (scope === undefined) {
+          scope = getScope();
+        }
+        if (!_handlers[key]) {
+          return;
+        }
+        for (i = 0; i < _handlers[key].length; i++) {
+          obj = _handlers[key][i];
+          // only clear handlers if correct scope and mods match
+          if (obj.scope === scope && compareArray(obj.mods, mods)) {
+            _handlers[key][i] = {};
+          }
+        }
+      }
+    };
+
+    // Returns true if the key with code 'keyCode' is currently down
+    // Converts strings into key codes.
+    function isPressed(keyCode) {
+      if (typeof(keyCode) == 'string') {
+        keyCode = code(keyCode);
+      }
+      return index(_downKeys, keyCode) != -1;
+    }
+
+    function getPressedKeyCodes() {
+      return _downKeys.slice(0);
+    }
+
+    function filter(event) {
+      var tagName = (event.target || event.srcElement).tagName;
+      // ignore keypressed in any elements that support keyboard data input
+      return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
+    }
+
+    // initialize key.<modifier> to false
+    for (k in _MODIFIERS) assignKey[k] = false;
+
+    // set current scope (default 'all')
+    function setScope(scope) {
+      _scope = scope || 'all'
+    };
+    function getScope() {
+      return _scope || 'all'
+    };
+
+    // delete all handlers for a given scope
+    function deleteScope(scope) {
+      var key, handlers, i;
+
+      for (key in _handlers) {
+        handlers = _handlers[key];
+        for (i = 0; i < handlers.length;) {
+          if (handlers[i].scope === scope) handlers.splice(i, 1);
+          else i++;
+        }
+      }
+    };
+
+    // abstract key logic for assign and unassign
+    function getKeys(key) {
+      var keys;
+      key = key.replace(/\s/g, '');
+      keys = key.split(',');
+      if ((keys[keys.length - 1]) == '') {
+        keys[keys.length - 2] += ',';
+      }
+      return keys;
+    }
+
+    // abstract mods logic for assign and unassign
+    function getMods(key) {
+      var mods = key.slice(0, key.length - 1);
+      for (var mi = 0; mi < mods.length; mi++)
+        mods[mi] = _MODIFIERS[mods[mi]];
+      return mods;
+    }
+
+    // cross-browser events
+    function addEvent(object, event, method) {
+      if (object.addEventListener)
+        object.addEventListener(event, method, false);
+      else if (object.attachEvent)
+        object.attachEvent('on' + event, function () {
+          method(window.event)
+        });
+    };
+
+    // set the handlers globally on document
+    addEvent(document, 'keydown', function (event) {
+      dispatch(event)
+    }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
+    addEvent(document, 'keyup', clearModifier);
+
+    // reset modifiers to false whenever the window is (re)focused.
+    addEvent(window, 'focus', resetModifiers);
+
+    // store previously defined key
+    var previousKey = global.key;
+
+    // restore previously defined key and return reference to our key object
+    function noConflict() {
+      var k = global.key;
+      global.key = previousKey;
+      return k;
+    }
+
+    // set window.key and window.key.set/get/deleteScope, and the default filter
+    global.key = assignKey;
+    global.key.setScope = setScope;
+    global.key.getScope = getScope;
+    global.key.deleteScope = deleteScope;
+    global.key.filter = filter;
+    global.key.isPressed = isPressed;
+    global.key.getPressedKeyCodes = getPressedKeyCodes;
+    global.key.noConflict = noConflict;
+    global.key.unbind = unbindKey;
+
+    if (typeof module !== 'undefined') module.exports = assignKey;
+
+  })(this);
+});
+define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster'], function (ppp, key) {
+  return {
+    init: function () {
+      var $mainMenu = $('#main-menu');
+
+      function linkFromMainMenu(type) {
+        var href = $mainMenu.find('.' + type).attr('href');
+        if (href) {
+          window.location.href = href;
+          return false;
+        }
+        return true;
+      }
+
+      if (ppp.matchPage('issues', 'show')) {
+        key('e', function() {
+          showAndScrollTo("update", "issue_notes");
+          return false;
+        });
+        /*key('left', function() {
+         $('#content .next-prev-links a').each(function() {
+         if ($(this).text() == '« Předchozí') {
+         window.location.href = $(this).attr('href');
+         }
+         });
+         return false;
+         });
+         key('right', function() {
+         $('#content .next-prev-links a').each(function() {
+         if ($(this).text() == 'Další »') {
+         window.location.href = $(this).attr('href');
+         }
+         });
+         return false;
+         });*/
+
+      } else if (ppp.matchPage('issues', 'index')) {
+        /*key('esc', function() {
+         var $link = $('.buttons .icon-reload');
+         if ($link.length > 0) {
+         window.location.href = $link.attr('href');
+         return false;
+         }
+         });
+
+         key('left', function() {
+         var href = $('ul.pagination .prev').attr('href');
+         if (href) {
+         window.location.href = href;
+         }
+         return false;
+         });
+
+         key('right', function() {
+         var href = $('ul.pagination .next').attr('href');
+         if (href) {
+         window.location.href = href;
+         }
+         return false;
+         });*/
+      }
+
+      /*key('i', function() {
+       return linkFromMainMenu('issues');
+       });
+
+       key('n', function() {
+       return linkFromMainMenu('new-issue');
+       });
+
+       key('w', function() {
+       return linkFromMainMenu('wiki');
+       });
+
+       key('p', function() {
+       $('#s2id_project_quick_jump_box').select2("open");
+       return false;
+       });
+
+       key('a', function() {
+       return linkFromMainMenu('activity');
+       });*/
+    }
+  }
+});
+define('templates',['vendor/handlebars.runtime'], function(Handlebars) {
+  Handlebars = Handlebars["default"];  var template = Handlebars.template, templates = Handlebars.templates = Handlebars.templates || {};
+templates['absences'] = template({"1":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return "    <h4 style=\"margin: 10px 0 0\">"
+    + this.escapeExpression((helpers.monthFromDate || (depth0 && depth0.monthFromDate) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.month : depth0),{"name":"monthFromDate","hash":{},"data":data}))
+    + "</h4>\n    <ul>\n"
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.persons : depth0),{"name":"each","hash":{},"fn":this.program(2, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "    </ul>\n";
+},"2":function(depth0,helpers,partials,data) {
+    var stack1, helper;
+
+  return "            <li style=\"margin: 0 0;\"><b>"
+    + this.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"name","hash":{},"data":data}) : helper)))
+    + "</b>:\n\n"
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.absences : depth0),{"name":"each","hash":{},"fn":this.program(3, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n            </li>\n";
+},"3":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return "                    "
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.actual : depth0),{"name":"if","hash":{},"fn":this.program(4, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n\n"
+    + ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.from : depth0),(depth0 != null ? depth0.to : depth0),{"name":"is","hash":{},"fn":this.program(6, data, 0),"inverse":this.program(8, data, 0),"data":data})) != null ? stack1 : "")
+    + "\n"
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":this.program(10, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.actual : depth0),{"name":"if","hash":{},"fn":this.program(19, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.unless.call(depth0,(data && data.last),{"name":"unless","hash":{},"fn":this.program(21, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n";
+},"4":function(depth0,helpers,partials,data) {
+    return "<span style=\"color:red\">";
+},"6":function(depth0,helpers,partials,data) {
+    return "                        "
+    + this.escapeExpression((helpers.dayFromDate || (depth0 && depth0.dayFromDate) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.from : depth0),{"name":"dayFromDate","hash":{},"data":data}))
+    + ".\n";
+},"8":function(depth0,helpers,partials,data) {
+    var alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "                        "
+    + alias2((helpers.dayFromDate || (depth0 && depth0.dayFromDate) || alias1).call(depth0,(depth0 != null ? depth0.from : depth0),{"name":"dayFromDate","hash":{},"data":data}))
+    + ".–"
+    + alias2((helpers.dayFromDate || (depth0 && depth0.dayFromDate) || alias1).call(depth0,(depth0 != null ? depth0.to : depth0),{"name":"dayFromDate","hash":{},"data":data}))
+    + ".\n";
+},"10":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"-",{"name":"is","hash":{},"fn":this.program(11, data, 0),"inverse":this.program(13, data, 0),"data":data})) != null ? stack1 : "");
+},"11":function(depth0,helpers,partials,data) {
+    return "";
+},"13":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"/",{"name":"is","hash":{},"fn":this.program(11, data, 0),"inverse":this.program(14, data, 0),"data":data})) != null ? stack1 : "");
+},"14":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"?",{"name":"is","hash":{},"fn":this.program(15, data, 0),"inverse":this.program(17, data, 0),"data":data})) != null ? stack1 : "");
+},"15":function(depth0,helpers,partials,data) {
+    return "("
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"maybe",{"name":"_","hash":{},"data":data}))
+    + ")";
+},"17":function(depth0,helpers,partials,data) {
+    return "("
+    + this.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"trim","hash":{},"data":data}))
+    + ")";
+},"19":function(depth0,helpers,partials,data) {
+    return "</span>";
+},"21":function(depth0,helpers,partials,data) {
+    return ", ";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "<h3 style=\"margin-top: 30px\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Planned absences",{"name":"_","hash":{},"data":data}))
+    + " (<a href=\"#\" class=\"refresh\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"refresh",{"name":"_","hash":{},"data":data}))
+    + "</a>)</h3>\n\n"
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.months : depth0),{"name":"each","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n<p><a href=\""
+    + alias2(((helper = (helper = helpers.detailsUri || (depth0 != null ? depth0.detailsUri : depth0)) != null ? helper : alias1),(typeof helper === "function" ? helper.call(depth0,{"name":"detailsUri","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Show details",{"name":"_","hash":{},"data":data}))
+    + "</a></p>";
+},"useData":true});
+templates['issue_tree_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "<thead>\n    <tr>\n        <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Subject",{"name":"_","hash":{},"data":data}))
+    + "</th>\n        <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Status",{"name":"_","hash":{},"data":data}))
+    + "</th>\n        <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Assignee",{"name":"_","hash":{},"data":data}))
+    + "</th>\n        <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Done",{"name":"_","hash":{},"data":data}))
+    + "</th>\n    </tr>\n</thead>";
+},"useData":true});
+templates['open_timey'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    return "<div id=\"enterTimey\" style=\"float: right\">\n    <a href=\"https://timey.proofreason.com\" target=\"_blank\">"
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Open Timey",{"name":"_","hash":{},"data":data}))
+    + "</a>\n</div>";
+},"useData":true});
+templates['relations_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "<thead>\n<tr>\n    <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Subject",{"name":"_","hash":{},"data":data}))
+    + "</th>\n    <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Status",{"name":"_","hash":{},"data":data}))
+    + "</th>\n    <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Assignee",{"name":"_","hash":{},"data":data}))
+    + "</th>\n    <th>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
+    + "</th>\n    <th></th>\n</tr>\n</thead>";
+},"useData":true});
+return templates;
+});
+
+
+define('module/timey_integration',['lib/page_property_miner', 'templates'], function (ppp, themes) {
+  return {
+
+    init: function () {
+      $(themes['open_timey']()).insertBefore('#loggedas');
+
+      if (ppp.matchPage('timelog', 'new')) {
+        this.insertTimeyLogger();
+
+      } else if (ppp.matchPage('timelog', 'index')) {
+        $('#context-menu').remove();
+        $('td.buttons').hide();
+      }
+
+      var self = this;
+      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
+        self.insertTimeyLogger();
+        return false;
+      });
+    },
+
+    insertTimeyLogger: function () {
+      var self = this;
+      ppp.getProjectId(function (projectId) {
+        var issueId = ppp.getIssueId();
+
+        var url = 'https://timey.proofreason.com/';
+        if (projectId > 0) {
+          url = url + '?redmine[project_id]=' + projectId;
+          if (issueId > 0) url = url + '&redmine[issue_id]=' + issueId;
+        }
+        url = url + '#/logs/new';
+
+        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
+          url + '"></iframe></div>';
+
+        if (ppp.matchPage('timelog', 'new')) {
+          $('#new_time_entry').after(timeyLogger).hide();
+
+        } else if (ppp.matchPage('issues', 'show')) {
+          $('body').append(timeyLogger);
+          $('.timeyLoggerWrapper .close').click(function () {
+            self.removeTimeyLogger();
+          });
+        }
+      });
+    },
+
+    removeTimeyLogger: function () {
+      $('.timeyLoggerWrapper').remove();
+    }
+  }
+});
+
+
+define('module/related_issues_header',['lib/page_property_miner', 'templates'], function (ppp, templates) {
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      var $issue = $('#content .issue'),
+        $issueTree = $issue.find('#issue_tree table.list.issues'),
+        $issueRelations = $issue.find('#relations table.list.issues');
+
+      if ($issueTree.length) {
+        $issueTree.prepend(templates['issue_tree_header']());
+      }
+
+      if ($issueRelations.length) {
+        $issueRelations.prepend(templates['relations_header']());
+      }
+    }
+  }
+});
+
+
+define('module/absences',['lib/page_property_miner', 'lib/local_storage', 'templates'], function (ppp, ls, templates) {
+  return {
+    absencesInfoUrl: null,
+    htmlOutput: null,
+
+    czechMonths: {
+      Leden: 1,
+      Únor: 2,
+      Březen: 3,
+      Duben: 4,
+      Květen: 5,
+      Červen: 6,
+      Červenec: 7,
+      Srpen: 8,
+      Září: 9,
+      Říjen: 10,
+      Listopad: 11,
+      Prosinec: 12
+    },
+
+    init: function () {
+      this.absencesInfoUrl = window.location.hostname == 'localhost' ?
+        'holidays.html' : // test
+        '/projects/pm/wiki/Holidays'; // production
+
+      if (ppp.matchPage('welcome', 'index')) {
+        $('div.projects.box').after('<div id="plannedAbsences"></div>');
+
+      } else if (ppp.matchPage('issues', 'index')) {
+        $('#sidebar').append('<div id="plannedAbsences"></div>');
+      }
+
+      if ($('#plannedAbsences').length) {
+        if (ls.get('absencesObject')) {
+          var absences = JSON.parse(ls.get('absencesObject'));
+          this.put(absences);
+        } else {
+          this.load();
+        }
+      }
+    },
+
+    fixDate: function (date) {
+      var parts = date.split('-');
+      if (parts[1] < 10) {
+        parts[1] = '0' + parts[1];
+      }
+      if (parts[2] < 10) {
+        parts[2] = '0' + parts[2];
+      }
+
+      return parts.join('-')
+    },
+
+    removeOldAndMarkActual: function (data) {
+      var filtered = {};
+      var now = new Date();
+      var startOfDay = this.fixDate(now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate());
+
+      for (var name in data) {
+        for (var i = 0; i < data[name].length; i++) {
+          var entry = data[name][i],
+            from = this.fixDate(entry.from),
+            to = this.fixDate(entry.to);
+
+          // Entry is old
+          if (to < startOfDay) {
+            continue;
+          }
+
+          entry.actual = (from <= startOfDay);
+
+          if (!(name in filtered)) {
+            filtered[name] = [];
+          }
+
+          filtered[name].push(entry);
+        }
+      }
+
+      return filtered;
+    },
+
+    createHtml: function (data) {
+      data = this.removeOldAndMarkActual(data);
+
+      // Group by month
+      var grouped = {};
+      for (var name in data) {
+        for (var i = 0; i < data[name].length; i++) {
+          var parts = data[name][i].from.split('-'),
+            month = parts[0] + '-' + parts[1];
+
+          if (!(month in grouped)) {
+            grouped[month] = {};
+          }
+          if (!(name in grouped[month])) {
+            grouped[month][name] = [];
+          }
+
+          grouped[month][name].push(data[name][i]);
+        }
+      }
+
+      var months = [];
+      for (month in grouped) {
+        var object = {
+          month: month,
+          persons: []
+        };
+
+        for (var person in grouped[month]) {
+          object.persons.push({
+            name: person,
+            absences: grouped[month][person]
+          });
+        }
+
+        object.persons.sort(function (a, b) {
+          return a.name.split(' ')[1].localeCompare(b.name.split(' ')[1]);
+        });
+
+        months.push(object);
+      }
+
+      months.sort(function (a, b) {
+        return a.month > b.month;
+      });
+
+      return months;
+    },
+
+    putHtmlIntoDocument: function (months) {
+      $('#plannedAbsences').html(templates['absences']({
+        detailsUri: this.absencesInfoUrl,
+        months: months
+      }));
+
+      var self = this;
+      $('#plannedAbsences .refresh').click(function() {
+        self.load();
+        return false;
+      });
+    },
+
+    getAbsencesForTable: function (table, data) {
+      var trs = table.querySelectorAll('tr'),
+        month = trs[0].querySelector('td strong').textContent,
+        date = month.split(' ')[1] + '-' + this.czechMonths[month.split(' ')[0]] + '-';
+
+      for (var i = 2; i < trs.length; i++) {
+        var tds = trs[i].querySelectorAll('td'),
+          name = tds[0].textContent,
+          person;
+
+        if (name in data) {
+          person = data[name];
+        } else {
+          data[name] = [];
+          person = data[name];
+        }
+
+        var day = 1;
+        for (var j = 1; j < tds.length; j++) {
+          var td = tds[j],
+            tdContent = td.textContent,
+            absence;
+
+          if (tdContent !== (day + '.')) {
+            if (absence && absence.type !== tdContent) {
+              absence.to = date + (day - 1);
+              person.push(absence);
+              absence = null;
+            }
+
+            if (!absence) {
+              absence = {
+                from: date + day,
+                to: -1,
+                type: tdContent
+              };
+            }
+          } else if (absence) {
+            absence.to = date + (day - 1);
+            person.push(absence);
+            absence = null;
+          }
+
+          if (td.colSpan) {
+            day += td.colSpan;
+          } else {
+            day++;
+          }
+        }
+
+        if (absence) {
+          absence.to = date + (day - 1);
+          person.push(absence);
+          absence = null;
+        }
+      }
+    },
+
+    loadAbsencesData: function (callback) {
+      var self = this;
+
+      $.ajax({
+        url: this.absencesInfoUrl,
+        global: false,
+        cache: false
+      }).success(function (data) {
+        var absences = {};
+
+        var tmp = document.createElement('div');
+        tmp.innerHTML = data;
+
+        var tables = tmp.querySelectorAll('table');
+        for (var i = 0; i < tables.length; i++) {
+          self.getAbsencesForTable(tables[i], absences);
+        }
+
+        callback(absences);
+      });
+    },
+
+    load: function () {
+      var self = this;
+      this.loadAbsencesData(function (absences) {
+        self.put(absences)
+      });
+    },
+
+    put: function (absences) {
+      ls.set('absencesObject', JSON.stringify(absences), 24);
+
+      var html = this.createHtml(absences);
+      this.putHtmlIntoDocument(html);
+    }
+  }
+});
+
+
+// Register handlebars helpers
+require([
+  'template/helper/translate',
+  'template/helper/dayFromDate',
+  'template/helper/trim',
+  'template/helper/is',
+  'template/helper/monthFromDate'
+]);
 
 require([
   'module/remove_issue_type_from_title',
@@ -44,24 +2019,19 @@ require([
   'module/autologin',
   'module/key_shortcuts',
   'module/timey_integration',
-  'module/related_issues_header'
+  'module/related_issues_header',
+  'module/absences'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
     (function(module) {
-      if (module.constructor === undefined && module.init === undefined) {
+      if (module.init === undefined) {
         throw new Error();
       }
 
-      if (module.constructor !== undefined) {
-        module.constructor();
-      }
-
-      if (module.init !== undefined) {
-        $(function () {
-          module.init();
-        });
-      }
+      $(function () {
+        module.init();
+      });
     })(arguments[i]);
   }
 });
@@ -81,7 +2051,6 @@ var ProofReasonRedmineTheme = {
     this.BetterTimeline.init();
     this.AutoReturnToOwner.init();
     this.AlternateCellFormats.init();
-    this.AbsencesViewer.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
@@ -650,310 +2619,6 @@ var ProofReasonRedmineTheme = {
     }
   },
 
-  AbsencesViewer: {
-    absencesInfoUrl: null,
-    htmlOutput: null,
-
-    czechMonths: {
-      Leden: 1,
-      Únor: 2,
-      Březen: 3,
-      Duben: 4,
-      Květen: 5,
-      Červen: 6,
-      Červenec: 7,
-      Srpen: 8,
-      Září: 9,
-      Říjen: 10,
-      Listopad: 11,
-      Prosinec: 12
-    },
-
-    englishMonths: {
-      January: 1,
-      February: 2,
-      March: 3,
-      April: 4,
-      May: 5,
-      Jun: 6,
-      July: 7,
-      August: 8,
-      September: 9,
-      October: 10,
-      November: 11,
-      December: 12
-    },
-
-    init: function () {
-      this.absencesInfoUrl = window.location.hostname == 'localhost' ?
-        '/redmine/holidays.html' : // test
-        '/projects/pm/wiki/Holidays'; // production
-
-
-      if (ProofReasonRedmineTheme.PagePropertyMiner.matchPage('welcome', 'index')) {
-        $('div.projects.box').after('<div id="plannedAbsences"></div>');
-      }
-
-      if (ProofReasonRedmineTheme.PagePropertyMiner.matchPage('issues', 'index')) {
-        $('#sidebar').append('<div id="plannedAbsences"></div>');
-      }
-
-      if ($('#plannedAbsences').length) {
-        if (ProofReasonRedmineTheme.tools.cookie('absencesObject')) {
-          var absences = JSON.parse(ProofReasonRedmineTheme.tools.cookie('absencesObject'));
-          this.put(absences);
-        } else {
-          this.load();
-        }
-
-      }
-    },
-
-    fixDate: function (date) {
-      var parts = date.split('-');
-      if (parts[1] < 10) {
-        parts[1] = '0' + parts[1];
-      }
-      if (parts[2] < 10) {
-        parts[2] = '0' + parts[2];
-      }
-
-      return parts.join('-')
-    },
-
-    removeOldAndMarkActual: function (data) {
-      var filtered = {};
-      var now = new Date();
-      var startOfDay = this.fixDate(now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate());
-
-      for (var name in data) {
-        for (var i = 0; i < data[name].length; i++) {
-          var entry = data[name][i],
-            from = this.fixDate(entry.from),
-            to = this.fixDate(entry.to);
-
-          // Entry is old
-          if (to < startOfDay) {
-            continue;
-          }
-
-          entry.actual = (from <= startOfDay);
-
-          if (!(name in filtered)) {
-            filtered[name] = [];
-          }
-
-          filtered[name].push(entry);
-        }
-      }
-
-      return filtered;
-    },
-
-    createHtml: function (data) {
-      data = this.removeOldAndMarkActual(data);
-
-      // Group by month
-      var grouped = {};
-      for (var name in data) {
-        for (var i = 0; i < data[name].length; i++) {
-          var parts = data[name][i].from.split('-'),
-            month = parts[0] + '-' + parts[1];
-
-          if (!(month in grouped)) {
-            grouped[month] = {};
-          }
-          if (!(name in grouped[month])) {
-            grouped[month][name] = [];
-          }
-
-          grouped[month][name].push(data[name][i]);
-        }
-      }
-
-      var flippedMonths = {};
-      for (var key in this.czechMonths) {
-        flippedMonths[this.czechMonths[key]] = key;
-      }
-
-      var months = [];
-      for (month in grouped) {
-        var object = {
-          month: month,
-          persons: []
-        };
-
-        for (var person in grouped[month]) {
-          object.persons.push({
-            name: person,
-            absences: grouped[month][person]
-          });
-        }
-
-        object.persons.sort(function (a, b) {
-          return a.name.split(' ')[1].localeCompare(b.name.split(' ')[1]);
-        });
-
-        months.push(object);
-      }
-
-      months.sort(function (a, b) {
-        return a.month > b.month;
-      });
-
-      var html = [];
-      for (i = 0; i < months.length; i++) {
-        html.push('<h4 style="margin: 10px 0 0">');
-        html.push(flippedMonths[months[i].month.split('-')[1]]);
-        html.push(' ');
-        html.push(months[i].month.split('-')[0]);
-        html.push('</h4><ul>');
-
-        for (var j = 0; j < months[i].persons.length; j++) {
-          html.push('<li style="margin: 0 0;"><b>');
-          html.push(months[i].persons[j].name);
-          html.push('</b>: ');
-
-          var dates = [];
-          for (var k = 0; k < months[i].persons[j].absences.length; k++) {
-            var absence = months[i].persons[j].absences[k],
-              fromDay = absence.from.split('-')[2],
-              toDay = absence.to.split('-')[2];
-
-            var description = '';
-            switch (absence.type) {
-              case '?':
-                description = ' (možná)';
-                break;
-
-              case '-':
-                break;
-
-              default:
-                description = ' (' + absence.type.trim() + ')';
-            }
-
-            var date;
-            if (fromDay === toDay) {
-              date = fromDay + '.';
-            } else {
-              date = fromDay + '.—' + toDay + '.';
-            }
-
-            if (absence.actual) {
-              date = '<span style="color:red">' + date + '</span>';
-            }
-
-            dates.push(date + description);
-          }
-
-          html.push(dates.join(', '));
-          html.push('</li>');
-        }
-
-        html.push('</ul>');
-      }
-
-      return html.join('');
-    },
-
-    putHtmlIntoDocument: function (html) {
-      $('#plannedAbsences').html('<h3 style="margin-top: 30px">Planned absences (<a href="javascript:ProofReasonRedmineTheme.AbsencesViewer.load()">refresh</a>)</h3>' +
-      html + '<p><a href="' + this.absencesInfoUrl + '">Zobrazit detaily</a></p>');
-    },
-
-    getAbsencesForTable: function (table, data) {
-      var trs = table.querySelectorAll('tr'),
-        month = trs[0].querySelector('td strong').textContent,
-        date = month.split(' ')[1] + '-' + this.czechMonths[month.split(' ')[0]] + '-';
-
-      for (var i = 2; i < trs.length; i++) {
-        var tds = trs[i].querySelectorAll('td'),
-          name = tds[0].textContent,
-          person;
-
-        if (name in data) {
-          person = data[name];
-        } else {
-          data[name] = [];
-          person = data[name];
-        }
-
-        var day = 1;
-        for (var j = 1; j < tds.length; j++) {
-          var td = tds[j],
-            tdContent = td.textContent,
-            absence;
-
-          if (tdContent !== (day + '.')) {
-            if (absence && absence.type !== tdContent) {
-              absence.to = date + (day - 1);
-              person.push(absence);
-              absence = null;
-            }
-
-            if (!absence) {
-              absence = {
-                from: date + day,
-                to: -1,
-                type: tdContent
-              };
-            }
-          } else if (absence) {
-            absence.to = date + (day - 1);
-            person.push(absence);
-            absence = null;
-          }
-
-          if (td.colSpan) {
-            day += td.colSpan;
-          } else {
-            day++;
-          }
-        }
-
-        if (absence) {
-          absence.to = date + (day - 1);
-          person.push(absence);
-          absence = null;
-        }
-      }
-    },
-
-    loadAbsencesData: function (callback) {
-      var self = this;
-
-      $.ajax({
-        url: this.absencesInfoUrl,
-        global: false,
-        cache: false
-      }).success(function (data) {
-        var absences = {};
-
-        var tmp = document.createElement('div');
-        tmp.innerHTML = data;
-
-        var tables = tmp.querySelectorAll('table');
-        for (var i = 0; i < tables.length; i++) {
-          self.getAbsencesForTable(tables[i], absences);
-        }
-
-        callback(absences);
-      });
-    },
-
-    load: function () {
-      this.loadAbsencesData(this.put);
-    },
-
-    put: function (absences) {
-      ProofReasonRedmineTheme.tools.cookie('absencesObject', JSON.stringify(absences), 24);
-
-      var html = ProofReasonRedmineTheme.AbsencesViewer.createHtml(absences);
-      ProofReasonRedmineTheme.AbsencesViewer.putHtmlIntoDocument(html);
-    }
-  },
-
   BetterIssuesContextualMenu: {
     init: function () {
       var menu = document.getElementById('context-menu');
@@ -1294,828 +2959,7 @@ jQuery.fn.highlight = function () {
 Date.fromString = function(str) {
   return new Date(Date.parse(str));
 };
-
 define("main", function(){});
 
 
-
-define('lib/local_storage',[],function() {
-  var ls = window.localStorage,
-    NS = 'theme';
-
-  return {
-    _key: function (key, sub) {
-      if (key.indexOf('.') !== -1) {
-        throw new Error('Key cannot contains dot character, "' + key + '" given.');
-      }
-
-      if (sub !== undefined) {
-        return NS + '.' + key + '.' + sub;
-      } else {
-        return NS + '.' + key;
-      }
-    },
-
-    _isExpired: function (key) {
-      var expirationTime;
-
-      if ((expirationTime = ls.getItem(this._key(key, 'expire'))) !== null) {
-        if (new Date() > new Date(expirationTime)) {
-          return true;
-        }
-      }
-
-      return false;
-    },
-
-    set: function (key, value, expireInHours) {
-      if (expireInHours !== undefined) {
-        var expirationTime = new Date().getTime() + expireInHours * 3600 * 1000;
-        ls.setItem(this._key(key, 'expire'), new Date(expirationTime));
-      }
-
-      return ls.setItem(this._key(key), value);
-    },
-
-    get: function (key) {
-      if (this._isExpired(key)) {
-        ls.removeItem(this._key(key, 'expire'));
-        ls.removeItem(this._key(key));
-        return null;
-      }
-
-      return ls.getItem(this._key(key));
-    },
-
-    remove: function (key) {
-      ls.removeItem(this._key(key, 'expire'));
-      return ls.removeItem(this._key(key));
-    },
-
-    removeExpired: function() {
-      for (var lsItem in localStorage) {
-        var parts = lsItem.split('.');
-        if (parts.length === 2 && parts[0] === NS) {
-          var key = parts[1];
-          if (this._isExpired(key)) {
-            this.remove(key);
-          }
-        }
-      }
-    }
-  }
-});
-
-
-define('lib/redmine_api',['lib/local_storage'], function (ls) {
-  return function() {
-    if (typeof jQuery === 'undefined') {
-      throw new Error('Redmine API require jQuery library');
-    }
-
-    var $ = jQuery;
-
-    function hashCode(string) {
-      var hash = 0;
-      if (string == 0) return hash;
-      for (var i = 0; i < string.length; i++) {
-        var char = string.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
-      }
-      return hash;
-    }
-
-    // Load Redmine API key from my account page and save to local storage
-    this.getRedmineApiKey = function (callback) {
-      var redmineApiKey = ls.get('rma:redmineApiKey');
-      if (!redmineApiKey) {
-        $.get('/my/account').done(function (html) {
-          redmineApiKey = $(html).find('#api-access-key').text();
-
-          if (!redmineApiKey) {
-            throw new Error('Cannot find Redmine API access key in element #api-access-key on page /my/account.');
-          }
-
-          ls.set('rma:redmineApiKey', redmineApiKey);
-          callback(redmineApiKey);
-        }).fail(function () {
-          throw new Error('Cannot load page /my/account for getting Redmine API access key.');
-        });
-        return;
-      }
-      callback(redmineApiKey);
-    };
-
-    this.get = function (uri, params, callback) {
-      this.getRedmineApiKey(function (key) {
-        params.key = key;
-        uri += '?' + $.param(params);
-
-        $.ajax({
-          url: uri,
-          dataType: 'text',
-          global: false
-
-        }).done(function (data) {
-          callback(JSON.parse(data), data);
-
-        }).fail(function (jqXHR, textStatus) {
-          if (jqXHR.statusCode() === 401) {
-            throw new Error('Redmine API access key is invalid.');
-          } else {
-            throw new Error('Cannot load URL ' + uri + ' from Redmine API. ' + textStatus);
-          }
-        });
-      });
-    };
-
-    this.getWithCache = function (uri, params, callback) {
-      var cacheKey = 'rma:cache:' + hashCode(uri + '?' + $.param(params)),
-        cached = ls.get(cacheKey);
-
-      if (cached) {
-        callback(JSON.parse(cached));
-      }
-
-      this.get(uri, params, function (json, data) {
-        if (cached != data) {
-          ls.set(cacheKey, data, 1);
-          callback(json);
-        }
-      });
-    };
-
-    this.getIssuesWithCache = function (params, callback) {
-      this.getWithCache('/issues.json', params, callback);
-    };
-
-    this.getProject = function (projectId, callback) {
-      this.getWithCache('/projects/' + projectId + '.json', {}, callback);
-    }
-  }
-});
-
-
-define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
-  return {
-    projectId: null,
-    issueId: null,
-    userId: null,
-    lang: null,
-
-    matchPage: function (controller, action) {
-      var $body = $('body');
-
-      return $body.hasClass('controller-' + controller) && $body.hasClass('action-' + action);
-    },
-
-    getProjectName: function() {
-      var bodyClassList = document.body.className.split(/\s+/);
-      for (var i = 0; i < bodyClassList.length; i++) {
-        var className = bodyClassList[i];
-        if (className.indexOf('project-') === 0) {
-          return className.substr(8);
-        }
-      }
-
-      return false;
-    },
-
-    getProjectId: function (callback) {
-      if (this.projectId === null) {
-        if (this.matchPage('issues', 'show')) {
-          this.projectId = $('#issue_project_id option[selected="selected"]').val();
-          callback(this.projectId);
-        } else {
-          var redmineApi = new RedmineApi(),
-            self = this;
-
-          redmineApi.getProject(this.getProjectName(), function (data) {
-            self.projectId = data.project.id;
-            callback(self.projectId);
-          });
-        }
-      } else {
-        callback(this.projectId);
-      }
-    },
-
-    getIssueId: function () {
-      if (this.issueId === null) {
-
-        if (this.matchPage('issues', 'show')) {
-          if ($('h2').eq(0).text().match(/^.+\#([0-9]+)/)) {
-            this.issueId = /^.+\#([0-9]+)/.exec($('h2').eq(0).text()).pop();
-          }
-        }
-
-        if (this.matchPage('timelog', 'new')) {
-          if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
-            this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
-          }
-        }
-
-        if (console) console.log('issue id recognized: ' + this.issueId);
-      }
-
-      return this.issueId;
-    },
-
-    getUserId: function () {
-      if (this.userId === null) {
-        this.userId = /users\/([0-9]+)$/.exec($('#loggedas a').attr('href')).pop();
-
-        if (console) console.log('user id recognized: ' + this.userId);
-      }
-
-      return this.userId;
-    },
-
-    assessUsedLanguage: function () {
-      if (this.lang === null) {
-
-        if ($('#top-menu a.home').text() == 'Úvodní') {
-          this.lang = 'cs';
-        } else {
-          this.lang = 'en';
-        }
-
-        if (console) console.log('used language recognized: ' + this.lang);
-      }
-
-      return this.lang;
-    },
-
-    debug: function () {
-      this.getProjectId(function (projectId) {
-        if (console) console.log('Project ID recognized: ' + projectId);
-      });
-      this.getIssueId();
-      this.getUserId();
-      this.assessUsedLanguage();
-    }
-  }
-});
-
-
-
-define('module/remove_issue_type_from_title',['lib/page_property_miner'], function (ppp) {
-  return {
-    init: function () {
-      if (ppp.matchPage('issues', 'show')) {
-        document.title = document.title.replace(/^([^#]*)/, '');
-      }
-    }
-  }
-});
-
-
-define('module/high_res_gravatars',{
-  init: function () {
-    // devicePixelRatio is not supported
-    if (window.devicePixelRatio === undefined) {
-      return;
-    }
-
-    if (window.devicePixelRatio === 2) {
-      $('.gravatar').each(function () {
-        var img = this;
-
-        img.src = img.src.replace(/size=([0-9]*)/, function (match, contents) {
-          img.width = contents;
-          img.height = contents;
-
-          return 'size=' + (contents * 2);
-        });
-      })
-    }
-  }
-});
-
-
-/**
- * Auto login when password is filled in login form when page is loaded
- */
-define('module/autologin',['lib/page_property_miner'], function (ppp) {
-  return {
-    init: function() {
-      if (!ppp.matchPage('account', 'login')) {
-        return;
-      }
-
-      // Login credentials are invalid, do not log again
-      if (document.getElementById('flash_error')) {
-        return;
-      }
-
-      if (
-        document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
-        document.getElementById('password').value
-      ) {
-        document.querySelector('#login-form form').submit();
-      }
-    }
-  }
-});
-//     keymaster.js
-//     (c) 2011-2013 Thomas Fuchs
-//     keymaster.js may be freely distributed under the MIT license.
-define('lib/keymaster',['require','exports','module'],function(require, exports, module) {
-  (function (global) {
-    var k,
-      _handlers = {},
-      _mods = {16: false, 18: false, 17: false, 91: false},
-      _scope = 'all',
-    // modifier keys
-      _MODIFIERS = {
-        '⇧': 16, shift: 16,
-        '⌥': 18, alt: 18, option: 18,
-        '⌃': 17, ctrl: 17, control: 17,
-        '⌘': 91, command: 91
-      },
-    // special keys
-      _MAP = {
-        backspace: 8, tab: 9, clear: 12,
-        enter: 13, 'return': 13,
-        esc: 27, escape: 27, space: 32,
-        left: 37, up: 38,
-        right: 39, down: 40,
-        del: 46, 'delete': 46,
-        home: 36, end: 35,
-        pageup: 33, pagedown: 34,
-        ',': 188, '.': 190, '/': 191,
-        '`': 192, '-': 189, '=': 187,
-        ';': 186, '\'': 222,
-        '[': 219, ']': 221, '\\': 220
-      },
-      code = function (x) {
-        return _MAP[x] || x.toUpperCase().charCodeAt(0);
-      },
-      _downKeys = [];
-
-    for (k = 1; k < 20; k++) _MAP['f' + k] = 111 + k;
-
-    // IE doesn't support Array#indexOf, so have a simple replacement
-    function index(array, item) {
-      var i = array.length;
-      while (i--) if (array[i] === item) return i;
-      return -1;
-    }
-
-    // for comparing mods before unassignment
-    function compareArray(a1, a2) {
-      if (a1.length != a2.length) return false;
-      for (var i = 0; i < a1.length; i++) {
-        if (a1[i] !== a2[i]) return false;
-      }
-      return true;
-    }
-
-    var modifierMap = {
-      16: 'shiftKey',
-      18: 'altKey',
-      17: 'ctrlKey',
-      91: 'metaKey'
-    };
-
-    function updateModifierKey(event) {
-      for (k in _mods) _mods[k] = event[modifierMap[k]];
-    };
-
-    // handle keydown event
-    function dispatch(event) {
-      var key, handler, k, i, modifiersMatch, scope;
-      key = event.keyCode;
-
-      if (index(_downKeys, key) == -1) {
-        _downKeys.push(key);
-      }
-
-      // if a modifier key, set the key.<modifierkeyname> property to true and return
-      if (key == 93 || key == 224) key = 91; // right command on webkit, command on Gecko
-      if (key in _mods) {
-        _mods[key] = true;
-        // 'assignKey' from inside this closure is exported to window.key
-        for (k in _MODIFIERS) if (_MODIFIERS[k] == key) assignKey[k] = true;
-        return;
-      }
-      updateModifierKey(event);
-
-      // see if we need to ignore the keypress (filter() can can be overridden)
-      // by default ignore key presses if a select, textarea, or input is focused
-      if (!assignKey.filter.call(this, event)) return;
-
-      // abort if no potentially matching shortcuts found
-      if (!(key in _handlers)) return;
-
-      scope = getScope();
-
-      // for each potential shortcut
-      for (i = 0; i < _handlers[key].length; i++) {
-        handler = _handlers[key][i];
-
-        // see if it's in the current scope
-        if (handler.scope == scope || handler.scope == 'all') {
-          // check if modifiers match if any
-          modifiersMatch = handler.mods.length > 0;
-          for (k in _mods)
-            if ((!_mods[k] && index(handler.mods, +k) > -1) ||
-              (_mods[k] && index(handler.mods, +k) == -1)) modifiersMatch = false;
-          // call the handler and stop the event if neccessary
-          if ((handler.mods.length == 0 && !_mods[16] && !_mods[18] && !_mods[17] && !_mods[91]) || modifiersMatch) {
-            if (handler.method(event, handler) === false) {
-              if (event.preventDefault) event.preventDefault();
-              else event.returnValue = false;
-              if (event.stopPropagation) event.stopPropagation();
-              if (event.cancelBubble) event.cancelBubble = true;
-            }
-          }
-        }
-      }
-    };
-
-    // unset modifier keys on keyup
-    function clearModifier(event) {
-      var key = event.keyCode, k,
-        i = index(_downKeys, key);
-
-      // remove key from _downKeys
-      if (i >= 0) {
-        _downKeys.splice(i, 1);
-      }
-
-      if (key == 93 || key == 224) key = 91;
-      if (key in _mods) {
-        _mods[key] = false;
-        for (k in _MODIFIERS) if (_MODIFIERS[k] == key) assignKey[k] = false;
-      }
-    };
-
-    function resetModifiers() {
-      for (k in _mods) _mods[k] = false;
-      for (k in _MODIFIERS) assignKey[k] = false;
-    };
-
-    // parse and assign shortcut
-    function assignKey(key, scope, method) {
-      var keys, mods;
-      keys = getKeys(key);
-      if (method === undefined) {
-        method = scope;
-        scope = 'all';
-      }
-
-      // for each shortcut
-      for (var i = 0; i < keys.length; i++) {
-        // set modifier keys if any
-        mods = [];
-        key = keys[i].split('+');
-        if (key.length > 1) {
-          mods = getMods(key);
-          key = [key[key.length - 1]];
-        }
-        // convert to keycode and...
-        key = key[0]
-        key = code(key);
-        // ...store handler
-        if (!(key in _handlers)) _handlers[key] = [];
-        _handlers[key].push({shortcut: keys[i], scope: scope, method: method, key: keys[i], mods: mods});
-      }
-    };
-
-    // unbind all handlers for given key in current scope
-    function unbindKey(key, scope) {
-      var multipleKeys, keys,
-        mods = [],
-        i, j, obj;
-
-      multipleKeys = getKeys(key);
-
-      for (j = 0; j < multipleKeys.length; j++) {
-        keys = multipleKeys[j].split('+');
-
-        if (keys.length > 1) {
-          mods = getMods(keys);
-        }
-
-        key = keys[keys.length - 1];
-        key = code(key);
-
-        if (scope === undefined) {
-          scope = getScope();
-        }
-        if (!_handlers[key]) {
-          return;
-        }
-        for (i = 0; i < _handlers[key].length; i++) {
-          obj = _handlers[key][i];
-          // only clear handlers if correct scope and mods match
-          if (obj.scope === scope && compareArray(obj.mods, mods)) {
-            _handlers[key][i] = {};
-          }
-        }
-      }
-    };
-
-    // Returns true if the key with code 'keyCode' is currently down
-    // Converts strings into key codes.
-    function isPressed(keyCode) {
-      if (typeof(keyCode) == 'string') {
-        keyCode = code(keyCode);
-      }
-      return index(_downKeys, keyCode) != -1;
-    }
-
-    function getPressedKeyCodes() {
-      return _downKeys.slice(0);
-    }
-
-    function filter(event) {
-      var tagName = (event.target || event.srcElement).tagName;
-      // ignore keypressed in any elements that support keyboard data input
-      return !(tagName == 'INPUT' || tagName == 'SELECT' || tagName == 'TEXTAREA');
-    }
-
-    // initialize key.<modifier> to false
-    for (k in _MODIFIERS) assignKey[k] = false;
-
-    // set current scope (default 'all')
-    function setScope(scope) {
-      _scope = scope || 'all'
-    };
-    function getScope() {
-      return _scope || 'all'
-    };
-
-    // delete all handlers for a given scope
-    function deleteScope(scope) {
-      var key, handlers, i;
-
-      for (key in _handlers) {
-        handlers = _handlers[key];
-        for (i = 0; i < handlers.length;) {
-          if (handlers[i].scope === scope) handlers.splice(i, 1);
-          else i++;
-        }
-      }
-    };
-
-    // abstract key logic for assign and unassign
-    function getKeys(key) {
-      var keys;
-      key = key.replace(/\s/g, '');
-      keys = key.split(',');
-      if ((keys[keys.length - 1]) == '') {
-        keys[keys.length - 2] += ',';
-      }
-      return keys;
-    }
-
-    // abstract mods logic for assign and unassign
-    function getMods(key) {
-      var mods = key.slice(0, key.length - 1);
-      for (var mi = 0; mi < mods.length; mi++)
-        mods[mi] = _MODIFIERS[mods[mi]];
-      return mods;
-    }
-
-    // cross-browser events
-    function addEvent(object, event, method) {
-      if (object.addEventListener)
-        object.addEventListener(event, method, false);
-      else if (object.attachEvent)
-        object.attachEvent('on' + event, function () {
-          method(window.event)
-        });
-    };
-
-    // set the handlers globally on document
-    addEvent(document, 'keydown', function (event) {
-      dispatch(event)
-    }); // Passing _scope to a callback to ensure it remains the same by execution. Fixes #48
-    addEvent(document, 'keyup', clearModifier);
-
-    // reset modifiers to false whenever the window is (re)focused.
-    addEvent(window, 'focus', resetModifiers);
-
-    // store previously defined key
-    var previousKey = global.key;
-
-    // restore previously defined key and return reference to our key object
-    function noConflict() {
-      var k = global.key;
-      global.key = previousKey;
-      return k;
-    }
-
-    // set window.key and window.key.set/get/deleteScope, and the default filter
-    global.key = assignKey;
-    global.key.setScope = setScope;
-    global.key.getScope = getScope;
-    global.key.deleteScope = deleteScope;
-    global.key.filter = filter;
-    global.key.isPressed = isPressed;
-    global.key.getPressedKeyCodes = getPressedKeyCodes;
-    global.key.noConflict = noConflict;
-    global.key.unbind = unbindKey;
-
-    if (typeof module !== 'undefined') module.exports = assignKey;
-
-  })(this);
-});
-define('module/key_shortcuts',['lib/page_property_miner', 'lib/keymaster'], function (ppp, key) {
-  return {
-    init: function () {
-      var $mainMenu = $('#main-menu');
-
-      function linkFromMainMenu(type) {
-        var href = $mainMenu.find('.' + type).attr('href');
-        if (href) {
-          window.location.href = href;
-          return false;
-        }
-        return true;
-      }
-
-      if (ppp.matchPage('issues', 'show')) {
-        key('e', function() {
-          showAndScrollTo("update", "issue_notes");
-          return false;
-        });
-        /*key('left', function() {
-         $('#content .next-prev-links a').each(function() {
-         if ($(this).text() == '« Předchozí') {
-         window.location.href = $(this).attr('href');
-         }
-         });
-         return false;
-         });
-         key('right', function() {
-         $('#content .next-prev-links a').each(function() {
-         if ($(this).text() == 'Další »') {
-         window.location.href = $(this).attr('href');
-         }
-         });
-         return false;
-         });*/
-
-      } else if (ppp.matchPage('issues', 'index')) {
-        /*key('esc', function() {
-         var $link = $('.buttons .icon-reload');
-         if ($link.length > 0) {
-         window.location.href = $link.attr('href');
-         return false;
-         }
-         });
-
-         key('left', function() {
-         var href = $('ul.pagination .prev').attr('href');
-         if (href) {
-         window.location.href = href;
-         }
-         return false;
-         });
-
-         key('right', function() {
-         var href = $('ul.pagination .next').attr('href');
-         if (href) {
-         window.location.href = href;
-         }
-         return false;
-         });*/
-      }
-
-      /*key('i', function() {
-       return linkFromMainMenu('issues');
-       });
-
-       key('n', function() {
-       return linkFromMainMenu('new-issue');
-       });
-
-       key('w', function() {
-       return linkFromMainMenu('wiki');
-       });
-
-       key('p', function() {
-       $('#s2id_project_quick_jump_box').select2("open");
-       return false;
-       });
-
-       key('a', function() {
-       return linkFromMainMenu('activity');
-       });*/
-    }
-  }
-});
-
-
-define('module/timey_integration',['lib/page_property_miner'], function (ppp) {
-  return {
-
-    init: function () {
-      $('<div id="enterTimey" style="float: right"><a href="https://timey.proofreason.com" target="_blank">Open Timey</a></div>').insertBefore('#loggedas');
-
-      if (ppp.matchPage('timelog', 'new')) {
-        this.insertTimeyLogger();
-
-      } else if (ppp.matchPage('timelog', 'index')) {
-        $('#context-menu').remove();
-        $('td.buttons').hide();
-      }
-
-      var self = this;
-      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        self.insertTimeyLogger();
-        return false;
-      });
-    },
-
-    insertTimeyLogger: function () {
-      var self = this;
-      ppp.getProjectId(function (projectId) {
-        var issueId = ppp.getIssueId();
-
-        var url = 'https://timey.proofreason.com/';
-        if (projectId > 0) {
-          url = url + '?redmine[project_id]=' + projectId;
-          if (issueId > 0) url = url + '&redmine[issue_id]=' + issueId;
-        }
-        url = url + '#/logs/new';
-
-        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
-          url + '"></iframe></div>';
-
-        if (ppp.matchPage('timelog', 'new')) {
-          $('#new_time_entry').after(timeyLogger).hide();
-
-        } else if (ppp.matchPage('issues', 'show')) {
-          $('body').append(timeyLogger);
-          $('.timeyLoggerWrapper .close').click(function () {
-            self.removeTimeyLogger();
-          });
-        }
-      });
-    },
-
-    removeTimeyLogger: function () {
-      $('.timeyLoggerWrapper').remove();
-    }
-  }
-});
-define('translation/cs',{
-  Subject: 'Předmět',
-  Assignee: 'Přiřazeno',
-  Status: 'Stav',
-  Done: 'Hotovo',
-  'Due date': 'Uzavřít do'
-});
-define('lib/translate',['translation/cs'], function(cs) {
-  var language = $('html').attr('lang');
-
-  return function(key) {
-    if (language === 'cs' && key in cs) {
-      return cs[key];
-    } else {
-      return key;
-    }
-  }
-});
-
-
-define('module/related_issues_header',['lib/page_property_miner', 'lib/translate'], function (ppp, _) {
-  return {
-    init: function () {
-      if (!ppp.matchPage('issues', 'show')) {
-        return;
-      }
-
-      var $issue = $('#content .issue');
-
-      var subject = _('Subject'),
-        status = _('Status'),
-        assignee = _('Assignee'),
-        done = _('Done'),
-        dueDate = _('Due date');
-
-      var issueTree = [
-          '<th>' + subject +'</th>',
-          '<th>' + status +'</th>',
-          '<th>' + assignee +'</th>',
-          '<th>' + done +'</th>'
-      ];
-
-      var relations = [
-        '<th>' + subject +'</th>',
-        '<th>' + status +'</th>',
-        '<th>' + assignee +'</th>',
-        '<th>' + dueDate +'</th>',
-        '<th></th>'
-      ];
-
-      $issue.find('#issue_tree table.list.issues').prepend('<thead><tr>' + issueTree.join('') + '</tr></thead>');
-      $issue.find('#relations table.list.issues').prepend('<thead><tr>' + relations.join('') + '</tr></thead>');
-    }
-  }
-});
+define.amd = undefined;
