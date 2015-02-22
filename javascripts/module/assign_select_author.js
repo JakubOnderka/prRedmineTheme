@@ -13,12 +13,12 @@ define([
       }
 
       function addText() {
-        $('#issue_assigned_to_id').find('option[value="' + ipm.createdBy.id +'"]').each(function() {
+        $('#issue_assigned_to_id').find('option[value="' + ipm().createdBy.id +'"]').each(function() {
           $(this).text($(this).text() + ' (' +  _('issue author') + ')');
         });
       }
 
-      if (!ipm.isCreatedByMe) {
+      if (!ipm().isCreatedByMe) {
         addText();
         proxy(addText);
       }
