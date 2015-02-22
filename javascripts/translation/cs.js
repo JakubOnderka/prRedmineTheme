@@ -15,6 +15,9 @@ define({
   'Planned absences': 'Plánované absence',
   refresh: 'obnovit',
 
+  // Assign select author
+  'issue author': 'autor issue',
+
   months : {
     1: 'Leden',
     2: 'Únor',

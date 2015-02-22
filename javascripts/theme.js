@@ -778,6 +778,9 @@ define('translation/cs',{
   'Planned absences': 'Plánované absence',
   refresh: 'obnovit',
 
+  // Assign select author
+  'issue author': 'autor issue',
+
   months : {
     1: 'Leden',
     2: 'Únor',
@@ -2002,6 +2005,111 @@ define('module/absences',['lib/page_property_miner', 'lib/local_storage', 'templ
     }
   }
 });
+define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
+
+  function getIdAndName($link) {
+    var href = $link.attr('href'),
+      id = href.split('/')[2];
+
+    return {
+      id: id,
+      name: $link.text()
+    }
+  }
+
+  var h2Content = $('h2').text(),
+    $issueDiv = $('div.issue'),
+    authorLinks = $issueDiv.find('p.author a'),
+    issueDivClassList = $issueDiv[0].className.split(/\s+/),
+    dueDate = $issueDiv.find('td.due-date').text(),
+    startDate = $issueDiv.find('td.start-date').text(),
+    assignedTo = getIdAndName($issueDiv.find('td.assigned-to a'));
+
+  var trackerId, statusId, priorityId, priorityType;
+  for (var i = 0; i < issueDivClassList.length; i++) {
+    var className = issueDivClassList[i];
+    if (className.indexOf('tracker-') === 0) {
+      trackerId = className.replace('tracker-', '');
+    } else if (className.indexOf('status-') === 0) {
+      statusId = className.replace('status-', '');
+    } else if (className.indexOf('priority-') === 0) {
+      var after = className.replace('priority-', '');
+      if (/\d/.test(after)) {
+        priorityId = after;
+      } else {
+        priorityType = after;
+      }
+    }
+  }
+
+  return {
+    id: h2Content.substr(h2Content.indexOf('#') + 1),
+    projectName: ppp.getProjectName(),
+
+    createdBy: getIdAndName($(authorLinks[0])),
+    assignedTo: assignedTo,
+
+    isCreatedByMe: $issueDiv.hasClass('created-by-me'),
+    isAssignedToMe: $issueDiv.hasClass('assigned-to-me'),
+    isOverDueDate: $issueDiv.hasClass('overdue'),
+
+    trackerId: trackerId,
+    statusId: statusId,
+    priority: {
+      id: priorityId,
+      type: priorityType
+    },
+
+    addedAt: authorLinks[1].title,
+    actualizedAt: authorLinks[2] ? authorLinks[2].title : null,
+    startDate: startDate,
+    dueDate: dueDate
+  };
+});
+define('lib/replace_issue_form_proxy',[],function() {
+  var proxied = replaceIssueFormWith,
+    callbacks = [];
+
+  replaceIssueFormWith = function () {
+    console.log('replaceIssueFormWith proxy called');
+    var output = proxied.apply(this, arguments);
+    for (var i = 0; i < callbacks.length; i++) {
+      callbacks[i]();
+    }
+    return output;
+  };
+
+  return function (callback) {
+    callbacks.push(callback);
+  }
+});
+
+
+define('module/assign_select_author',[
+  'lib/page_property_miner',
+  'lib/issue_property_miner',
+  'lib/translate',
+  'lib/replace_issue_form_proxy'
+], function (ppp, ipm, _, proxy) {
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      function addText() {
+        $('#issue_assigned_to_id').find('option[value="' + ipm.createdBy.id +'"]').each(function() {
+          $(this).text($(this).text() + ' (' +  _('issue author') + ')');
+        });
+      }
+
+      if (!ipm.isCreatedByMe) {
+        addText();
+        proxy(addText);
+      }
+    }
+  }
+});
 
 
 // Register handlebars helpers
@@ -2020,7 +2128,8 @@ require([
   'module/key_shortcuts',
   'module/timey_integration',
   'module/related_issues_header',
-  'module/absences'
+  'module/absences',
+  'module/assign_select_author'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -2042,6 +2151,7 @@ require(['lib/local_storage'], function (module) {
     module.removeExpired();
   }
 });
+
 
 var ProofReasonRedmineTheme = {
   init: function () {

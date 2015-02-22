@@ -16,7 +16,8 @@ require([
   'module/key_shortcuts',
   'module/timey_integration',
   'module/related_issues_header',
-  'module/absences'
+  'module/absences',
+  'module/assign_select_author'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -38,6 +39,7 @@ require(['lib/local_storage'], function (module) {
     module.removeExpired();
   }
 });
+
 
 var ProofReasonRedmineTheme = {
   init: function () {

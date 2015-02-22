@@ -1,12 +1,22 @@
 define(['lib/page_property_miner'], function (ppp) {
 
+  function getIdAndName($link) {
+    var href = $link.attr('href'),
+      id = href.split('/')[2];
+
+    return {
+      id: id,
+      name: $link.text()
+    }
+  }
+
   var h2Content = $('h2').text(),
     $issueDiv = $('div.issue'),
     authorLinks = $issueDiv.find('p.author a'),
     issueDivClassList = $issueDiv[0].className.split(/\s+/),
     dueDate = $issueDiv.find('td.due-date').text(),
     startDate = $issueDiv.find('td.start-date').text(),
-    assignedTo = $issueDiv.find('td.assigned-to a').text();
+    assignedTo = getIdAndName($issueDiv.find('td.assigned-to a'));
 
   var trackerId, statusId, priorityId, priorityType;
   for (var i = 0; i < issueDivClassList.length; i++) {
@@ -29,7 +39,7 @@ define(['lib/page_property_miner'], function (ppp) {
     id: h2Content.substr(h2Content.indexOf('#') + 1),
     projectName: ppp.getProjectName(),
 
-    createdBy: authorLinks[0].textContent,
+    createdBy: getIdAndName($(authorLinks[0])),
     assignedTo: assignedTo,
 
     isCreatedByMe: $issueDiv.hasClass('created-by-me'),
@@ -38,8 +48,10 @@ define(['lib/page_property_miner'], function (ppp) {
 
     trackerId: trackerId,
     statusId: statusId,
-    priorityId: priorityId,
-    priorityType: priorityType,
+    priority: {
+      id: priorityId,
+      type: priorityType
+    },
 
     addedAt: authorLinks[1].title,
     actualizedAt: authorLinks[2] ? authorLinks[2].title : null,
