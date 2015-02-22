@@ -2006,6 +2006,9 @@ define('module/absences',['lib/page_property_miner', 'lib/local_storage', 'templ
   }
 });
 define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
+  if (!ppp.matchPage('issues', 'show')) {
+    return null;
+  }
 
   function getIdAndName($link) {
     var href = $link.attr('href'),

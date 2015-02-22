@@ -1,4 +1,7 @@
 define(['lib/page_property_miner'], function (ppp) {
+  if (!ppp.matchPage('issues', 'show')) {
+    return null;
+  }
 
   function getIdAndName($link) {
     var href = $link.attr('href'),
