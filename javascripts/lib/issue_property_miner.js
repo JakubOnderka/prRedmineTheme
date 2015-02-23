@@ -1,9 +1,4 @@
 define(['lib/page_property_miner'], function (ppp) {
-  if (!ppp.matchPage('issues', 'show')) {
-    return function () {
-      return null;
-    };
-  }
 
   function getIdAndName($link) {
     if ($link.length === 0) {
@@ -22,8 +17,13 @@ define(['lib/page_property_miner'], function (ppp) {
   var properties;
 
   return function () {
-    if (properties) {
+    if (typeof properties !== 'undefined') {
       return properties;
+    }
+
+    if (!ppp.matchPage('issues', 'show')) {
+      properties = null;
+      return null;
     }
 
     var h2Content = $('h2').text(),
