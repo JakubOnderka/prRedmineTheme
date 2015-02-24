@@ -1592,9 +1592,9 @@ templates['absences'] = template({"1":function(depth0,helpers,partials,data) {
     + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.actual : depth0),{"name":"if","hash":{},"fn":this.program(4, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n\n"
     + ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.from : depth0),(depth0 != null ? depth0.to : depth0),{"name":"is","hash":{},"fn":this.program(6, data, 0),"inverse":this.program(8, data, 0),"data":data})) != null ? stack1 : "")
-    + "\n"
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":this.program(10, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.actual : depth0),{"name":"if","hash":{},"fn":this.program(19, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n                    "
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.actual : depth0),{"name":"if","hash":{},"fn":this.program(10, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":this.program(12, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers.unless.call(depth0,(data && data.last),{"name":"unless","hash":{},"fn":this.program(21, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n";
 },"4":function(depth0,helpers,partials,data) {
@@ -1612,29 +1612,29 @@ templates['absences'] = template({"1":function(depth0,helpers,partials,data) {
     + alias2((helpers.dayFromDate || (depth0 && depth0.dayFromDate) || alias1).call(depth0,(depth0 != null ? depth0.to : depth0),{"name":"dayFromDate","hash":{},"data":data}))
     + ".\n";
 },"10":function(depth0,helpers,partials,data) {
+    return "</span>";
+},"12":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"-",{"name":"is","hash":{},"fn":this.program(11, data, 0),"inverse":this.program(13, data, 0),"data":data})) != null ? stack1 : "");
-},"11":function(depth0,helpers,partials,data) {
-    return "";
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"-",{"name":"is","hash":{},"fn":this.program(13, data, 0),"inverse":this.program(15, data, 0),"data":data})) != null ? stack1 : "");
 },"13":function(depth0,helpers,partials,data) {
-    var stack1;
-
-  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"/",{"name":"is","hash":{},"fn":this.program(11, data, 0),"inverse":this.program(14, data, 0),"data":data})) != null ? stack1 : "");
-},"14":function(depth0,helpers,partials,data) {
-    var stack1;
-
-  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"?",{"name":"is","hash":{},"fn":this.program(15, data, 0),"inverse":this.program(17, data, 0),"data":data})) != null ? stack1 : "");
+    return "";
 },"15":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"/",{"name":"is","hash":{},"fn":this.program(13, data, 0),"inverse":this.program(16, data, 0),"data":data})) != null ? stack1 : "");
+},"16":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),"?",{"name":"is","hash":{},"fn":this.program(17, data, 0),"inverse":this.program(19, data, 0),"data":data})) != null ? stack1 : "");
+},"17":function(depth0,helpers,partials,data) {
     return "("
     + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"maybe",{"name":"_","hash":{},"data":data}))
     + ")";
-},"17":function(depth0,helpers,partials,data) {
+},"19":function(depth0,helpers,partials,data) {
     return "("
     + this.escapeExpression((helpers.trim || (depth0 && depth0.trim) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"trim","hash":{},"data":data}))
     + ")";
-},"19":function(depth0,helpers,partials,data) {
-    return "</span>";
 },"21":function(depth0,helpers,partials,data) {
     return ", ";
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {

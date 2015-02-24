@@ -15,6 +15,8 @@
                         {{dayFromDate from}}.–{{dayFromDate to}}.
                     {{/is}}
 
+                    {{#if actual ~}}</span>{{/if ~}}
+
                     {{#if type ~}}
                     {{#is type "-" ~}}
                     {{else ~}}
@@ -25,7 +27,6 @@
                     {{/is ~}}
                     {{/if ~}}
 
-                    {{#if actual ~}}</span>{{/if ~}}
                     {{#unless @last}}, {{/unless}}
                 {{/each}}
 
