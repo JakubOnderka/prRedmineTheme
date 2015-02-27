@@ -2136,6 +2136,23 @@ define('module/datepicker_focus',[],function () {
 });
 
 
+define('module/cmd_enter_form_submit',[],function () {
+  return {
+    init: function () {
+      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description', function (event) {
+        if (event.keyCode === 13 && (event.metaKey || event.ctrlKey)) {
+          // Disable showing warning message
+          window.onbeforeunload = null;
+
+          $(this).parents('form').submit();
+          event.preventDefault();
+        }
+      });
+    }
+  }
+});
+
+
 // Register handlebars helpers
 require([
   'template/helper/translate',
@@ -2154,7 +2171,8 @@ require([
   'module/related_issues_header',
   'module/absences',
   'module/assign_select_author',
-  'module/datepicker_focus'
+  'module/datepicker_focus',
+  'module/cmd_enter_form_submit'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -2190,7 +2208,6 @@ var ProofReasonRedmineTheme = {
     this.MakeMoney.init();
     this.ClickableIssueNames.init();
     this.SingleClickSelect.init();
-    this.CmdEnterFormSubmit.init();
   },
 
   tools: {
@@ -2840,17 +2857,6 @@ var ProofReasonRedmineTheme = {
         window.getSelection().addRange(range);
 
         lastMouseDownX = lastMouseDownY = null;
-      });
-    }
-  },
-
-  CmdEnterFormSubmit: {
-    init: function () {
-      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description', function (event) {
-        if (event.keyCode === 13 && (event.metaKey || event.ctrlKey)) {
-          $(this).parents('form').submit();
-          event.preventDefault();
-        }
       });
     }
   }
