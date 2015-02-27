@@ -287,7 +287,7 @@ var ProofReasonRedmineTheme = {
         e.preventDefault();
         $('#update').show();
         $('#issue_notes').focus();
-        $('html, body').animate({scrollTop: $('#issue-form').closest('fieldset').offset().top}, 100);
+        $('html, body').animate({scrollTop: $('#issue-form').offset().top}, 100);
       });
 
 
