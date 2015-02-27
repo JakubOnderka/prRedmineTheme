@@ -301,6 +301,7 @@ var ProofReasonRedmineTheme = {
         $('#update span.minimize').click();
       }
 
+      // Remove delimiter for minimized form
       $('#issue-form')
         .contents()
         .filter(function() { return this.nodeType === 3 && this.textContent.trim() === '|'})
@@ -804,6 +805,11 @@ function daysFromToday(date) {
 jQuery.fn.highlight = function () {
     $(this).each(function () {
         var el = $(this);
+
+        if (!el.is(':visible')) {
+          return;
+        }
+
         var fadingEl = $("<div/>")
         .width(el.outerWidth())
         .height(el.outerHeight())
