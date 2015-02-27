@@ -2129,6 +2129,13 @@ define('module/assign_select_author',[
 });
 
 
+define('module/datepicker_focus',[],function () {
+  $('body').on('focus', '.hasDatepicker', function() {
+    $(this).datepicker('show');
+  });
+});
+
+
 // Register handlebars helpers
 require([
   'template/helper/translate',
@@ -2146,18 +2153,17 @@ require([
   'module/timey_integration',
   'module/related_issues_header',
   'module/absences',
-  'module/assign_select_author'
+  'module/assign_select_author',
+  'module/datepicker_focus'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
     (function(module) {
-      if (module.init === undefined) {
-        throw new Error();
+      if (module && module.init) {
+        $(function () {
+          module.init();
+        });
       }
-
-      $(function () {
-        module.init();
-      });
     })(arguments[i]);
   }
 });
@@ -2417,7 +2423,7 @@ var ProofReasonRedmineTheme = {
         e.preventDefault();
         $('#update').show();
         $('#issue_notes').focus();
-        $('html, body').animate({scrollTop: $('#issue_notes').closest('fieldset').offset().top}, 100);
+        $('html, body').animate({scrollTop: $('#issue-form').closest('fieldset').offset().top}, 100);
       });
 
 
