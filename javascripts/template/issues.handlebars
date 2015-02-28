@@ -1,0 +1,25 @@
+<table class="list issues">
+    <thead>
+    <tr>
+        <th>#</th>
+        {{#if withProject}}<th>{{_ "Project"}}</th>{{/if}}
+        {{#if withAssigned}}<th>{{_ "Assigned to"}}</th>{{/if}}
+        <th>{{_ "Status"}}</th>
+        <th>{{_ "Subject"}}</th>
+        <th>{{_ "Actualized at"}}</th>
+        <th>{{_ "Due date"}}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{#each issues}}
+        <tr class="issue priority-{{priority.id}}">
+            <td class="id"><a href="/issues/{{id}}">{{id}}</a></td>
+            {{#if withProject}}<td class="project"><a href="/projects/{{project.id}}">{{project.name}}</a></td>{{/if}}
+            {{#if withAssigned}}<td class="assigned_to"><a href="/projects/{{project.id}}">{{assigned_to.name}}</a></td>{{/if}}
+            <td class="status" title="{{status.name}}">{{status.name}}</td>
+            <td class="subject"><a href="/issues/{{id}}">{{subject}}</a></td>
+            <td class="due_date">{{due_date}}</td>
+        </tr>
+    {{/each}}
+    </tbody>
+</table>

@@ -27,7 +27,8 @@ require([
   'module/assign_select_author',
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
-  'module/better_header'
+  'module/better_header',
+  'module/issues_project'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
