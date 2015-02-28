@@ -6,6 +6,7 @@ define({
   Done: 'Hotovo',
   'Due date': 'Uzavřít do',
   'Updated on': 'Aktualizováno',
+  'Assigned to': 'Přiřazeno',
 
   // Timey
   'Open Timey': 'Otevřít Timey',

@@ -3964,6 +3964,7 @@ define('translation/cs',{
   Done: 'Hotovo',
   'Due date': 'Uzavřít do',
   'Updated on': 'Aktualizováno',
+  'Assigned to': 'Přiřazeno',
 
   // Timey
   'Open Timey': 'Otevřít Timey',
@@ -4022,6 +4023,24 @@ define('template/helper/trim',['vendor/handlebars.runtime'], function (handlebar
 define('template/helper/is',['vendor/handlebars.runtime'], function (handlebars) {
   handlebars.registerHelper('is', function(first, second,  options) {
     if (first === second) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+});
+define('template/helper/isEven',['vendor/handlebars.runtime'], function (handlebars) {
+  handlebars.registerHelper('isEven', function(first,  options) {
+    if (first % 2 === 0) {
+      return options.fn(this);
+    } else {
+      return options.inverse(this);
+    }
+  });
+});
+define('template/helper/isNotEmpty',['vendor/handlebars.runtime'], function (handlebars) {
+  handlebars.registerHelper('isNotEmpty', function(first,  options) {
+    if (first && first.length !== 0) {
       return options.fn(this);
     } else {
       return options.inverse(this);
@@ -4853,62 +4872,12 @@ templates['issue_tree_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"mai
     + "</th>\n    </tr>\n</thead>";
 },"useData":true});
 templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
-    return "<th>"
-    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Project",{"name":"_","hash":{},"data":data}))
-    + "</th>";
-},"3":function(depth0,helpers,partials,data) {
-    return "<th>"
-    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Assigned to",{"name":"_","hash":{},"data":data}))
-    + "</th>";
-},"5":function(depth0,helpers,partials,data) {
-    var stack1, helper, alias1=this.lambda, alias2=this.escapeExpression, alias3=helpers.helperMissing, alias4="function";
-
-  return "        <tr class=\"issue priority-"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.priority : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\">\n            <td class=\"id\"><a href=\"/issues/"
-    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
-    + "\">"
-    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
-    + "</a></td>\n            "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(6, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "\n            "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(8, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "\n            <td class=\"status\" title=\""
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.name : stack1), depth0))
-    + "\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</td>\n            <td class=\"subject\"><a href=\"/issues/"
-    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
-    + "\">"
-    + alias2(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"subject","hash":{},"data":data}) : helper)))
-    + "</a></td>\n            <td class=\"updated_on\">"
-    + alias2(((helper = (helper = helpers.updated_on || (depth0 != null ? depth0.updated_on : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"updated_on","hash":{},"data":data}) : helper)))
-    + "</td>\n            <td class=\"due_date\">"
-    + alias2(((helper = (helper = helpers.due_date || (depth0 != null ? depth0.due_date : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"due_date","hash":{},"data":data}) : helper)))
-    + "</td>\n        </tr>\n";
-},"6":function(depth0,helpers,partials,data) {
-    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
-
-  return "<td class=\"project\"><a href=\"/projects/"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.project : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.project : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></td>";
-},"8":function(depth0,helpers,partials,data) {
-    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
-
-  return "<td class=\"assigned_to\"><a href=\"/projects/"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.project : depth0)) != null ? stack1.id : stack1), depth0))
-    + "\">"
-    + alias2(alias1(((stack1 = (depth0 != null ? depth0.assigned_to : depth0)) != null ? stack1.name : stack1), depth0))
-    + "</a></td>";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1, alias1=helpers.helperMissing, alias2=this.escapeExpression;
 
   return "<table class=\"list issues\">\n    <thead>\n    <tr>\n        <th>#</th>\n        "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(1, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(2, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n        "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(3, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(4, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Status",{"name":"_","hash":{},"data":data}))
     + "</th>\n        <th>"
@@ -4918,8 +4887,69 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     + "</th>\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
     + "</th>\n    </tr>\n    </thead>\n    <tbody>\n"
-    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"each","hash":{},"fn":this.program(5, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
-    + "    </tbody>\n</table>";
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"each","hash":{},"fn":this.program(6, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "    </tbody>\n</table>\n";
+},"2":function(depth0,helpers,partials,data) {
+    return "<th>"
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Project",{"name":"_","hash":{},"data":data}))
+    + "</th>";
+},"4":function(depth0,helpers,partials,data) {
+    return "<th>"
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Assigned to",{"name":"_","hash":{},"data":data}))
+    + "</th>";
+},"6":function(depth0,helpers,partials,data) {
+    var stack1, helper, alias1=helpers.helperMissing, alias2=this.lambda, alias3=this.escapeExpression, alias4="function";
+
+  return "        <tr class=\"issue "
+    + ((stack1 = (helpers.isEven || (depth0 && depth0.isEven) || alias1).call(depth0,(data && data.index),{"name":"isEven","hash":{},"fn":this.program(7, data, 0),"inverse":this.program(9, data, 0),"data":data})) != null ? stack1 : "")
+    + " priority-"
+    + alias3(alias2(((stack1 = (depth0 != null ? depth0.priority : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">\n            <td class=\"id\"><a href=\"/issues/"
+    + alias3(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias3(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
+    + "</a></td>\n            "
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(11, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n            "
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(13, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + "\n            <td class=\"status\" title=\""
+    + alias3(alias2(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.name : stack1), depth0))
+    + "\">"
+    + alias3(alias2(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</td>\n            <td class=\"subject\"><a href=\"/issues/"
+    + alias3(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\">"
+    + alias3(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"subject","hash":{},"data":data}) : helper)))
+    + "</a></td>\n            <td class=\"updated_on\">"
+    + alias3(((helper = (helper = helpers.updated_on || (depth0 != null ? depth0.updated_on : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"updated_on","hash":{},"data":data}) : helper)))
+    + "</td>\n            <td class=\"due_date\">"
+    + alias3(((helper = (helper = helpers.due_date || (depth0 != null ? depth0.due_date : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"due_date","hash":{},"data":data}) : helper)))
+    + "</td>\n        </tr>\n";
+},"7":function(depth0,helpers,partials,data) {
+    return "event";
+},"9":function(depth0,helpers,partials,data) {
+    return "odd";
+},"11":function(depth0,helpers,partials,data) {
+    var stack1, alias1=this.lambda, alias2=this.escapeExpression;
+
+  return "<td class=\"project\"><a href=\"/projects/"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.project : depth0)) != null ? stack1.id : stack1), depth0))
+    + "\">"
+    + alias2(alias1(((stack1 = (depth0 != null ? depth0.project : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</a></td>";
+},"13":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return "<td class=\"assigned_to\">"
+    + this.escapeExpression(this.lambda(((stack1 = (depth0 != null ? depth0.assigned_to : depth0)) != null ? stack1.name : stack1), depth0))
+    + "</td>";
+},"15":function(depth0,helpers,partials,data) {
+    return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"No issues",{"name":"_","hash":{},"data":data}))
+    + "\n";
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1;
+
+  return ((stack1 = (helpers.isNotEmpty || (depth0 && depth0.isNotEmpty) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"isNotEmpty","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(15, data, 0),"data":data})) != null ? stack1 : "");
 },"useData":true});
 templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>Úkoly s vypršeným Uzavřít do</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
@@ -5553,7 +5583,12 @@ define('module/issues_project',[
       var redmineApi = new RedmineApi(),
         projectName = ppp.getProjectName();
 
-      $('#content .splitcontentright').prepend(templates['issues_project']());
+      $('#content .splitcontentright')
+        .prepend(templates['issues_project']())
+        .css('width', '70%');
+
+      $('#content .splitcontentleft')
+        .css('width', '28%');
 
       redmineApi.getIssuesWithCache({
         project_id: projectName,
@@ -5607,6 +5642,8 @@ require([
   'template/helper/dayFromDate',
   'template/helper/trim',
   'template/helper/is',
+  'template/helper/isEven',
+  'template/helper/isNotEmpty',
   'template/helper/monthFromDate'
 ]);
 

@@ -13,6 +13,8 @@ require([
   'template/helper/dayFromDate',
   'template/helper/trim',
   'template/helper/is',
+  'template/helper/isEven',
+  'template/helper/isNotEmpty',
   'template/helper/monthFromDate'
 ]);
 

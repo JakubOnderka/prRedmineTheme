@@ -38,7 +38,12 @@ define([
       var redmineApi = new RedmineApi(),
         projectName = ppp.getProjectName();
 
-      $('#content .splitcontentright').prepend(templates['issues_project']());
+      $('#content .splitcontentright')
+        .prepend(templates['issues_project']())
+        .css('width', '70%');
+
+      $('#content .splitcontentleft')
+        .css('width', '28%');
 
       redmineApi.getIssuesWithCache({
         project_id: projectName,

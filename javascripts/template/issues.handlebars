@@ -1,3 +1,4 @@
+{{#isNotEmpty issues}}
 <table class="list issues">
     <thead>
     <tr>
@@ -12,10 +13,10 @@
     </thead>
     <tbody>
     {{#each issues}}
-        <tr class="issue priority-{{priority.id}}">
+        <tr class="issue {{#isEven @index}}event{{else}}odd{{/isEven}} priority-{{priority.id}}">
             <td class="id"><a href="/issues/{{id}}">{{id}}</a></td>
             {{#if withProject}}<td class="project"><a href="/projects/{{project.id}}">{{project.name}}</a></td>{{/if}}
-            {{#if withAssigned}}<td class="assigned_to"><a href="/projects/{{project.id}}">{{assigned_to.name}}</a></td>{{/if}}
+            {{#if withAssigned}}<td class="assigned_to">{{assigned_to.name}}</td>{{/if}}
             <td class="status" title="{{status.name}}">{{status.name}}</td>
             <td class="subject"><a href="/issues/{{id}}">{{subject}}</a></td>
             <td class="updated_on">{{updated_on}}</td>
@@ -24,3 +25,6 @@
     {{/each}}
     </tbody>
 </table>
+{{else}}
+{{_ "No issues"}}
+{{/isNotEmpty}}
