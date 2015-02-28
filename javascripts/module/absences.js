@@ -1,6 +1,11 @@
 "use strict";
 
-define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (ppp, ls, templates) {
+define([
+  'lib/page_property_miner',
+  'lib/local_storage',
+  'templates',
+  'vendor/moment'
+], function (ppp, ls, templates, moment) {
   return {
     absencesInfoUrl: null,
     htmlOutput: null,
@@ -21,6 +26,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
     },
 
     init: function () {
+      var self = this;
       this.absencesInfoUrl = window.location.hostname == 'localhost' ?
         'holidays.html' : // test
         '/projects/pm/wiki/Holidays'; // production
@@ -30,24 +36,27 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
 
       } else if (ppp.matchPage('issues', 'index')) {
         $('#sidebar').append('<div id="plannedAbsences"></div>');
+
+      } else if (ppp.matchPage('issues', 'show')) {
+        this.loadWithCache(function(absences) {
+          self.markAbsencedUsers(absences);
+        });
       }
 
       if ($('#plannedAbsences').length) {
-        if (ls.get('absencesObject')) {
-          var absences = JSON.parse(ls.get('absencesObject'));
-          this.put(absences);
-        } else {
-          this.load();
-        }
+        this.loadWithCache(function(absences) {
+          var html = self.createHtml(absences);
+          self.putHtmlIntoDocument(html);
+        });
       }
     },
 
     fixDate: function (date) {
       var parts = date.split('-');
-      if (parts[1] < 10) {
+      if (parts[1].length !== 2 && parseInt(parts[1]) < 10) {
         parts[1] = '0' + parts[1];
       }
-      if (parts[2] < 10) {
+      if (parts[2].length !== 2 && parseInt(parts[2]) < 10) {
         parts[2] = '0' + parts[2];
       }
 
@@ -81,6 +90,34 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
       }
 
       return filtered;
+    },
+
+    markAbsencedUsers: function(data) {
+      var self = this;
+      data = this.removeOldAndMarkActual(data);
+
+      $('#content .issue .user').each(function() {
+        var $user = $(this),
+          name = $user.text();
+
+        if (name in data) {
+          for (var i = 0; i < data[name].length; i++) {
+            var absence = data[name][i];
+            if (absence.actual) {
+              var title = moment(self.fixDate(absence.from)).format('D. MMMM');
+              title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
+              if (absence.type !== '-') {
+                title += ': ' + absence.type;
+              }
+
+              $user.after(templates['not_available_user']({
+                title: title
+              }));
+            }
+          }
+        }
+      });
+
     },
 
     createHtml: function (data) {
@@ -146,7 +183,10 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
 
       var self = this;
       $('#plannedAbsences .refresh').click(function() {
-        self.load();
+        self.load(function(absences) {
+          var html = self.createHtml(absences);
+          self.putHtmlIntoDocument(html);
+        });
         return false;
       });
     },
@@ -176,20 +216,20 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
 
           if (tdContent !== (day + '.')) {
             if (absence && absence.type !== tdContent) {
-              absence.to = date + (day - 1);
+              absence.to = this.fixDate(date + (day - 1));
               person.push(absence);
               absence = null;
             }
 
             if (!absence) {
               absence = {
-                from: date + day,
+                from: this.fixDate(date + day),
                 to: -1,
                 type: tdContent
               };
             }
           } else if (absence) {
-            absence.to = date + (day - 1);
+            absence.to = this.fixDate(date + (day - 1));
             person.push(absence);
             absence = null;
           }
@@ -202,7 +242,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
         }
 
         if (absence) {
-          absence.to = date + (day - 1);
+          absence.to = this.fixDate(date + (day - 1));
           person.push(absence);
           absence = null;
         }
@@ -231,18 +271,20 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
       });
     },
 
-    load: function () {
-      var self = this;
-      this.loadAbsencesData(function (absences) {
-        self.put(absences)
-      });
+    loadWithCache: function (callback) {
+      if (ls.get('absencesObject')) {
+        var absences = JSON.parse(ls.get('absencesObject'));
+        callback(absences);
+      } else {
+        this.load(callback);
+      }
     },
 
-    put: function (absences) {
-      ls.set('absencesObject', JSON.stringify(absences), 24);
-
-      var html = this.createHtml(absences);
-      this.putHtmlIntoDocument(html);
+    load: function (callback) {
+      this.loadAbsencesData(function (absences) {
+        ls.set('absencesObject', JSON.stringify(absences), 24);
+        callback(absences);
+      });
     }
   }
 });

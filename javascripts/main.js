@@ -1,5 +1,12 @@
 "use strict";
 
+require(['vendor/moment'], function (moment) {
+  var language = $('html').attr('lang');
+  if (language === 'cs') {
+    moment.locale(language);
+  }
+});
+
 // Register handlebars helpers
 require([
   'template/helper/translate',
