@@ -96,7 +96,7 @@ define([
       var self = this;
       data = this.removeOldAndMarkActual(data);
 
-      $('#content .issue .user').each(function() {
+      $('.user').each(function() {
         var $user = $(this),
           name = $user.text();
 
@@ -106,7 +106,7 @@ define([
             if (absence.actual) {
               var title = moment(self.fixDate(absence.from)).format('D. MMMM');
               title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
-              if (absence.type !== '-') {
+              if (absence.type && absence.type !== '-') {
                 title += ': ' + absence.type;
               }
 

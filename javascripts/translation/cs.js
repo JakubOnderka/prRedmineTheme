@@ -14,7 +14,6 @@ define({
   'Show details': 'Zobrazit detaily',
   'Planned absences': 'Plánované absence',
   refresh: 'obnovit',
-  'not available': 'nepřítomen',
 
   // Assign select author
   'issue author': 'autor issue'

@@ -3972,7 +3972,6 @@ define('translation/cs',{
   'Show details': 'Zobrazit detaily',
   'Planned absences': 'Plánované absence',
   refresh: 'obnovit',
-  'not available': 'nepřítomen',
 
   // Assign select author
   'issue author': 'autor issue'
@@ -4000,7 +3999,7 @@ define('template/helper/translate',['vendor/handlebars.runtime', 'lib/translate'
 });
 define('template/helper/dayFromDate',['vendor/handlebars.runtime'], function (handlebars) {
   handlebars.registerHelper('dayFromDate', function(key) {
-    return key.split('-')[2];
+    return parseInt(key.split('-')[2]);
   });
 });
 define('template/helper/trim',['vendor/handlebars.runtime'], function (handlebars) {
@@ -4842,13 +4841,11 @@ templates['issue_tree_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"mai
     + "</th>\n    </tr>\n</thead>";
 },"useData":true});
 templates['not_available_user'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    var helper, alias1=helpers.helperMissing, alias2=this.escapeExpression;
+    var helper;
 
-  return " <span style=\"color: gray;\" title=\""
-    + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias1),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
-    + "\">("
-    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"not available",{"name":"_","hash":{},"data":data}))
-    + ")</span>";
+  return " <span class=\"glyphicon glyphicon-warning-sign\" style=\"color: #a6281b;padding-right:3px;\" title=\""
+    + this.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
+    + "\"></span>";
 },"useData":true});
 templates['open_timey'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div id=\"enterTimey\" style=\"float: right\">\n    <a href=\"https://timey.proofreason.com\" target=\"_blank\">"
@@ -5046,7 +5043,7 @@ define('module/absences',[
       var self = this;
       data = this.removeOldAndMarkActual(data);
 
-      $('#content .issue .user').each(function() {
+      $('.user').each(function() {
         var $user = $(this),
           name = $user.text();
 
@@ -5056,7 +5053,7 @@ define('module/absences',[
             if (absence.actual) {
               var title = moment(self.fixDate(absence.from)).format('D. MMMM');
               title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
-              if (absence.type !== '-') {
+              if (absence.type && absence.type !== '-') {
                 title += ': ' + absence.type;
               }
 
