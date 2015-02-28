@@ -126,7 +126,13 @@ define(['lib/page_property_miner', 'lib/local_storage', 'templates'], function (
       }
 
       months.sort(function (a, b) {
-        return a.month > b.month;
+         if (a.month > b.month) {
+           return 1;
+         } else if (a.month < b.month) {
+           return -1;
+         } else {
+           return 0;
+         }
       });
 
       return months;
