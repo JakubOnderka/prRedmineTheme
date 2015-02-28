@@ -96,25 +96,44 @@ define([
       var self = this;
       data = this.removeOldAndMarkActual(data);
 
-      $('.user').each(function() {
-        var $user = $(this),
-          name = $user.text();
-
+      function findCurrentAbsence(name) {
         if (name in data) {
           for (var i = 0; i < data[name].length; i++) {
             var absence = data[name][i];
             if (absence.actual) {
-              var title = moment(self.fixDate(absence.from)).format('D. MMMM');
-              title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
-              if (absence.type && absence.type !== '-') {
-                title += ': ' + absence.type;
-              }
-
-              $user.after(templates['not_available_user']({
-                title: title
-              }));
+              return absence;
             }
           }
+        }
+
+        return false;
+      }
+
+      $('#issue_assigned_to_id option').each(function() {
+        var $option = $(this),
+          name = $option.text(),
+          absence = findCurrentAbsence(name);
+
+        if (absence) {
+          $option.text($option.text() + ' ⚠');
+        }
+      });
+
+      $('.user').each(function() {
+        var $user = $(this),
+          name = $user.text(),
+          absence = findCurrentAbsence(name);
+
+        if (absence) {
+          var title = moment(self.fixDate(absence.from)).format('D. MMMM');
+          title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
+          if (absence.type && absence.type !== '-') {
+            title += ': ' + absence.type;
+          }
+
+          $user.after(templates['not_available_user']({
+            title: title
+          }));
         }
       });
 
