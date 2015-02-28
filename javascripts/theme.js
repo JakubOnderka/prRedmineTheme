@@ -6058,6 +6058,11 @@ var ProofReasonRedmineTheme = {
     init: function () {
       this.tools = ProofReasonRedmineTheme.tools;
 
+      // Add class to issue tree table
+      $('#issue_tree').find('table.issues tr').each(function () {
+        $(this).find('td:eq(2)').addClass('status');
+      });
+
       this.setFormatUp('table.issues .due_date', {'verbalDate': this.format.verbalDate});
       this.setFormatUp('table.issues .updated_on', {'relativeTime': this.format.relativeTime});
       this.setFormatUp('table.issues td.status', {
