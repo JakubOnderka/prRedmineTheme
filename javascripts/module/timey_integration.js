@@ -1,10 +1,10 @@
 "use strict";
 
-define(['lib/page_property_miner', 'templates'], function (ppp, themes) {
+define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
   return {
 
     init: function () {
-      $(themes['open_timey']()).insertBefore('#loggedas');
+      $(templates['open_timey']()).insertBefore('#loggedas');
 
       if (ppp.matchPage('timelog', 'new')) {
         this.insertTimeyLogger();
@@ -33,8 +33,9 @@ define(['lib/page_property_miner', 'templates'], function (ppp, themes) {
         }
         url = url + '#/logs/new';
 
-        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
-          url + '"></iframe></div>';
+        var timeyLogger = templates['timey_loger']({
+          url: url
+        });
 
         if (ppp.matchPage('timelog', 'new')) {
           $('#new_time_entry').after(timeyLogger).hide();

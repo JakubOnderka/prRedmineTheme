@@ -4994,15 +4994,22 @@ templates['relations_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
     + "</th>\n    <th></th>\n</tr>\n</thead>";
 },"useData":true});
+templates['timey_loger'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var helper;
+
+  return "<div class=\"timeyLoggerWrapper\">\n    <span class=\"close\"><i class=\"glyphicon glypicon-remove\"></i></span>\n    <iframe style=\"border:0; width: 100%; height: 220px\" src=\""
+    + this.escapeExpression(((helper = (helper = helpers.url || (depth0 != null ? depth0.url : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"url","hash":{},"data":data}) : helper)))
+    + "\"></iframe>\n</div>";
+},"useData":true});
 return templates;
 });
 
 
-define('module/timey_integration',['lib/page_property_miner', 'templates'], function (ppp, themes) {
+define('module/timey_integration',['lib/page_property_miner', 'templates'], function (ppp, templates) {
   return {
 
     init: function () {
-      $(themes['open_timey']()).insertBefore('#loggedas');
+      $(templates['open_timey']()).insertBefore('#loggedas');
 
       if (ppp.matchPage('timelog', 'new')) {
         this.insertTimeyLogger();
@@ -5031,8 +5038,9 @@ define('module/timey_integration',['lib/page_property_miner', 'templates'], func
         }
         url = url + '#/logs/new';
 
-        var timeyLogger = '<div class="timeyLoggerWrapper"><span class="close"><i class="bootstrap-icon-remove"></i></span><iframe style="border:0; width: 100%; height: 220px" src="' +
-          url + '"></iframe></div>';
+        var timeyLogger = templates['timey_loger']({
+          url: url
+        });
 
         if (ppp.matchPage('timelog', 'new')) {
           $('#new_time_entry').after(timeyLogger).hide();
