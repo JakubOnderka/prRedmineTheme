@@ -1498,7 +1498,11 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster'], f
 
       if (ppp.matchPage('issues', 'show')) {
         key('e', function() {
-          showAndScrollTo("update", "issue_notes");
+          $('.updateButton:eq(0)').click();
+          return false;
+        });
+        key('esc', function() {
+          $('#update').hide();
           return false;
         });
         /*key('left', function() {

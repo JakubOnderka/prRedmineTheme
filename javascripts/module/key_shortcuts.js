@@ -14,7 +14,11 @@ define(['lib/page_property_miner', 'vendor/keymaster'], function (ppp, key) {
 
       if (ppp.matchPage('issues', 'show')) {
         key('e', function() {
-          showAndScrollTo("update", "issue_notes");
+          $('.updateButton:eq(0)').click();
+          return false;
+        });
+        key('esc', function() {
+          $('#update').hide();
           return false;
         });
         /*key('left', function() {
