@@ -40,7 +40,8 @@ define([
 
       $('#content .splitcontentright')
         .prepend(templates['issues_project']())
-        .css('width', '70%');
+        .css('width', '70%')
+        .css('margin-top', '-30px');
 
       $('#content .splitcontentleft')
         .css('width', '28%');
