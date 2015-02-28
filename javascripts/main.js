@@ -19,7 +19,8 @@ require([
   'module/absences',
   'module/assign_select_author',
   'module/datepicker_focus',
-  'module/cmd_enter_form_submit'
+  'module/cmd_enter_form_submit',
+  'module/better_header'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -43,7 +44,6 @@ require(['lib/local_storage'], function (module) {
 
 var ProofReasonRedmineTheme = {
   init: function () {
-    this.BetterHeader.init();
     this.BetterSidebar.init();
     this.BetterUpdateForm.init();
     this.BetterTimeline.init();
@@ -196,18 +196,6 @@ var ProofReasonRedmineTheme = {
       this.assessUsedLanguage();
     }
 
-  },
-
-  BetterHeader: {
-    init: function () {
-      // header links
-      $('#header h1').prepend('<a class="go-to-my-issues" href="https://redmine.proofreason.com/issues?query_id=135">My issues</a><a class="go-to-projects" href="/projects">Projects</a>');
-      //standard link for my issues: /issues?assigned_to_id=me&set_filter=1&sort=priority%3Adesc%2Cupdated_on%3Adesc
-
-      if ($(window).width() > 640) {
-        $('#q').focus();
-      }
-    }
   },
 
   BetterSidebar: {
