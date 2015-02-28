@@ -4059,7 +4059,7 @@ define('template/helper/monthFromDate',['vendor/handlebars.runtime', 'vendor/mom
 });
 define('template/helper/redmineTime',['vendor/handlebars.runtime', 'vendor/moment'], function (handlebars, moment) {
   handlebars.registerHelper('redmineTime', function(key) {
-    return moment(key).format('YYYY-MM-DD HH.mm');
+    return moment(key).format('YYYY-MM-DD HH:mm');
   });
 });
 
@@ -4931,7 +4931,7 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockP
     + alias3(((helper = (helper = helpers.due_date || (depth0 != null ? depth0.due_date : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"due_date","hash":{},"data":data}) : helper)))
     + "</td>\n        </tr>\n";
 },"7":function(depth0,helpers,partials,data) {
-    return "event";
+    return "even";
 },"9":function(depth0,helpers,partials,data) {
     return "odd";
 },"11":function(depth0,helpers,partials,data) {
@@ -5594,6 +5594,8 @@ define('module/issues_project',[
 
       $('#content .splitcontentleft')
         .css('width', '28%');
+
+      ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
 
       redmineApi.getIssuesWithCache({
         project_id: projectName,

@@ -13,7 +13,7 @@
     </thead>
     <tbody>
     {{#each issues}}
-        <tr class="issue {{#isEven @index}}event{{else}}odd{{/isEven}} priority-{{priority.id}}">
+        <tr class="issue {{#isEven @index}}even{{else}}odd{{/isEven}} priority-{{priority.id}}">
             <td class="id"><a href="/issues/{{id}}">{{id}}</a></td>
             {{#if ../withProject}}<td class="project"><a href="/projects/{{project.id}}">{{project.name}}</a></td>{{/if}}
             {{#if ../withAssigned}}<td class="assigned_to">{{assigned_to.name}}</td>{{/if}}

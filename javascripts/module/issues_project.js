@@ -45,6 +45,8 @@ define([
       $('#content .splitcontentleft')
         .css('width', '28%');
 
+      ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
+
       redmineApi.getIssuesWithCache({
         project_id: projectName,
         assigned_to_id: 'me',
