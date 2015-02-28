@@ -5859,7 +5859,6 @@ var ProofReasonRedmineTheme = {
 
       if (this.tools.cookie('sidebarHidden')) {
         this.hideSidebar();
-        this.tools.cookie('sidebarHidden', true); //extend expiration
       }
 
       this.setListeners();
@@ -5872,11 +5871,12 @@ var ProofReasonRedmineTheme = {
     },
 
     toggleSidebar: function () {
-
       if ($('#sidebar').is(':visible')) {
         this.hideSidebar();
+        this.tools.cookie('sidebarHidden', true);
       } else {
         this.showSidebar();
+        this.tools.removeCookie('sidebarHidden');
       }
     },
 
@@ -5884,14 +5884,12 @@ var ProofReasonRedmineTheme = {
       $('#sidebar').show();
       $('button.toggleSidebar').html('&times;');
       $('#main').removeClass('nosidebar');
-      this.tools.removeCookie('sidebarHidden');
     },
 
     hideSidebar: function () {
       $('#sidebar').hide();
       $('button.toggleSidebar').html('&larr;');
       $('#main').addClass('nosidebar');
-      this.tools.cookie('sidebarHidden', true);
     }
   },
 
