@@ -2424,12 +2424,14 @@ var ProofReasonRedmineTheme = {
     init: function () {
       this.tools = ProofReasonRedmineTheme.tools;
 
-      $('#update #issue_subject').closest('fieldset').addClass('issueAttributes');
-      $("#update #time_entry_hours").closest('fieldset').addClass('timeLogging');
-      $('#update #issue_notes').closest('fieldset').addClass('issueJournalNotes');
+      var $update = $('#update');
+
+      $update.find('#issue_subject').closest('fieldset').addClass('issueAttributes');
+      $update.find("#time_entry_hours").closest('fieldset').addClass('timeLogging');
+      $update.find('#issue_notes').closest('fieldset').addClass('issueJournalNotes');
 
       // hide logging part of the form
-      $("#update .timeLogging").closest('fieldset').hide();
+      $update.find(".timeLogging").closest('fieldset').hide();
 
       // better functioning update, mainly on mobile
       $('.icon-edit').filter(function () {
@@ -2438,19 +2440,22 @@ var ProofReasonRedmineTheme = {
 
       $('.updateButton').click(function (e) {
         e.preventDefault();
-        $('#update').show();
+        $update.show();
         $('#issue_notes').focus();
-        $('html, body').animate({scrollTop: $('#issue-form').offset().top}, 100);
+
+        if (!$update.hasClass('minimized')) {
+          $('html, body').animate({scrollTop: $('#issue-form').offset().top}, 100);
+        }
       });
 
 
-      $('#update').prepend('<span class="minimize"><span class="glyphicon glyphicon-minus"></span> <span class="glyphicon glyphicon-plus"></span></span>');
-      $('#update span.minimize').click(function () {
+      $update.prepend('<span class="minimize"><span class="glyphicon glyphicon-minus"></span> <span class="glyphicon glyphicon-plus"></span></span>');
+      $update.find('span.minimize').click(function () {
         ProofReasonRedmineTheme.BetterUpdateForm.toggleUpdateForm();
         return false;
       });
       if (this.tools.cookie('updateFormMinimized')) {
-        $('#update span.minimize').click();
+        $update.find('span.minimize').click();
       }
 
       // Remove delimiter for minimized form
