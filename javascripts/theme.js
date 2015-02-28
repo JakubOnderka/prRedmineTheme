@@ -4871,13 +4871,13 @@ templates['issue_tree_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"mai
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Done",{"name":"_","hash":{},"data":data}))
     + "</th>\n    </tr>\n</thead>";
 },"useData":true});
-templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
+templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockParams,depths) {
     var stack1, alias1=helpers.helperMissing, alias2=this.escapeExpression;
 
   return "<table class=\"list issues\">\n    <thead>\n    <tr>\n        <th>#</th>\n        "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(2, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(2, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n        "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(4, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(4, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Status",{"name":"_","hash":{},"data":data}))
     + "</th>\n        <th>"
@@ -4887,7 +4887,7 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     + "</th>\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
     + "</th>\n    </tr>\n    </thead>\n    <tbody>\n"
-    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"each","hash":{},"fn":this.program(6, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers.each.call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"each","hash":{},"fn":this.program(6, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "    </tbody>\n</table>\n";
 },"2":function(depth0,helpers,partials,data) {
     return "<th>"
@@ -4897,11 +4897,11 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     return "<th>"
     + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Assigned to",{"name":"_","hash":{},"data":data}))
     + "</th>";
-},"6":function(depth0,helpers,partials,data) {
+},"6":function(depth0,helpers,partials,data,blockParams,depths) {
     var stack1, helper, alias1=helpers.helperMissing, alias2=this.lambda, alias3=this.escapeExpression, alias4="function";
 
   return "        <tr class=\"issue "
-    + ((stack1 = (helpers.isEven || (depth0 && depth0.isEven) || alias1).call(depth0,(data && data.index),{"name":"isEven","hash":{},"fn":this.program(7, data, 0),"inverse":this.program(9, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = (helpers.isEven || (depth0 && depth0.isEven) || alias1).call(depth0,(data && data.index),{"name":"isEven","hash":{},"fn":this.program(7, data, 0, blockParams, depths),"inverse":this.program(9, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "")
     + " priority-"
     + alias3(alias2(((stack1 = (depth0 != null ? depth0.priority : depth0)) != null ? stack1.id : stack1), depth0))
     + "\">\n            <td class=\"id\"><a href=\"/issues/"
@@ -4909,9 +4909,9 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     + "\">"
     + alias3(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
     + "</a></td>\n            "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withProject : depth0),{"name":"if","hash":{},"fn":this.program(11, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depths[1] != null ? depths[1].withProject : depths[1]),{"name":"if","hash":{},"fn":this.program(11, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n            "
-    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.withAssigned : depth0),{"name":"if","hash":{},"fn":this.program(13, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depths[1] != null ? depths[1].withAssigned : depths[1]),{"name":"if","hash":{},"fn":this.program(13, data, 0, blockParams, depths),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\n            <td class=\"status\" title=\""
     + alias3(alias2(((stack1 = (depth0 != null ? depth0.status : depth0)) != null ? stack1.name : stack1), depth0))
     + "\">"
@@ -4946,11 +4946,11 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
 },"15":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"No issues",{"name":"_","hash":{},"data":data}))
     + "\n";
-},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data,blockParams,depths) {
     var stack1;
 
-  return ((stack1 = (helpers.isNotEmpty || (depth0 && depth0.isNotEmpty) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"isNotEmpty","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(15, data, 0),"data":data})) != null ? stack1 : "");
-},"useData":true});
+  return ((stack1 = (helpers.isNotEmpty || (depth0 && depth0.isNotEmpty) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"isNotEmpty","hash":{},"fn":this.program(1, data, 0, blockParams, depths),"inverse":this.program(15, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "");
+},"useData":true,"useDepths":true});
 templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>Úkoly s vypršeným Uzavřít do</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
 },"useData":true});
