@@ -1,1 +1,7 @@
- <span class="glyphicon glyphicon-warning-sign" style="color: #a6281b;padding-right:3px;" title="{{ title }}"></span>
+ <span class="glyphicon glyphicon-warning-sign" style="color: #a6281b;padding-right:3px;" title="{{#is from to ~}}
+{{_ "Not available %0" from ~}}
+{{else ~}}
+{{_ "Not available from %0 to %1" from to ~}}
+{{/is ~}}
+{{#if type}}: {{type}}{{/if ~}}
+ "></span>

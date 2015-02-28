@@ -131,14 +131,10 @@ define([
           absence = findCurrentAbsence(name);
 
         if (absence) {
-          var title = moment(self.fixDate(absence.from)).format('D. MMMM');
-          title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
-          if (absence.type && absence.type !== '-') {
-            title += ': ' + absence.type;
-          }
-
           $user.after(templates['not_available_user']({
-            title: title
+            from: moment(self.fixDate(absence.from)).format('D. MMMM'),
+            to: moment(self.fixDate(absence.to)).format('D. MMMM'),
+            type: absence.type && absence.type !== '-' ? absence.type : null
           }));
         }
       });

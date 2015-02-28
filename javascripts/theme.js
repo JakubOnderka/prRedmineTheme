@@ -3972,6 +3972,9 @@ define('translation/cs',{
   'Show details': 'Zobrazit detaily',
   'Planned absences': 'Plánované absence',
   refresh: 'obnovit',
+  'Not available from %0 to %1': 'Nedostupný od %0 do %1',
+  'Not available %0': 'Nedostupný %0',
+
 
   // Assign select author
   'issue author': 'autor issue'
@@ -3994,7 +3997,15 @@ define('lib/translate',['translation/cs', 'translation/en'], function(cs, en) {
 });
 define('template/helper/translate',['vendor/handlebars.runtime', 'lib/translate'], function (handlebars, _) {
   handlebars.registerHelper('_', function(key) {
-    return _(key);
+    var translated = _(key);
+
+    var i = 0;
+    for (var a in this) {
+      //translated = translated.replace('%' + (i++), this[a]);
+      translated = translated.replace('%' + a, this[a]);
+    }
+
+    return translated;
   });
 });
 define('template/helper/dayFromDate',['vendor/handlebars.runtime'], function (handlebars) {
@@ -4840,11 +4851,21 @@ templates['issue_tree_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"mai
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Done",{"name":"_","hash":{},"data":data}))
     + "</th>\n    </tr>\n</thead>";
 },"useData":true});
-templates['not_available_user'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
+    return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));
+},"3":function(depth0,helpers,partials,data) {
+    return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available from %0 to %1",(depth0 != null ? depth0.from : depth0),(depth0 != null ? depth0.to : depth0),{"name":"_","hash":{},"data":data}));
+},"5":function(depth0,helpers,partials,data) {
     var helper;
 
+  return ": "
+    + this.escapeExpression(((helper = (helper = helpers.type || (depth0 != null ? depth0.type : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"type","hash":{},"data":data}) : helper)));
+},"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var stack1;
+
   return " <span class=\"glyphicon glyphicon-warning-sign\" style=\"color: #a6281b;padding-right:3px;\" title=\""
-    + this.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
+    + ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.from : depth0),(depth0 != null ? depth0.to : depth0),{"name":"is","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(3, data, 0),"data":data})) != null ? stack1 : "")
+    + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":this.program(5, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\"></span>";
 },"useData":true});
 templates['open_timey'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -5095,14 +5116,10 @@ define('module/absences',[
           absence = findCurrentAbsence(name);
 
         if (absence) {
-          var title = moment(self.fixDate(absence.from)).format('D. MMMM');
-          title += '–' + moment(self.fixDate(absence.to)).format('D. MMMM');
-          if (absence.type && absence.type !== '-') {
-            title += ': ' + absence.type;
-          }
-
           $user.after(templates['not_available_user']({
-            title: title
+            from: moment(self.fixDate(absence.from)).format('D. MMMM'),
+            to: moment(self.fixDate(absence.to)).format('D. MMMM'),
+            type: absence.type && absence.type !== '-' ? absence.type : null
           }));
         }
       });
