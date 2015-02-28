@@ -4001,7 +4001,7 @@ define('template/helper/translate',['vendor/handlebars.runtime', 'lib/translate'
 
     var i = 0;
     for (var a in this) {
-      //translated = translated.replace('%' + (i++), this[a]);
+      translated = translated.replace('%' + (i++), this[a]);
       translated = translated.replace('%' + a, this[a]);
     }
 
@@ -5189,7 +5189,9 @@ define('module/absences',[
 
       var self = this;
       $('#plannedAbsences .refresh').click(function() {
+        $('#ajax-indicator').show();
         self.load(function(absences) {
+          $('#ajax-indicator').hide();
           var html = self.createHtml(absences);
           self.putHtmlIntoDocument(html);
         });

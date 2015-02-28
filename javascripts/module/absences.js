@@ -204,7 +204,9 @@ define([
 
       var self = this;
       $('#plannedAbsences .refresh').click(function() {
+        $('#ajax-indicator').show();
         self.load(function(absences) {
+          $('#ajax-indicator').hide();
           var html = self.createHtml(absences);
           self.putHtmlIntoDocument(html);
         });
