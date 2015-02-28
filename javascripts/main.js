@@ -15,7 +15,8 @@ require([
   'template/helper/is',
   'template/helper/isEven',
   'template/helper/isNotEmpty',
-  'template/helper/monthFromDate'
+  'template/helper/monthFromDate',
+  'template/helper/redmineTime'
 ]);
 
 require([
@@ -434,33 +435,35 @@ var ProofReasonRedmineTheme = {
        $('table.issues th[title="Sort by \"Estimated time\""] a').html('Estimate');*/
     },
 
-    setFormatUp: function (cellSelector, alternateFormats, originalFormat) {
-      this.prepareCells(cellSelector);
-      for (var format in alternateFormats) {
-        this.addAlternateFormat(cellSelector, format, alternateFormats[format]);
+    setFormatUp: function (cellSelector, alternateFormats) {
+      this.prepareCells(cellSelector, alternateFormats);
 
-        if (originalFormat == null) {
-          originalFormat = format;
-        }
+      if (this.tools.cookie(cellSelector)) {
+        this.showAlternateFormat(cellSelector, this.tools.cookie(cellSelector));
       }
-      this.showAlternateFormat(cellSelector, this.tools.cookie(cellSelector) ? this.tools.cookie(cellSelector) : originalFormat);
     },
 
-    prepareCells: function (cells) {
+    prepareCells: function (cells, alternateFormats) {
       $(cells).each(function () {
-        $(this).data('format.' + 'originalFormat', $(this).text());
-        $(this).attr('title', $(this).text());
-        $(this).data('currentlyDisplayed', 'originalFormat');
+        var $this = $(this),
+          text = $this.text();
+
+        if ($this.data('currentlyDisplayed')) {
+          return;
+        }
+
+        $this.data('format.' + 'originalFormat', text);
+        $this.attr('title', text);
+        $this.data('currentlyDisplayed', 'originalFormat');
+
+        for (var format in alternateFormats) {
+          var procedure = alternateFormats[format];
+          $this.data('format.' + format, procedure(text));
+        }
       });
 
       $(cells).click(function () {
         ProofReasonRedmineTheme.AlternateCellFormats.toggleFormats(cells);
-      });
-    },
-
-    addAlternateFormat: function (cells, format, procedure) {
-      $(cells).each(function () {
-        $(this).data('format.' + format, procedure($(this).text()));
       });
     },
 

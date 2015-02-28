@@ -60,6 +60,8 @@ define([
         });
 
         $('#my-issues-content').html(html);
+
+        ProofReasonRedmineTheme.AlternateCellFormats.init();
       });
 
       redmineApi.getIssuesWithCache({
@@ -77,6 +79,8 @@ define([
         });
 
         $('#due-date-issues-content').html(html);
+
+        ProofReasonRedmineTheme.AlternateCellFormats.init();
       });
     }
   }

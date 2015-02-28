@@ -19,7 +19,7 @@
             {{#if ../withAssigned}}<td class="assigned_to">{{assigned_to.name}}</td>{{/if}}
             <td class="status" title="{{status.name}}">{{status.name}}</td>
             <td class="subject"><a href="/issues/{{id}}">{{subject}}</a></td>
-            <td class="updated_on">{{updated_on}}</td>
+            <td class="updated_on">{{redmineTime updated_on}}</td>
             <td class="due_date">{{due_date}}</td>
         </tr>
     {{/each}}

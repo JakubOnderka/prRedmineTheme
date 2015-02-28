@@ -4057,6 +4057,11 @@ define('template/helper/monthFromDate',['vendor/handlebars.runtime', 'vendor/mom
     return date.charAt(0).toUpperCase() + date.slice(1)
   });
 });
+define('template/helper/redmineTime',['vendor/handlebars.runtime', 'vendor/moment'], function (handlebars, moment) {
+  handlebars.registerHelper('redmineTime', function(key) {
+    return moment(key).format('YYYY-MM-DD HH.mm');
+  });
+});
 
 
 define('lib/local_storage',[],function() {
@@ -4921,7 +4926,7 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockP
     + "\">"
     + alias3(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"subject","hash":{},"data":data}) : helper)))
     + "</a></td>\n            <td class=\"updated_on\">"
-    + alias3(((helper = (helper = helpers.updated_on || (depth0 != null ? depth0.updated_on : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"updated_on","hash":{},"data":data}) : helper)))
+    + alias3((helpers.redmineTime || (depth0 && depth0.redmineTime) || alias1).call(depth0,(depth0 != null ? depth0.updated_on : depth0),{"name":"redmineTime","hash":{},"data":data}))
     + "</td>\n            <td class=\"due_date\">"
     + alias3(((helper = (helper = helpers.due_date || (depth0 != null ? depth0.due_date : depth0)) != null ? helper : alias1),(typeof helper === alias4 ? helper.call(depth0,{"name":"due_date","hash":{},"data":data}) : helper)))
     + "</td>\n        </tr>\n";
@@ -5605,6 +5610,8 @@ define('module/issues_project',[
         });
 
         $('#my-issues-content').html(html);
+
+        ProofReasonRedmineTheme.AlternateCellFormats.init();
       });
 
       redmineApi.getIssuesWithCache({
@@ -5622,6 +5629,8 @@ define('module/issues_project',[
         });
 
         $('#due-date-issues-content').html(html);
+
+        ProofReasonRedmineTheme.AlternateCellFormats.init();
       });
     }
   }
@@ -5644,7 +5653,8 @@ require([
   'template/helper/is',
   'template/helper/isEven',
   'template/helper/isNotEmpty',
-  'template/helper/monthFromDate'
+  'template/helper/monthFromDate',
+  'template/helper/redmineTime'
 ]);
 
 require([
@@ -6063,33 +6073,35 @@ var ProofReasonRedmineTheme = {
        $('table.issues th[title="Sort by \"Estimated time\""] a').html('Estimate');*/
     },
 
-    setFormatUp: function (cellSelector, alternateFormats, originalFormat) {
-      this.prepareCells(cellSelector);
-      for (var format in alternateFormats) {
-        this.addAlternateFormat(cellSelector, format, alternateFormats[format]);
+    setFormatUp: function (cellSelector, alternateFormats) {
+      this.prepareCells(cellSelector, alternateFormats);
 
-        if (originalFormat == null) {
-          originalFormat = format;
-        }
+      if (this.tools.cookie(cellSelector)) {
+        this.showAlternateFormat(cellSelector, this.tools.cookie(cellSelector));
       }
-      this.showAlternateFormat(cellSelector, this.tools.cookie(cellSelector) ? this.tools.cookie(cellSelector) : originalFormat);
     },
 
-    prepareCells: function (cells) {
+    prepareCells: function (cells, alternateFormats) {
       $(cells).each(function () {
-        $(this).data('format.' + 'originalFormat', $(this).text());
-        $(this).attr('title', $(this).text());
-        $(this).data('currentlyDisplayed', 'originalFormat');
+        var $this = $(this),
+          text = $this.text();
+
+        if ($this.data('currentlyDisplayed')) {
+          return;
+        }
+
+        $this.data('format.' + 'originalFormat', text);
+        $this.attr('title', text);
+        $this.data('currentlyDisplayed', 'originalFormat');
+
+        for (var format in alternateFormats) {
+          var procedure = alternateFormats[format];
+          $this.data('format.' + format, procedure(text));
+        }
       });
 
       $(cells).click(function () {
         ProofReasonRedmineTheme.AlternateCellFormats.toggleFormats(cells);
-      });
-    },
-
-    addAlternateFormat: function (cells, format, procedure) {
-      $(cells).each(function () {
-        $(this).data('format.' + format, procedure($(this).text()));
       });
     },
 
