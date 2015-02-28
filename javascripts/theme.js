@@ -3963,6 +3963,7 @@ define('translation/cs',{
   Status: 'Stav',
   Done: 'Hotovo',
   'Due date': 'Uzavřít do',
+  'Updated on': 'Aktualizováno',
 
   // Timey
   'Open Timey': 'Otevřít Timey',
@@ -4880,7 +4881,9 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
     + "\">"
     + alias2(((helper = (helper = helpers.subject || (depth0 != null ? depth0.subject : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"subject","hash":{},"data":data}) : helper)))
-    + "</a></td>\n            <td class=\"due_date\">"
+    + "</a></td>\n            <td class=\"updated_on\">"
+    + alias2(((helper = (helper = helpers.updated_on || (depth0 != null ? depth0.updated_on : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"updated_on","hash":{},"data":data}) : helper)))
+    + "</td>\n            <td class=\"due_date\">"
     + alias2(((helper = (helper = helpers.due_date || (depth0 != null ? depth0.due_date : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(depth0,{"name":"due_date","hash":{},"data":data}) : helper)))
     + "</td>\n        </tr>\n";
 },"6":function(depth0,helpers,partials,data) {
@@ -4911,7 +4914,7 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data) {
     + "</th>\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Subject",{"name":"_","hash":{},"data":data}))
     + "</th>\n        <th>"
-    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Actualized at",{"name":"_","hash":{},"data":data}))
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Updated on",{"name":"_","hash":{},"data":data}))
     + "</th>\n        <th>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
     + "</th>\n    </tr>\n    </thead>\n    <tbody>\n"

@@ -5,6 +5,7 @@ define({
   Status: 'Stav',
   Done: 'Hotovo',
   'Due date': 'Uzavřít do',
+  'Updated on': 'Aktualizováno',
 
   // Timey
   'Open Timey': 'Otevřít Timey',
