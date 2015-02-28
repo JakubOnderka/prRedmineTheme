@@ -731,45 +731,12 @@ $(function() {
 //    ######## #### ########   ######
 
 
-// http://stackoverflow.com/questions/2270910/how-to-convert-sequence-of-numbers-in-an-array-to-range-of-numbers
-function getRanges(array) {
-  var ranges = [], rstart, rend;
-  for (var i = 0; i < array.length; i++) {
-    rstart = array[i];
-    rend = rstart;
-    while (array[i + 1] - array[i] == 1) {
-      rend = array[i + 1]; // increment the index if the numbers sequential
-      i++;
-    }
-    ranges.push(rstart == rend ? rstart+'' : rstart + '-' + rend);
-  }
-  return ranges;
-}
-
-
-// http://stackoverflow.com/questions/1810984/number-of-days-in-any-month
-function getDaysInMonth(m, y) {
-   return /8|3|5|10/.test(--m)?30:m==1?(!(y%4)&&y%100)||!(y%400)?29:28:31;
-}
-
 // http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
 Date.prototype.yyyymmdd = function() {
-   var yyyy = this.getFullYear().toString();
-   var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-   var dd  = this.getDate().toString();
-   return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]); // padding
-  };
-
-//http://stackoverflow.com/a/7616484
-String.prototype.hashCode = function(){
-    var hash = 0, i, char;
-    if (this.length == 0) return hash;
-    for (i = 0; i < this.length; i++) {
-        char = this.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    return hash;
+  var yyyy = this.getFullYear().toString();
+  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+  var dd  = this.getDate().toString();
+  return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]); // padding
 };
 
 //http://stackoverflow.com/questions/2627473/how-to-calculate-the-number-of-days-between-two-dates-using-javascript
