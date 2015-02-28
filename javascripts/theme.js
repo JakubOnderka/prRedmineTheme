@@ -4945,14 +4945,32 @@ define('module/related_issues_header',['lib/page_property_miner', 'templates'], 
     }
   }
 });
+define('lib/replace_issue_form_proxy',[],function() {
+  var proxied = replaceIssueFormWith,
+    callbacks = [];
+
+  replaceIssueFormWith = function () {
+    console.log('replaceIssueFormWith proxy called');
+    var output = proxied.apply(this, arguments);
+    for (var i = 0; i < callbacks.length; i++) {
+      callbacks[i]();
+    }
+    return output;
+  };
+
+  return function (callback) {
+    callbacks.push(callback);
+  }
+});
 
 
 define('module/absences',[
   'lib/page_property_miner',
   'lib/local_storage',
   'templates',
-  'vendor/moment'
-], function (ppp, ls, templates, moment) {
+  'vendor/moment',
+  'lib/replace_issue_form_proxy'
+], function (ppp, ls, templates, moment, proxy) {
   return {
     absencesInfoUrl: null,
     htmlOutput: null,
@@ -5056,15 +5074,20 @@ define('module/absences',[
         return false;
       }
 
-      $('#issue_assigned_to_id option').each(function() {
-        var $option = $(this),
-          name = $option.text(),
-          absence = findCurrentAbsence(name);
+      function markUserInUpdateForm() {
+        $('#issue_assigned_to_id option').each(function() {
+          var $option = $(this),
+            name = $option.text(),
+            absence = findCurrentAbsence(name);
 
-        if (absence) {
-          $option.text($option.text() + ' ⚠');
-        }
-      });
+          if (absence) {
+            $option.text($option.text() + ' ⚠');
+          }
+        });
+      }
+
+      markUserInUpdateForm();
+      proxy(markUserInUpdateForm);
 
       $('.user').each(function() {
         var $user = $(this),
@@ -5330,23 +5353,6 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
       startDate: startDate,
       dueDate: dueDate
     };
-  }
-});
-define('lib/replace_issue_form_proxy',[],function() {
-  var proxied = replaceIssueFormWith,
-    callbacks = [];
-
-  replaceIssueFormWith = function () {
-    console.log('replaceIssueFormWith proxy called');
-    var output = proxied.apply(this, arguments);
-    for (var i = 0; i < callbacks.length; i++) {
-      callbacks[i]();
-    }
-    return output;
-  };
-
-  return function (callback) {
-    callbacks.push(callback);
   }
 });
 

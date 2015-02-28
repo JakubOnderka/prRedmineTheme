@@ -4,8 +4,9 @@ define([
   'lib/page_property_miner',
   'lib/local_storage',
   'templates',
-  'vendor/moment'
-], function (ppp, ls, templates, moment) {
+  'vendor/moment',
+  'lib/replace_issue_form_proxy'
+], function (ppp, ls, templates, moment, proxy) {
   return {
     absencesInfoUrl: null,
     htmlOutput: null,
@@ -109,15 +110,20 @@ define([
         return false;
       }
 
-      $('#issue_assigned_to_id option').each(function() {
-        var $option = $(this),
-          name = $option.text(),
-          absence = findCurrentAbsence(name);
+      function markUserInUpdateForm() {
+        $('#issue_assigned_to_id option').each(function() {
+          var $option = $(this),
+            name = $option.text(),
+            absence = findCurrentAbsence(name);
 
-        if (absence) {
-          $option.text($option.text() + ' ⚠');
-        }
-      });
+          if (absence) {
+            $option.text($option.text() + ' ⚠');
+          }
+        });
+      }
+
+      markUserInUpdateForm();
+      proxy(markUserInUpdateForm);
 
       $('.user').each(function() {
         var $user = $(this),
