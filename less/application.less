@@ -237,7 +237,8 @@ body.controller-issues.action-show #content > .issue {
     &.status-7 .attributes td.status:before,
     &.status-8 .attributes td.status:before,
     &.status-10 .attributes td.status:before,
-    &.status-16 .attributes td.status:before {
+    &.status-16 .attributes td.status:before,
+    &.status-17 .attributes td.status:before {
         font-family: 'Glyphicons Halflings';
         padding: 3px 4px;
         margin-right: 6px;
@@ -304,6 +305,11 @@ body.controller-issues.action-show #content > .issue {
     // Needs review
     &.status-16 .attributes td.status:before {
         content: "\e105";
+    }
+
+    // Closed
+    &.status-17 .attributes td.status:before {
+        content: "\e021";
     }
 }
 
