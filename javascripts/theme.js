@@ -4933,7 +4933,7 @@ templates['not_available_user'] = template({"1":function(depth0,helpers,partials
 },"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var stack1;
 
-  return " <span class=\"glyphicon glyphicon-warning-sign\" style=\"color: #a6281b;padding-right:3px;\" title=\""
+  return " <span class=\"glyphicon glyphicon-warning-sign\" style=\"color: #d9534f;padding-right:3px;\" title=\""
     + ((stack1 = (helpers.is || (depth0 && depth0.is) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.from : depth0),(depth0 != null ? depth0.to : depth0),{"name":"is","hash":{},"fn":this.program(1, data, 0),"inverse":this.program(3, data, 0),"data":data})) != null ? stack1 : "")
     + ((stack1 = helpers['if'].call(depth0,(depth0 != null ? depth0.type : depth0),{"name":"if","hash":{},"fn":this.program(5, data, 0),"inverse":this.noop,"data":data})) != null ? stack1 : "")
     + "\"></span>";
