@@ -14,7 +14,7 @@ define([
 
       function addText() {
         $('#issue_assigned_to_id').find('option[value="' + ipm().createdBy.id +'"]').each(function() {
-          $(this).text($(this).text() + ' (' +  _('issue author') + ')');
+          $(this).text($(this).text() + ' (' +  _('author') + ')');
         });
       }
 

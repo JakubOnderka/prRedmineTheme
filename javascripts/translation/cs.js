@@ -21,5 +21,5 @@ define({
 
 
   // Assign select author
-  'issue author': 'autor issue'
+  'author': 'autor'
 });
