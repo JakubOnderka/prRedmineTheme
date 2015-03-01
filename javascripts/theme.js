@@ -5664,8 +5664,8 @@ define('module/localize',['lib/page_property_miner', 'lib/local_storage', 'lib/r
       }
 
       if (ppp.matchPage('issues', 'show')) {
-        this.localizeElementContent($('.issue td.status'));
-        this.localizeElementContent($('.issue td.priority'));
+        this.localizeElementContent($('.issue .attributes td.status'));
+        this.localizeElementContent($('.issue .attributes td.priority'));
 
         var localizeForm = function() {
           self.localizeSelect($('#issue_status_id'));
