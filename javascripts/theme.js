@@ -4959,6 +4959,9 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockP
 templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>Úkoly s vypršeným Uzavřít do</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
 },"useData":true});
+templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>";
+},"useData":true});
 templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));
 },"3":function(depth0,helpers,partials,data) {
@@ -5556,7 +5559,7 @@ define('module/better_header',['lib/page_property_miner'], function (ppp) {
     }
   }
 });
-define('module/issues_project',[
+define('module/issues',[
   'vendor/moment',
   'lib/redmine_api',
   'lib/page_property_miner',
@@ -5582,64 +5585,98 @@ define('module/issues_project',[
     });
   }
 
+  var redmineApi = new RedmineApi();
+
   return {
     init: function() {
-
-      if (!ppp.matchPage('projects', 'show')) {
-        return;
-      }
 
       if (!ls.get('enabled:issues_project')) {
         return;
       }
 
-      var redmineApi = new RedmineApi(),
-        projectName = ppp.getProjectName();
+      if (ppp.matchPage('projects', 'show')) {
+        this.project();
 
+      } else if (ppp.matchPage('welcome', 'index')) {
+        this.welcome();
+      }
+    },
+
+    project: function () {
+        var projectName = ppp.getProjectName();
+
+        $('#content .splitcontentright')
+          .prepend(templates['issues_project']())
+          .css('width', '70%')
+          .css('margin-top', '-30px');
+
+        $('#content .splitcontentleft')
+          .css('width', '28%');
+
+        ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
+
+        redmineApi.getIssuesWithCache({
+          project_id: projectName,
+          assigned_to_id: 'me',
+          sort: 'due_date:desc,updated_on:desc',
+          limit: 20
+        }, function (data) {
+          sortIssues(data.issues);
+
+          var html = templates['issues']({
+            issues: data.issues,
+            withProject: false,
+            withAssigned: false
+          });
+
+          $('#my-issues-content').html(html);
+
+          ProofReasonRedmineTheme.AlternateCellFormats.init();
+        });
+
+        redmineApi.getIssuesWithCache({
+          project_id: projectName,
+          due_date: '<=' + moment().format('YYYY-MM-DD'),
+          sort: 'due_date:desc',
+          limit: 20
+        }, function(data) {
+          sortIssues(data.issues);
+
+          var html = templates['issues']({
+            issues: data.issues,
+            withProject: false,
+            withAssigned: true
+          });
+
+          $('#due-date-issues-content').html(html);
+
+          ProofReasonRedmineTheme.AlternateCellFormats.init();
+        });
+    },
+
+    welcome: function() {
       $('#content .splitcontentright')
-        .prepend(templates['issues_project']())
-        .css('width', '70%')
+        .prepend(templates['issues_welcome']())
+        .css('width', '60%')
         .css('margin-top', '-30px');
 
       $('#content .splitcontentleft')
-        .css('width', '28%');
-
-      ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
+        .css('width', '38%');
 
       redmineApi.getIssuesWithCache({
-        project_id: projectName,
-        assigned_to_id: 'me',
+        assigned_to_id: ppp.getUserId(),
         sort: 'due_date:desc,updated_on:desc',
-        limit: 20
-      }, function (data) {
-        sortIssues(data.issues);
-
-        var html = templates['issues']({
-          issues: data.issues,
-          withProject: false,
-          withAssigned: false
-        });
-
-        $('#my-issues-content').html(html);
-
-        ProofReasonRedmineTheme.AlternateCellFormats.init();
-      });
-
-      redmineApi.getIssuesWithCache({
-        project_id: projectName,
-        due_date: '<=' + moment().format('YYYY-MM-DD'),
-        sort: 'due_date:desc',
         limit: 20
       }, function(data) {
         sortIssues(data.issues);
 
         var html = templates['issues']({
           issues: data.issues,
-          withProject: false,
-          withAssigned: true
+          withProject: true,
+          withAssigned: false
         });
 
-        $('#due-date-issues-content').html(html);
+        $('#my-issues-content').html(html);
 
         ProofReasonRedmineTheme.AlternateCellFormats.init();
       });
@@ -5733,7 +5770,7 @@ require([
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
   'module/better_header',
-  'module/issues_project',
+  'module/issues',
   'module/localize'
 ], function () {
 

@@ -31,7 +31,7 @@ require([
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
   'module/better_header',
-  'module/issues_project',
+  'module/issues',
   'module/localize'
 ], function () {
 
