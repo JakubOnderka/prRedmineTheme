@@ -3,7 +3,7 @@
 define(function () {
   return {
     init: function () {
-      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description', function (event) {
+      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description, #issue-form input', function (event) {
         if (event.keyCode === 13 && (event.metaKey || event.ctrlKey)) {
           // Disable showing warning message
           window.onbeforeunload = null;
