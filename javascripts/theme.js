@@ -3978,9 +3978,13 @@ define('translation/cs',{
   'Not available from %0 to %1': 'Nedostupný od %0 do %1',
   'Not available %0': 'Nedostupný %0',
 
-
   // Assign select author
-  'author': 'autor'
+  'author': 'autor',
+
+  // Issues
+  'My issues': 'Mé úkoly',
+  'No issues': 'Žádné úkoly',
+  'My overdue issues': 'Úkoly s vypršeným Uzavří do'
 });
 define('translation/en',{
 
@@ -4958,10 +4962,18 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockP
   return ((stack1 = (helpers.isNotEmpty || (depth0 && depth0.isNotEmpty) || helpers.helperMissing).call(depth0,(depth0 != null ? depth0.issues : depth0),{"name":"isNotEmpty","hash":{},"fn":this.program(1, data, 0, blockParams, depths),"inverse":this.program(15, data, 0, blockParams, depths),"data":data})) != null ? stack1 : "");
 },"useData":true,"useDepths":true});
 templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>Úkoly s vypršeným Uzavřít do</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
+    var alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "<div class=\"box issues\">\n    <h3>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
+    + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My overdue issues",{"name":"_","hash":{},"data":data}))
+    + "</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
 },"useData":true});
 templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<div class=\"box issues\">\n    <h3>Mé úkoly</h3>\n    <div id=\"my-issues-content\"></div>\n</div>";
+    return "<div class=\"box issues\">\n    <h3>"
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
+    + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>";
 },"useData":true});
 templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));

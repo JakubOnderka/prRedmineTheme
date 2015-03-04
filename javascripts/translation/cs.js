@@ -20,7 +20,11 @@ define({
   'Not available from %0 to %1': 'Nedostupný od %0 do %1',
   'Not available %0': 'Nedostupný %0',
 
-
   // Assign select author
-  'author': 'autor'
+  'author': 'autor',
+
+  // Issues
+  'My issues': 'Mé úkoly',
+  'No issues': 'Žádné úkoly',
+  'My overdue issues': 'Úkoly s vypršeným Uzavří do'
 });
