@@ -3,8 +3,9 @@ define([
   'lib/redmine_api',
   'lib/page_property_miner',
   'templates',
-  'lib/local_storage'
-], function (moment, RedmineApi, ppp, templates, ls) {
+  'lib/local_storage',
+  'module/alternate_cell_format'
+], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat) {
 
   /**
    * Sort issues by due date and updated on
@@ -70,7 +71,7 @@ define([
 
           $('#my-issues-content').html(html);
 
-          ProofReasonRedmineTheme.AlternateCellFormats.init();
+          alternateCellFormat.init();
         });
 
         redmineApi.getIssuesWithCache({
@@ -89,7 +90,7 @@ define([
 
           $('#due-date-issues-content').html(html);
 
-          ProofReasonRedmineTheme.AlternateCellFormats.init();
+          alternateCellFormat.init();
         });
     },
 
@@ -117,7 +118,7 @@ define([
 
         $('#my-issues-content').html(html);
 
-        ProofReasonRedmineTheme.AlternateCellFormats.init();
+        alternateCellFormat.init();
       });
     }
   }
