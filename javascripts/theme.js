@@ -3958,6 +3958,7 @@ var __module0__ = (function(__dependency1__, __dependency2__, __dependency3__, _
 
 define('translation/cs',{
 
+  Project: 'Projekt',
   Subject: 'Předmět',
   Assignee: 'Přiřazeno',
   Status: 'Stav',

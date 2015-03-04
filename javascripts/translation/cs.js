@@ -1,5 +1,6 @@
 define({
 
+  Project: 'Projekt',
   Subject: 'Předmět',
   Assignee: 'Přiřazeno',
   Status: 'Stav',
