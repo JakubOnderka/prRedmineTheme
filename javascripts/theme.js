@@ -5715,7 +5715,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
         };
 
         if (!(value in statusReplacements)) {
-          return;
+          return value;
         }
 
         var replacementCell = '';

@@ -141,7 +141,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
         };
 
         if (!(value in statusReplacements)) {
-          return;
+          return value;
         }
 
         var replacementCell = '';
