@@ -5714,6 +5714,10 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
           'Needs deployment': ['green']
         };
 
+        if (!value in statusReplacements) {
+          return;
+        }
+
         var replacementCell = '';
 
         for (var i = 0; i < statusReplacements[value].length; i++) {

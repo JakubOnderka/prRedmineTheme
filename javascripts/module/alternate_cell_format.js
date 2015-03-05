@@ -140,6 +140,10 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
           'Needs deployment': ['green']
         };
 
+        if (!value in statusReplacements) {
+          return;
+        }
+
         var replacementCell = '';
 
         for (var i = 0; i < statusReplacements[value].length; i++) {
