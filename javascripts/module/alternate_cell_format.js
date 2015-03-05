@@ -205,10 +205,20 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
       },
 
       shortIssueType: function (value) {
+        var icons = {
+          request: '<span style="opacity:.4">&fnof;</span>',
+          error: '<img src="/themes/prRedmineTheme/stylesheets/img/error.png" width="16" height="16" style="opacity:.4">',
+          support: '<span class="glyphicon glyphicon-question-sign" style="opacity:.4"></span>',
+          development: '<span class="glyphicon glyphicon-console" style="opacity:.4"></span>'
+        };
+
         var types = {
-          'Požadavek': '<span style="opacity:.4">&fnof;</span>',
-          'Feature Request': '<span style="opacity:.4">&fnof;</span>',
-          'Error': '<img src="/themes/prRedmineTheme/stylesheets/img/error.png" width="16" height="16" style="opacity:.4">'
+          'Požadavek': icons['request'],
+          'Feature Request': icons['request'],
+          'Error': icons['error'],
+          'Error (Baufinder)': icons['error'],
+          'Podpora': icons['support'],
+          'Development': icons['development']
         };
 
         if (value in types) {
