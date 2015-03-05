@@ -176,7 +176,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
               textualDueDate = 'Yesterday';
               break;
             case 1:
-              textualDueDate = ProofReasonRedmineTheme.AlternateCellFormats.format.relativeTime(value);
+              textualDueDate = this.relativeTime(value);
               break;
             case 2:
               textualDueDate = 'Tomorrow';

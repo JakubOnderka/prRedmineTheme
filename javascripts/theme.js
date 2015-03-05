@@ -5750,7 +5750,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
               textualDueDate = 'Yesterday';
               break;
             case 1:
-              textualDueDate = ProofReasonRedmineTheme.AlternateCellFormats.format.relativeTime(value);
+              textualDueDate = this.relativeTime(value);
               break;
             case 2:
               textualDueDate = 'Tomorrow';
