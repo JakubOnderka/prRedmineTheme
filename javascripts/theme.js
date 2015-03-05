@@ -5750,7 +5750,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
               textualDueDate = 'Yesterday';
               break;
             case 1:
-              textualDueDate = this.relativeTime(value);
+              textualDueDate = date.toRelativeTime(new Date(), 5000, true);
               break;
             case 2:
               textualDueDate = 'Tomorrow';

@@ -176,7 +176,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
               textualDueDate = 'Yesterday';
               break;
             case 1:
-              textualDueDate = this.relativeTime(value);
+              textualDueDate = date.toRelativeTime(new Date(), 5000, true);
               break;
             case 2:
               textualDueDate = 'Tomorrow';
