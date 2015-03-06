@@ -33,7 +33,8 @@ require([
   'module/better_header',
   'module/issues',
   'module/localize',
-  'module/alternate_cell_format'
+  'module/alternate_cell_format',
+  'module/paste_issue_number'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

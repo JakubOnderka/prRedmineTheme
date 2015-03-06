@@ -5985,6 +5985,58 @@ define('module/localize',['lib/page_property_miner', 'lib/local_storage', 'lib/r
 });
 
 
+define('module/paste_issue_number',['lib/local_storage'], function (ls) {
+
+  function isIssueId(value) {
+    if (value[0] === '#') {
+      value = value.substr(1);
+    }
+
+    if (parseInt(value) == value) {
+      return value;
+    }
+
+    return false;
+  }
+
+  function goToIssue(issueId) {
+    window.location.href = "/issues/" + issueId;
+  }
+
+  return {
+    init: function () {
+      if (!ls.get('enabled:pasteIssueNumber')) {
+        return;
+      }
+
+      $('#q').on('paste', function(e) {
+        var content = e.originalEvent.clipboardData.getData('text'),
+          issueId = isIssueId(content);
+
+        if (issueId) {
+          goToIssue(issueId);
+        }
+      });
+
+      document.addEventListener('paste', function(e) {
+        if (e.target.nodeName === 'INPUT' || e.target.nodeName === 'TEXTAREA') {
+          return;
+        }
+
+        if (e.clipboardData.types.indexOf('text/plain') > -1) {
+          var content = e.clipboardData.getData('text/plain'),
+            issueId = isIssueId(content);
+
+          if (issueId) {
+            goToIssue(issueId);
+          }
+        }
+      });
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6018,7 +6070,8 @@ require([
   'module/better_header',
   'module/issues',
   'module/localize',
-  'module/alternate_cell_format'
+  'module/alternate_cell_format',
+  'module/paste_issue_number'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
