@@ -4694,19 +4694,69 @@ define('vendor/keymaster',['require','exports','module'],function(require, expor
 
   })(this);
 });
-define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster'], function (ppp, key) {
+define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], function (ppp, key, ls) {
   return {
     init: function () {
+      if (!ls.get('enabled:keyShortcuts')) {
+        return;
+      }
+
       var $mainMenu = $('#main-menu');
+
+      function goTo(href) {
+        window.location.href = href;
+      }
 
       function linkFromMainMenu(type) {
         var href = $mainMenu.find('.' + type).attr('href');
         if (href) {
-          window.location.href = href;
+          goTo(href);
           return false;
         }
         return true;
       }
+
+      $('#q').keypress(function (e) {
+        if (e.keyCode === 27) { // esc
+          $(this).blur();
+        }
+      });
+
+      /*
+      Go
+       */
+      key('g', function() {
+        key.setScope('go');
+
+        setTimeout(function () {
+          key.setScope('all');
+        }, 1000);
+
+        return false;
+      });
+
+      key('p', 'go', function () {
+        goTo('/projects');
+        return false;
+      });
+
+      key('i', 'go', function() {
+        return linkFromMainMenu('issues');
+      });
+
+      key('w', 'go', function() {
+        return linkFromMainMenu('wiki');
+      });
+
+      key('s', function () {
+        $('#q').focus();
+        return false;
+      });
+
+      key('p', function () {
+        $('#s2id_project_quick_jump_box').select2("open");
+        return false;
+      });
 
       if (ppp.matchPage('issues', 'show')) {
         key('e', function() {
