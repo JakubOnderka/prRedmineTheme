@@ -29,6 +29,7 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
       $q.keypress(function (e) {
         if (e.keyCode === 27) { // esc
           $(this).blur();
+          return false;
         }
       });
 
@@ -50,6 +51,10 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         return false;
       });
 
+      key('o', 'go', function() {
+        return linkFromMainMenu('overview');
+      });
+
       key('i', 'go', function() {
         return linkFromMainMenu('issues');
       });
@@ -58,25 +63,37 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         return linkFromMainMenu('wiki');
       });
 
+      // Focus search input
       key('s', function () {
         $q.focus();
         return false;
       });
 
+      // Focus project select
       key('p', function () {
-        $('#s2id_project_quick_jump_box').select2("open");
+        $('#s2id_project_quick_jump_box').select2('open');
         return false;
       });
 
       if (ppp.matchPage('issues', 'show')) {
+        // Show edit issue form
         key('e', function() {
           $('.updateButton:eq(0)').click();
           return false;
         });
+
+        // Hide update form on escape
         key('esc', function() {
           $('#update').hide();
           return false;
         });
+        $('#issue_notes').keypress(function (e) {
+          if (e.keyCode === 27) { // esc
+            $('#update').hide();
+            return false;
+          }
+        });
+
         /*key('left', function() {
          $('#content .next-prev-links a').each(function() {
          if ($(this).text() == '« Předchozí') {
@@ -120,22 +137,13 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
          });*/
       }
 
-      /*key('i', function() {
-       return linkFromMainMenu('issues');
-       });
+      /*
 
        key('n', function() {
        return linkFromMainMenu('new-issue');
        });
 
-       key('w', function() {
-       return linkFromMainMenu('wiki');
-       });
 
-       key('p', function() {
-       $('#s2id_project_quick_jump_box').select2("open");
-       return false;
-       });
 
        key('a', function() {
        return linkFromMainMenu('activity');
