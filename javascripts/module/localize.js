@@ -1,18 +1,15 @@
 "use strict";
 
 define(['lib/page_property_miner', 'lib/local_storage', 'lib/replace_issue_form_proxy'], function (ppp, ls, proxy) {
+  var lang = $('html').attr('lang');
+
   return {
     init: function () {
       if (!ls.get('enabled:localize')) {
         return;
       }
 
-      var lang = $('html').attr('lang'),
-        self = this;
-
-      if (lang !== 'cs') {
-        return;
-      }
+      var self = this;
 
       if (ppp.matchPage('issues', 'show')) {
         this.localizeElementContent($('.issue .attributes td.status'));
@@ -36,7 +33,11 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/replace_issue_form_
 
     localizeElementContent: function($element) {
       var text = $element.text();
-      text = this.extractCzechVersion(text);
+      if (lang === 'cs') {
+        text = this.extractCzechVersion(text);
+      } else {
+        text = this.extractEnglishVersion(text);
+      }
       if (text) {
         $element.text(text);
       }
@@ -46,6 +47,14 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/replace_issue_form_
       var parts = value.split('/');
       if (parts.length === 2) {
         return parts[0].trim();
+      }
+      return false;
+    },
+
+    extractEnglishVersion: function(value) {
+      var parts = value.split('/');
+      if (parts.length === 2) {
+        return parts[1].trim();
       }
       return false;
     }
