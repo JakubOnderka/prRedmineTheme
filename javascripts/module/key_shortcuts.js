@@ -83,13 +83,17 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         });
 
         // Hide update form on escape
+
         key('esc', function() {
           $('#update').hide();
           return false;
         });
-        $('#issue_notes').keypress(function (e) {
+
+        var $issueNotes = $('#issue_notes');
+        $issueNotes.keypress(function (e) {
           if (e.keyCode === 27) { // esc
             $('#update').hide();
+            $issueNotes.blur();
             return false;
           }
         });
