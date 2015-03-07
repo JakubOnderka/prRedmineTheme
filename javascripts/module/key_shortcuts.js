@@ -1,7 +1,13 @@
 define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], function (ppp, key, ls) {
   return {
     init: function () {
+      var $q = $('#q');
+
       if (!ls.get('enabled:keyShortcuts')) {
+        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show')) {
+          $q.focus();
+        }
+
         return;
       }
 
@@ -20,7 +26,7 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         return true;
       }
 
-      $('#q').keypress(function (e) {
+      $q.keypress(function (e) {
         if (e.keyCode === 27) { // esc
           $(this).blur();
         }
@@ -53,7 +59,7 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
       });
 
       key('s', function () {
-        $('#q').focus();
+        $q.focus();
         return false;
       });
 

@@ -4697,7 +4697,13 @@ define('vendor/keymaster',['require','exports','module'],function(require, expor
 define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], function (ppp, key, ls) {
   return {
     init: function () {
+      var $q = $('#q');
+
       if (!ls.get('enabled:keyShortcuts')) {
+        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show')) {
+          $q.focus();
+        }
+
         return;
       }
 
@@ -4716,7 +4722,7 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
         return true;
       }
 
-      $('#q').keypress(function (e) {
+      $q.keypress(function (e) {
         if (e.keyCode === 27) { // esc
           $(this).blur();
         }
@@ -4749,7 +4755,7 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
       });
 
       key('s', function () {
-        $('#q').focus();
+        $q.focus();
         return false;
       });
 
@@ -5609,16 +5615,12 @@ define('module/cmd_enter_form_submit',[],function () {
 });
 
 
-define('module/better_header',['lib/page_property_miner'], function (ppp) {
+define('module/better_header',[],function () {
   return {
     init: function () {
       // header links
       $('#header h1').prepend('<a class="go-to-my-issues" href="https://redmine.proofreason.com/issues?query_id=135">My issues</a><a class="go-to-projects" href="/projects">Projects</a>');
       //standard link for my issues: /issues?assigned_to_id=me&set_filter=1&sort=priority%3Adesc%2Cupdated_on%3Adesc
-
-      if ($(window).width() > 640 && !ppp.matchPage('issues', 'show')) {
-        $('#q').focus();
-      }
     }
   }
 });
