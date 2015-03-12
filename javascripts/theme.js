@@ -6290,6 +6290,7 @@ define('module/cl_ly',['lib/page_property_miner', 'lib/local_storage'], function
 
         $a.html(image);
         $a.attr('target', '_blank');
+        $a.removeClass('external');
       }
     }
   }

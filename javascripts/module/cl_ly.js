@@ -51,6 +51,7 @@ define(['lib/page_property_miner', 'lib/local_storage'], function (ppp, ls) {
 
         $a.html(image);
         $a.attr('target', '_blank');
+        $a.removeClass('external');
       }
     }
   }
