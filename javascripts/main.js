@@ -34,7 +34,9 @@ require([
   'module/issues',
   'module/localize',
   'module/alternate_cell_format',
-  'module/paste_issue_number'
+  'module/paste_issue_number',
+  'module/checkbox',
+  'module/cl_ly'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

@@ -25,6 +25,16 @@ define(['lib/redmine_api'], function(RedmineApi) {
       return false;
     },
 
+    getTopProjectName: function() {
+      var $root = $('#header').find('h1 .root');
+      if ($root.size()) {
+        var href = $root.attr('href');
+        return href.split('/')[2].split('?')[0];
+      } else {
+       return this.getProjectName();
+      }
+    },
+
     getProjectId: function (callback) {
       if (this.projectId === null) {
         if (this.matchPage('issues', 'show')) {

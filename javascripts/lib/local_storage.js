@@ -4,53 +4,75 @@ define(function() {
   var ls = window.localStorage,
     NS = 'theme';
 
+  function hashCode(string) {
+    var hash = 0;
+    if (string == 0) return hash;
+    for (var i = 0; i < string.length; i++) {
+      var char = string.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+  }
+
+  function generateKey(key, sub) {
+    if (key.indexOf('.') !== -1) {
+      throw new Error('Key cannot contains dot character, "' + key + '" given.');
+    }
+
+    if (sub !== undefined) {
+      return NS + '.' + key + '.' + sub;
+    } else {
+      return NS + '.' + key;
+    }
+  }
+
+  function isExpired(key) {
+    var expirationTime;
+
+    if ((expirationTime = ls.getItem(generateKey(key, 'expire'))) !== null) {
+      if (new Date() > new Date(expirationTime)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   return {
-    _key: function (key, sub) {
-      if (key.indexOf('.') !== -1) {
-        throw new Error('Key cannot contains dot character, "' + key + '" given.');
-      }
-
-      if (sub !== undefined) {
-        return NS + '.' + key + '.' + sub;
-      } else {
-        return NS + '.' + key;
-      }
-    },
-
-    _isExpired: function (key) {
-      var expirationTime;
-
-      if ((expirationTime = ls.getItem(this._key(key, 'expire'))) !== null) {
-        if (new Date() > new Date(expirationTime)) {
-          return true;
-        }
-      }
-
-      return false;
-    },
-
     set: function (key, value, expireInHours) {
       if (expireInHours !== undefined) {
         var expirationTime = new Date().getTime() + expireInHours * 3600 * 1000;
-        ls.setItem(this._key(key, 'expire'), new Date(expirationTime));
+        ls.setItem(generateKey(key, 'expire'), expirationTime);
       }
 
-      return ls.setItem(this._key(key), value);
+      return ls.setItem(generateKey(key), value);
+    },
+
+    setJsonCache: function (type, uri, data, expireInHours) {
+      return this.set(type + ':' + hashCode(uri), JSON.stringify(data), expireInHours);
     },
 
     get: function (key) {
-      if (this._isExpired(key)) {
-        ls.removeItem(this._key(key, 'expire'));
-        ls.removeItem(this._key(key));
+      if (isExpired(key)) {
+        this.remove(key);
         return null;
       }
 
-      return ls.getItem(this._key(key));
+      return ls.getItem(generateKey(key));
+    },
+
+    getJsonCache: function (type, uri) {
+      var data = this.get(type + ':' + hashCode(uri));
+      if (data) {
+        return JSON.parse(data);
+      }
+      return null;
     },
 
     remove: function (key) {
-      ls.removeItem(this._key(key, 'expire'));
-      return ls.removeItem(this._key(key));
+      ls.removeItem(generateKey(key, 'expire'));
+      return ls.removeItem(generateKey(key));
     },
 
     removeExpired: function() {
@@ -58,7 +80,7 @@ define(function() {
         var parts = lsItem.split('.');
         if (parts.length === 2 && parts[0] === NS) {
           var key = parts[1];
-          if (this._isExpired(key)) {
+          if (isExpired(key)) {
             this.remove(key);
           }
         }

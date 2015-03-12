@@ -4073,53 +4073,75 @@ define('lib/local_storage',[],function() {
   var ls = window.localStorage,
     NS = 'theme';
 
+  function hashCode(string) {
+    var hash = 0;
+    if (string == 0) return hash;
+    for (var i = 0; i < string.length; i++) {
+      var char = string.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32bit integer
+    }
+    return hash;
+  }
+
+  function generateKey(key, sub) {
+    if (key.indexOf('.') !== -1) {
+      throw new Error('Key cannot contains dot character, "' + key + '" given.');
+    }
+
+    if (sub !== undefined) {
+      return NS + '.' + key + '.' + sub;
+    } else {
+      return NS + '.' + key;
+    }
+  }
+
+  function isExpired(key) {
+    var expirationTime;
+
+    if ((expirationTime = ls.getItem(generateKey(key, 'expire'))) !== null) {
+      if (new Date() > new Date(expirationTime)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   return {
-    _key: function (key, sub) {
-      if (key.indexOf('.') !== -1) {
-        throw new Error('Key cannot contains dot character, "' + key + '" given.');
-      }
-
-      if (sub !== undefined) {
-        return NS + '.' + key + '.' + sub;
-      } else {
-        return NS + '.' + key;
-      }
-    },
-
-    _isExpired: function (key) {
-      var expirationTime;
-
-      if ((expirationTime = ls.getItem(this._key(key, 'expire'))) !== null) {
-        if (new Date() > new Date(expirationTime)) {
-          return true;
-        }
-      }
-
-      return false;
-    },
-
     set: function (key, value, expireInHours) {
       if (expireInHours !== undefined) {
         var expirationTime = new Date().getTime() + expireInHours * 3600 * 1000;
-        ls.setItem(this._key(key, 'expire'), new Date(expirationTime));
+        ls.setItem(generateKey(key, 'expire'), expirationTime);
       }
 
-      return ls.setItem(this._key(key), value);
+      return ls.setItem(generateKey(key), value);
+    },
+
+    setJsonCache: function (type, uri, data, expireInHours) {
+      return this.set(type + ':' + hashCode(uri), JSON.stringify(data), expireInHours);
     },
 
     get: function (key) {
-      if (this._isExpired(key)) {
-        ls.removeItem(this._key(key, 'expire'));
-        ls.removeItem(this._key(key));
+      if (isExpired(key)) {
+        this.remove(key);
         return null;
       }
 
-      return ls.getItem(this._key(key));
+      return ls.getItem(generateKey(key));
+    },
+
+    getJsonCache: function (type, uri) {
+      var data = this.get(type + ':' + hashCode(uri));
+      if (data) {
+        return JSON.parse(data);
+      }
+      return null;
     },
 
     remove: function (key) {
-      ls.removeItem(this._key(key, 'expire'));
-      return ls.removeItem(this._key(key));
+      ls.removeItem(generateKey(key, 'expire'));
+      return ls.removeItem(generateKey(key));
     },
 
     removeExpired: function() {
@@ -4127,7 +4149,7 @@ define('lib/local_storage',[],function() {
         var parts = lsItem.split('.');
         if (parts.length === 2 && parts[0] === NS) {
           var key = parts[1];
-          if (this._isExpired(key)) {
+          if (isExpired(key)) {
             this.remove(key);
           }
         }
@@ -4250,6 +4272,16 @@ define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
       }
 
       return false;
+    },
+
+    getTopProjectName: function() {
+      var $root = $('#header').find('h1 .root');
+      if ($root.size()) {
+        var href = $root.attr('href');
+        return href.split('/')[2].split('?')[0];
+      } else {
+       return this.getProjectName();
+      }
     },
 
     getProjectId: function (callback) {
@@ -6110,6 +6142,160 @@ define('module/paste_issue_number',['lib/local_storage'], function (ls) {
 });
 
 
+define('module/checkbox',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      if (ppp.getTopProjectName() !== 'baufinder') {
+        return;
+      }
+
+      var checkboxId = 1,
+        $description = $('#issue_description'),
+        hasDescription = $description.size() > 0,
+        $wiki = $('#content').find('.issue .wiki');
+
+      function createInputNode(id, checked) {
+        var input = document.createElement('input');
+        input.type = 'checkbox';
+        input.name = 'todo';
+        input.checked = checked;
+        input.value = id;
+        input.disabled = !hasDescription;
+        return input;
+      }
+
+      function replaceWithCheckboxes(element) {
+        for (var i = 0; i < element.childNodes.length; i++) {
+          var child = element.childNodes[i];
+          if (child.nodeType === 3) {
+            var content = child.textContent;
+
+            if (content.indexOf('[ ]') === 0) {
+              child.textContent = content.substring(3);
+              element.insertBefore(createInputNode(checkboxId++), child);
+
+            } else if (content.indexOf('[]') === 0) {
+              child.textContent = content.substring(2);
+              element.insertBefore(createInputNode(checkboxId++), child);
+
+            } else if (content.indexOf('[X]') === 0 || content.indexOf('[x]') === 0) {
+              child.textContent = content.substring(3);
+              element.insertBefore(createInputNode(checkboxId++, true), child);
+            }
+          } else {
+            replaceWithCheckboxes(child);
+          }
+        }
+      }
+
+      function changeDescription(id, checked) {
+        var text = $description.text(),
+          i = 1;
+
+        text = text.replace(/\[[ Xx]?]/g, function (match) {
+          if (id == i++) {
+            if (checked) {
+              return '[x]';
+            } else {
+              return '[ ]';
+            }
+          } else {
+            return match;
+          }
+        });
+
+        $description.text(text);
+
+        // Show warning when leaving page with changed and not saved description
+        $description.data('changed', 'changed');
+      }
+
+      replaceWithCheckboxes($wiki[0]);
+
+      $wiki.on('change', '[name="todo"]', function (e) {
+        var id = e.target.value,
+          checked = e.target.checked;
+
+        changeDescription(id, checked);
+
+        $('#issue_description_and_toolbar').show().prev().hide();
+
+        if ($wiki.find('#saveCheckbox').length == 0) {
+          $wiki.css('position', 'relative');
+          $wiki.append('<input type="submit" value="Uložit" id="saveCheckbox" style="position: absolute; right: 10px; bottom: 10px;">');
+        }
+      });
+
+      $wiki.on('click', '#saveCheckbox', function () {
+        $('#issue-form').submit();
+        return false;
+      });
+    }
+  }
+});
+
+
+define('module/cl_ly',['lib/page_property_miner', 'lib/local_storage'], function (ppp, ls) {
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      if (ppp.getTopProjectName() !== 'baufinder') {
+        return;
+      }
+
+      var self = this;
+
+      $('#content').find('p > a').each(function () {
+        var $a = $(this),
+          href = $a.attr('href');
+        if (href.indexOf('http://cl.ly/') === 0) {
+          var data = ls.getJsonCache('clly', href);
+          if (data) {
+            self.processLink($a, data);
+          } else {
+            self.getData($a.attr('href'), function (data) {
+              ls.setJsonCache('clly', href, data, 24);
+              self.processLink($a, data);
+            });
+          }
+        }
+      });
+    },
+
+
+    getData: function(url, callback) {
+      var settings = {
+        headers: {
+          'Accept': 'application/json'
+        }
+      };
+
+      $.ajax('http://acci.cz/proxy/proxy.php?csurl=' + url, settings).done(function (data) {
+        callback(data);
+      });
+    },
+
+    processLink: function ($a, data) {
+      if (data.item_type === 'image') {
+        var image = new Image();
+        image.src = data.remote_url;
+        image.title = image.alt = data.name;
+
+        $a.html(image);
+        $a.attr('target', '_blank');
+      }
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6144,7 +6330,9 @@ require([
   'module/issues',
   'module/localize',
   'module/alternate_cell_format',
-  'module/paste_issue_number'
+  'module/paste_issue_number',
+  'module/checkbox',
+  'module/cl_ly'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
