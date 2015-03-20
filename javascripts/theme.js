@@ -4003,14 +4003,11 @@ define('lib/translate',['translation/cs', 'translation/en'], function(cs, en) {
   }
 });
 define('template/helper/translate',['vendor/handlebars.runtime', 'lib/translate'], function (handlebars, _) {
-  handlebars.registerHelper('_', function(key, options) {
+  handlebars.registerHelper('_', function(key) {
     var translated = _(key);
 
-    var i = 0;
-    for (var a in options.data.root) {
-      var value = options.data.root[a];
-      translated = translated.replace('%' + (i++), value);
-      translated = translated.replace('%' + a, value);
+    for (var i = 1; i < (arguments.length - 1); i++) {
+      translated = translated.replace('%' + (i - 1), arguments[i]);
     }
 
     return translated;
