@@ -26,5 +26,5 @@ define({
   // Issues
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
-  'My overdue issues': 'Úkoly s vypršeným Uzavří do'
+  'Overdue issues': 'Úkoly s vypršeným Uzavřít do'
 });
