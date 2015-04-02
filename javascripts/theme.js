@@ -3984,7 +3984,7 @@ define('translation/cs',{
   // Issues
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
-  'My overdue issues': 'Úkoly s vypršeným Uzavří do'
+  'Overdue issues': 'Úkoly s vypršeným Uzavřít do'
 });
 define('translation/en',{
 
@@ -5065,7 +5065,7 @@ templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":
   return "<div class=\"box issues\">\n    <h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
     + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>"
-    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My overdue issues",{"name":"_","hash":{},"data":data}))
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Overdue issues",{"name":"_","hash":{},"data":data}))
     + "</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
 },"useData":true});
 templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
@@ -6295,6 +6295,61 @@ define('module/cl_ly',['lib/page_property_miner', 'lib/local_storage'], function
 });
 
 
+// return closed ticket to its author ans set closing time automatically where possible
+define('module/auto_return_to_owner',[
+  'lib/page_property_miner',
+  'lib/replace_issue_form_proxy',
+  'lib/issue_property_miner'
+], function (ppp, proxy, ipm) {
+  return {
+    init: function () {
+
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      var returnToOwner = function () {
+        var author = ipm().createdBy.id;
+
+        var $issueAssignedToId = $('select#issue_assigned_to_id');
+        $issueAssignedToId.val(author);
+        $issueAssignedToId.prev('label').highlight();
+      },
+
+      setClosingDate = function () {
+        var $issueCustomFieldValues24 = $('#issue_custom_field_values_24');
+        if ($issueCustomFieldValues24.size() > 0) {
+          $issueCustomFieldValues24.val((new Date).yyyymmdd());
+          $issueCustomFieldValues24.prev('label').highlight();
+        }
+      };
+
+      var $allAttributes = $('#all_attributes'),
+        assignedToChanged = false;
+
+      $allAttributes.on('change', 'select#issue_assigned_to_id', function () {
+        assignedToChanged = true;
+      });
+
+      $allAttributes.on('change', 'select#issue_status_id', function () {
+        var value = $(this).val();
+        if (value == 3) { // Solved
+          if (!assignedToChanged) {
+            proxy(function () {
+              returnToOwner();
+            });
+          }
+        } else if (value == 17 || value == 5) { // Closed (on baufinder) OR Closed anywhere else
+          proxy(function () {
+            setClosingDate();
+          });
+        }
+      });
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6331,7 +6386,8 @@ require([
   'module/alternate_cell_format',
   'module/paste_issue_number',
   'module/checkbox',
-  'module/cl_ly'
+  'module/cl_ly',
+  'module/auto_return_to_owner'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -6358,7 +6414,6 @@ var ProofReasonRedmineTheme = {
     this.BetterSidebar.init();
     this.BetterUpdateForm.init();
     this.BetterTimeline.init();
-    this.AutoReturnToOwner.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
@@ -6604,51 +6659,6 @@ var ProofReasonRedmineTheme = {
       } else {
         $('#update').addClass('minimized');
         this.tools.cookie('updateFormMinimized', true);
-      }
-    }
-  },
-
-  AutoReturnToOwner: {
-    init: function () {
-      // return closed ticket to its author ans set closing time automatically where possible
-
-      var $allAttributes = $('#all_attributes');
-      $allAttributes.on('change', 'select#issue_status_id', function () {
-        var value = $(this).val();
-        if (value == 3) { // Solved
-          $allAttributes.one('DOMSubtreeModified', function () {
-            console.debug('All attributes DOMSubtreeModified event.');
-
-            setTimeout(function () {
-              ProofReasonRedmineTheme.AutoReturnToOwner.returnToOwner();
-            }, 100);
-
-          });
-        } else if (value == 17 || value == 5) { // Closed (on baufinder) OR Closed anywhere else
-          $allAttributes.one('DOMSubtreeModified', function () {
-            console.debug('All attributes DOMSubtreeModified event.');
-
-            setTimeout(function () {
-              ProofReasonRedmineTheme.AutoReturnToOwner.setClosingDate();
-            }, 100);
-          });
-        }
-      });
-    },
-
-    returnToOwner: function () {
-      var author = $('p.author a').first().attr('href').substring(7);
-
-      var $issueAssignedToId = $('select#issue_assigned_to_id');
-      $issueAssignedToId.val(author);
-      $issueAssignedToId.prev('label').highlight();
-    },
-
-    setClosingDate: function () {
-      var $issueCustomFieldValues24 = $('#issue_custom_field_values_24');
-      if ($issueCustomFieldValues24.size() > 0) {
-        $issueCustomFieldValues24.val((new Date).yyyymmdd());
-        $issueCustomFieldValues24.prev('label').highlight();
       }
     }
   },
