@@ -1,6 +1,6 @@
 "use strict";
 
-define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, redmineApi) {
+define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, RedmineApi) {
   return {
     init: function () {
 
