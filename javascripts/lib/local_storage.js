@@ -31,7 +31,7 @@ define(function() {
     var expirationTime;
 
     if ((expirationTime = ls.getItem(generateKey(key, 'expire'))) !== null) {
-      if (new Date() > new Date(expirationTime)) {
+      if (new Date() > new Date(parseInt(expirationTime))) {
         return true;
       }
     }
