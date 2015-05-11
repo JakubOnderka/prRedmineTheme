@@ -6354,11 +6354,11 @@ define('module/auto_return_to_owner',[
 });
 
 
-define('module/attachments',['lib/local_storage', 'lib/redmine_api'], function (ls, redmineApi) {
+define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, redmineApi) {
   return {
     init: function () {
 
-      if (!ls.get('enabled:attachments')) {
+      if (!ppp.matchPage('issues', 'show') || !ls.get('enabled:attachments')) {
         return;
       }
 
@@ -6394,7 +6394,8 @@ define('module/attachments',['lib/local_storage', 'lib/redmine_api'], function (
     },
 
     uploaded: function () {
-      var $lastAttachment = $('#attachments_fields span').last(),
+      var redmineApi = new RedmineApi(),
+        $lastAttachment = $('#attachments_fields span').last(),
         lastAttachmentId = $lastAttachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
         self = this;
 
@@ -6403,6 +6404,7 @@ define('module/attachments',['lib/local_storage', 'lib/redmine_api'], function (
           $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
             var text = '!' + attachment.filename  + '!';
             self.insertAtCursor($('#issue_notes')[0], text);
+            return false;
           });
         }
       });

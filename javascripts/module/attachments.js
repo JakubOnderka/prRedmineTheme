@@ -1,10 +1,10 @@
 "use strict";
 
-define(['lib/local_storage', 'lib/redmine_api'], function (ls, redmineApi) {
+define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, redmineApi) {
   return {
     init: function () {
 
-      if (!ls.get('enabled:attachments')) {
+      if (!ppp.matchPage('issues', 'show') || !ls.get('enabled:attachments')) {
         return;
       }
 
@@ -40,7 +40,8 @@ define(['lib/local_storage', 'lib/redmine_api'], function (ls, redmineApi) {
     },
 
     uploaded: function () {
-      var $lastAttachment = $('#attachments_fields span').last(),
+      var redmineApi = new RedmineApi(),
+        $lastAttachment = $('#attachments_fields span').last(),
         lastAttachmentId = $lastAttachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
         self = this;
 
