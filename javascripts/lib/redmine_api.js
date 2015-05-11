@@ -85,6 +85,10 @@ define(['lib/local_storage'], function (ls) {
 
     this.getProject = function (projectId, callback) {
       this.getWithCache('/projects/' + projectId + '.json', {}, callback);
+    };
+
+    this.getAttachment = function(attachmentId, callback) {
+      this.get('/attachments/' + attachmentId + '.json', {}, callback);
     }
   }
 });

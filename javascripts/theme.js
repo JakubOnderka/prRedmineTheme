@@ -4242,6 +4242,10 @@ define('lib/redmine_api',['lib/local_storage'], function (ls) {
 
     this.getProject = function (projectId, callback) {
       this.getWithCache('/projects/' + projectId + '.json', {}, callback);
+    };
+
+    this.getAttachment = function(attachmentId, callback) {
+      this.get('/attachments/' + attachmentId + '.json', {}, callback);
     }
   }
 });
@@ -6350,6 +6354,63 @@ define('module/auto_return_to_owner',[
 });
 
 
+define('module/attachments',['lib/local_storage', 'lib/redmine_api'], function (ls, redmineApi) {
+  return {
+    init: function () {
+
+      if (!ls.get('enabled:attachments')) {
+        return;
+      }
+
+      var proxied = uploadBlob,
+        self = this;
+
+      uploadBlob = function () {
+        var output = proxied.apply(this, arguments);
+        output.done(function () {
+          self.uploaded();
+        });
+        return output;
+      }
+    },
+
+    insertAtCursor: function (myField, myValue) {
+      //IE support
+      if (document.selection) {
+        myField.focus();
+        var sel = document.selection.createRange();
+        sel.text = myValue;
+      }
+      //MOZILLA and others
+      else if (myField.selectionStart || myField.selectionStart == '0') {
+        var startPos = myField.selectionStart;
+        var endPos = myField.selectionEnd;
+        myField.value = myField.value.substring(0, startPos)
+        + myValue
+        + myField.value.substring(endPos, myField.value.length);
+      } else {
+        myField.value += myValue;
+      }
+    },
+
+    uploaded: function () {
+      var $lastAttachment = $('#attachments_fields span').last(),
+        lastAttachmentId = $lastAttachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
+        self = this;
+
+      redmineApi.getAttachment(lastAttachmentId, function (attachment) {
+        if (attachment.content_type.split('/')[0] === 'image') {
+          $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
+            var text = '!' + attachment.filename  + '!';
+            self.insertAtCursor($('#issue_notes')[0], text);
+          });
+        }
+      });
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6387,7 +6448,8 @@ require([
   'module/paste_issue_number',
   'module/checkbox',
   'module/cl_ly',
-  'module/auto_return_to_owner'
+  'module/auto_return_to_owner',
+  'module/attachments'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

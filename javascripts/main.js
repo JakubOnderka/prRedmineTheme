@@ -37,7 +37,8 @@ require([
   'module/paste_issue_number',
   'module/checkbox',
   'module/cl_ly',
-  'module/auto_return_to_owner'
+  'module/auto_return_to_owner',
+  'module/attachments'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
