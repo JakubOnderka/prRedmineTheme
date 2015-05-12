@@ -6374,22 +6374,29 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
       }
     },
 
-    insertAtCursor: function (myField, myValue) {
+    insertAtCursor: function (myField, toAdd) {
       //IE support
       if (document.selection) {
         myField.focus();
         var sel = document.selection.createRange();
-        sel.text = myValue;
+        sel.text = toAdd;
       }
       //MOZILLA and others
       else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart;
-        var endPos = myField.selectionEnd;
-        myField.value = myField.value.substring(0, startPos)
-        + myValue
-        + myField.value.substring(endPos, myField.value.length);
+        var startPos = myField.selectionStart,
+          endPos = myField.selectionEnd,
+          value = myField.value;
+
+        if (startPos > 1 && value.substring(startPos - 1, 1) != "\n") {
+          toAdd = "\n" + toAdd;
+        }
+
+        myField.value = value.substring(0, startPos)
+          + toAdd
+          + value.substring(endPos, value.length);
+
       } else {
-        myField.value += myValue;
+        myField.value += toAdd;
       }
     },
 
@@ -6401,10 +6408,19 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
 
       redmineApi.getAttachment(lastAttachmentId, function (attachment) {
         attachment = attachment.attachment;
-        
+
         if (attachment.content_type.split('/')[0] === 'image') {
           $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
-            var text = '!' + attachment.filename  + '!';
+
+            var text;
+            if (attachment.filename.indexOf(' ') != -1) {
+              var parser = document.createElement('a');
+              parser.href = attachment.content_url;
+              text = '!' + parser. pathname + '!';
+            } else {
+              text = '!' + attachment.filename  + '!';
+            }
+
             self.insertAtCursor($('#issue_notes')[0], text);
             return false;
           });
