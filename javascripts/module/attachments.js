@@ -33,7 +33,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
           endPos = myField.selectionEnd,
           value = myField.value;
 
-        if (startPos > 1 && value.substring(startPos - 1, 1) != "\n") {
+        if (startPos > 1 && value.substring(startPos - 1, startPos) != "\n") {
           toAdd = "\n" + toAdd;
         }
 
