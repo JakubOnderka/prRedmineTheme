@@ -6400,6 +6400,8 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
         self = this;
 
       redmineApi.getAttachment(lastAttachmentId, function (attachment) {
+        attachment = attachment.attachment;
+        
         if (attachment.content_type.split('/')[0] === 'image') {
           $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
             var text = '!' + attachment.filename  + '!';
