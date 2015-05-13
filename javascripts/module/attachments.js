@@ -2,9 +2,26 @@
 
 define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, RedmineApi) {
   return {
+    activeEditor: 'issue_notes',
+
     init: function () {
 
-      if (!ppp.matchPage('issues', 'show') || !ls.get('enabled:attachments')) {
+      if (!ls.get('enabled:attachments')) {
+        return;
+      }
+
+      if (ppp.matchPage('issues', 'show') || ppp.matchPage('issues', 'edit')) {
+        $('#issue_description').focus(function () {
+          self.activeEditor = 'issue_description';
+        });
+        $('#issue_notes').focus(function () {
+          self.activeEditor = 'issue_notes';
+        });
+
+      } else if (ppp.matchPage('issues', 'new')) {
+        this.activeEditor = 'issue_description';
+
+      } else {
         return;
       }
 
@@ -17,7 +34,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
           self.uploaded();
         });
         return output;
-      }
+      };
     },
 
     insertAtCursor: function (myField, toAdd) {
@@ -59,15 +76,16 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
           $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
 
             var text;
-            if (attachment.filename.indexOf(' ') != -1) {
+            if (attachment.filename.indexOf(' ') !== -1) {
+              // Filename contains space, so we must use full url to attachment (it is Redmine bug)
               var parser = document.createElement('a');
               parser.href = attachment.content_url;
-              text = '!' + parser. pathname + '!';
+              text = '!' + parser.pathname + '!';
             } else {
               text = '!' + attachment.filename  + '!';
             }
 
-            self.insertAtCursor($('#issue_notes')[0], text);
+            self.insertAtCursor(document.getElementById(self.activeEditor), text);
             return false;
           });
         }
