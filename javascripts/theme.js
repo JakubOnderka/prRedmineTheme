@@ -3984,7 +3984,10 @@ define('translation/cs',{
   // Issues
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
-  'Overdue issues': 'Úkoly s vypršeným Uzavřít do'
+  'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
+
+  // Attachments
+  'Add to editor': 'Přidat do editoru'
 });
 define('translation/en',{
 
@@ -6354,7 +6357,12 @@ define('module/auto_return_to_owner',[
 });
 
 
-define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, RedmineApi) {
+define('module/attachments',[
+  'lib/page_property_miner',
+  'lib/local_storage',
+  'lib/redmine_api',
+  'lib/translate'
+], function (ppp, ls, RedmineApi, _) {
   return {
     activeEditor: 'issue_notes',
 
@@ -6407,6 +6415,8 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
           + toAdd
           + value.substring(endPos, value.length);
 
+        myField.selectionStart = myField.selectionEnd = startPos + toAdd.length;
+
       } else {
         myField.value += toAdd;
       }
@@ -6422,7 +6432,7 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
         attachment = attachment.attachment;
 
         if (attachment.content_type.split('/')[0] === 'image') {
-          $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
+          $('<a href="#">' + _('Add to editor') + '</a>').appendTo($lastAttachment).click(function () {
 
             var text;
             if (attachment.filename.indexOf(' ') !== -1) {

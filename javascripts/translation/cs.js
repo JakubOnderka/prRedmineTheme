@@ -26,5 +26,8 @@ define({
   // Issues
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
-  'Overdue issues': 'Úkoly s vypršeným Uzavřít do'
+  'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
+
+  // Attachments
+  'Add to editor': 'Přidat do editoru'
 });

@@ -1,6 +1,11 @@
 "use strict";
 
-define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], function (ppp, ls, RedmineApi) {
+define([
+  'lib/page_property_miner',
+  'lib/local_storage',
+  'lib/redmine_api',
+  'lib/translate'
+], function (ppp, ls, RedmineApi, _) {
   return {
     activeEditor: 'issue_notes',
 
@@ -53,6 +58,8 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
           + toAdd
           + value.substring(endPos, value.length);
 
+        myField.selectionStart = myField.selectionEnd = startPos + toAdd.length;
+
       } else {
         myField.value += toAdd;
       }
@@ -68,7 +75,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
         attachment = attachment.attachment;
 
         if (attachment.content_type.split('/')[0] === 'image') {
-          $('<a href="#">Přidat do editoru</a>').appendTo($lastAttachment).click(function () {
+          $('<a href="#">' + _('Add to editor') + '</a>').appendTo($lastAttachment).click(function () {
 
             var text;
             if (attachment.filename.indexOf(' ') !== -1) {
