@@ -5,11 +5,6 @@ define(['lib/page_property_miner', 'lib/local_storage', 'lib/redmine_api'], func
     activeEditor: 'issue_notes',
 
     init: function () {
-
-      if (!ls.get('enabled:attachments')) {
-        return;
-      }
-
       if (ppp.matchPage('issues', 'show') || ppp.matchPage('issues', 'edit')) {
         $('#issue_description').focus(function () {
           self.activeEditor = 'issue_description';

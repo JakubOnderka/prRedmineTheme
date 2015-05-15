@@ -6359,11 +6359,6 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
     activeEditor: 'issue_notes',
 
     init: function () {
-
-      if (!ls.get('enabled:attachments')) {
-        return;
-      }
-
       if (ppp.matchPage('issues', 'show') || ppp.matchPage('issues', 'edit')) {
         $('#issue_description').focus(function () {
           self.activeEditor = 'issue_description';
@@ -6434,7 +6429,7 @@ define('module/attachments',['lib/page_property_miner', 'lib/local_storage', 'li
               // Filename contains space, so we must use full url to attachment (it is Redmine bug)
               var parser = document.createElement('a');
               parser.href = attachment.content_url;
-              text = '!' + parser. pathname + '!';
+              text = '!' + parser.pathname + '!';
             } else {
               text = '!' + attachment.filename  + '!';
             }
