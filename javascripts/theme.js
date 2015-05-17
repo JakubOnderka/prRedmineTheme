@@ -6395,14 +6395,13 @@ define('module/attachments',[
     },
 
     insertAtCursor: function (myField, toAdd) {
-      //IE support
+      // IE support
       if (document.selection) {
         myField.focus();
         var sel = document.selection.createRange();
         sel.text = toAdd;
-      }
-      //MOZILLA and others
-      else if (myField.selectionStart || myField.selectionStart == '0') {
+
+      } else if (myField.selectionStart || myField.selectionStart == '0') {
         var startPos = myField.selectionStart,
           endPos = myField.selectionEnd,
           value = myField.value;
@@ -6423,16 +6422,29 @@ define('module/attachments',[
     },
 
     uploaded: function () {
+      var self = this;
+      $('#attachments_fields span').each(function () {
+        var $this = $(this);
+
+        if ($this.hasClass('ajax-loading') || $this.hasClass('ajax-waiting') || $this.hasClass('add-to-editor')) {
+          return;
+        }
+
+        self.processAttachment($this);
+      });
+    },
+
+    processAttachment: function ($attachment) {
       var redmineApi = new RedmineApi(),
-        $lastAttachment = $('#attachments_fields span').last(),
-        lastAttachmentId = $lastAttachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
+        attachmentId = $attachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
         self = this;
 
-      redmineApi.getAttachment(lastAttachmentId, function (attachment) {
+      redmineApi.getAttachment(attachmentId, function (attachment) {
         attachment = attachment.attachment;
 
         if (attachment.content_type.split('/')[0] === 'image') {
-          $('<a href="#">' + _('Add to editor') + '</a>').appendTo($lastAttachment).click(function () {
+          $attachment.addClass('add-to-editor');
+          $('<a href="#">' + _('Add to editor') + '</a>').appendTo($attachment).click(function () {
 
             var text;
             if (attachment.filename.indexOf(' ') !== -1) {
