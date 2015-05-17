@@ -28,10 +28,10 @@ define([
       var proxied = uploadBlob,
         self = this;
 
-      uploadBlob = function () {
+      uploadBlob = function (blob, uploadUrl, attachmentId, options) {
         var output = proxied.apply(this, arguments);
         output.done(function () {
-          self.uploaded();
+          self.uploaded(attachmentId);
         });
         return output;
       };
@@ -64,17 +64,8 @@ define([
       }
     },
 
-    uploaded: function () {
-      var self = this;
-      $('#attachments_fields span').each(function () {
-        var $this = $(this);
-
-        if ($this.hasClass('ajax-loading') || $this.hasClass('ajax-waiting') || $this.hasClass('add-to-editor')) {
-          return;
-        }
-
-        self.processAttachment($this);
-      });
+    uploaded: function (attachmentId) {
+      this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId));
     },
 
     processAttachment: function ($attachment) {
@@ -86,7 +77,6 @@ define([
         attachment = attachment.attachment;
 
         if (attachment.content_type.split('/')[0] === 'image') {
-          $attachment.addClass('add-to-editor');
           $('<a href="#">' + _('Add to editor') + '</a>').appendTo($attachment).click(function () {
 
             var text;
