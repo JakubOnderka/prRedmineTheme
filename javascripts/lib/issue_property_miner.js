@@ -28,6 +28,7 @@ define(['lib/page_property_miner'], function (ppp) {
 
     var h2Content = $('h2').text(),
       $issueDiv = $('div.issue'),
+      title = $issueDiv.find('h3').text(),
       authorLinks = $issueDiv.find('p.author a'),
       issueDivClassList = $issueDiv[0].className.split(/\s+/),
       dueDate = $issueDiv.find('td.due-date').text(),
@@ -53,6 +54,7 @@ define(['lib/page_property_miner'], function (ppp) {
 
     return properties = {
       id: h2Content.substr(h2Content.indexOf('#') + 1),
+      title: title,
       projectName: ppp.getProjectName(),
 
       createdBy: getIdAndName($(authorLinks[0])),

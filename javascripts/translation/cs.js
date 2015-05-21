@@ -29,5 +29,8 @@ define({
   'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
 
   // Attachments
-  'Add to editor': 'Přidat do editoru'
+  'Add to editor': 'Přidat do editoru',
+
+  // Last issue
+  'Last issue': 'Poslední úkol'
 });

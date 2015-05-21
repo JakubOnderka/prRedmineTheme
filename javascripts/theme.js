@@ -3987,7 +3987,10 @@ define('translation/cs',{
   'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
 
   // Attachments
-  'Add to editor': 'Přidat do editoru'
+  'Add to editor': 'Přidat do editoru',
+
+  // Last issue
+  'Last issue': 'Poslední úkol'
 });
 define('translation/en',{
 
@@ -5080,6 +5083,21 @@ templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":
     + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
     + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>";
 },"useData":true});
+templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    var helper, alias1=helpers.helperMissing, alias2=this.escapeExpression, alias3="function";
+
+  return "<h3>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Last issue",{"name":"_","hash":{},"data":data}))
+    + "</h3>\n<a href=\"/issues/"
+    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
+    + "\">#"
+    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
+    + " – "
+    + alias2(((helper = (helper = helpers.projectName || (depth0 != null ? depth0.projectName : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"projectName","hash":{},"data":data}) : helper)))
+    + ": "
+    + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
+    + "</a>";
+},"useData":true});
 templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));
 },"3":function(depth0,helpers,partials,data) {
@@ -5563,6 +5581,7 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
 
     var h2Content = $('h2').text(),
       $issueDiv = $('div.issue'),
+      title = $issueDiv.find('h3').text(),
       authorLinks = $issueDiv.find('p.author a'),
       issueDivClassList = $issueDiv[0].className.split(/\s+/),
       dueDate = $issueDiv.find('td.due-date').text(),
@@ -5588,6 +5607,7 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
 
     return properties = {
       id: h2Content.substr(h2Content.indexOf('#') + 1),
+      title: title,
       projectName: ppp.getProjectName(),
 
       createdBy: getIdAndName($(authorLinks[0])),
@@ -5670,6 +5690,39 @@ define('module/better_header',[],function () {
       // header links
       $('#header h1').prepend('<a class="go-to-my-issues" href="https://redmine.proofreason.com/issues?query_id=135">My issues</a><a class="go-to-projects" href="/projects">Projects</a>');
       //standard link for my issues: /issues?assigned_to_id=me&set_filter=1&sort=priority%3Adesc%2Cupdated_on%3Adesc
+    }
+  }
+});
+
+
+define('module/last_issue',[
+  'lib/page_property_miner',
+  'lib/issue_property_miner',
+  'lib/local_storage',
+  'templates'
+], function (ppp, ipm, ls, templates) {
+  return {
+    init: function () {
+      if (!ls.get('enabled:lastIssue')) {
+        return;
+      }
+
+      var properties = ipm();
+      if (properties) {
+        ls.set('last_issue', JSON.stringify({
+          id: properties.id,
+          projectName: properties.id,
+          title: properties.title
+        }));
+      }
+
+      if (ppp.matchPage('welcome', 'index')) {
+        var lastIssue = ls.get('last_issue');
+        if (lastIssue) {
+          var template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+      }
     }
   }
 });
@@ -6487,6 +6540,7 @@ require([
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
   'module/better_header',
+  'module/last_issue',
   'module/issues',
   'module/localize',
   'module/alternate_cell_format',

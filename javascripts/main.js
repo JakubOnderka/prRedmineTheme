@@ -31,6 +31,7 @@ require([
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
   'module/better_header',
+  'module/last_issue',
   'module/issues',
   'module/localize',
   'module/alternate_cell_format',
