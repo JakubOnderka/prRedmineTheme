@@ -80,7 +80,7 @@ define([
           $('<a href="#">' + _('Add to editor') + '</a>').appendTo($attachment).click(function () {
 
             var text;
-            if (attachment.filename.indexOf('%') !== -1) {
+            if (attachment.content_url.indexOf('%') !== -1) {
               // Filename contains special character, so we must use full url to attachment (it is Redmine bug)
               text = '!/attachments/download/';
               text += attachment.id;
