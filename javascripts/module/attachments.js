@@ -84,8 +84,8 @@ define([
               // Filename contains special character, so we must use full url to attachment (it is Redmine bug)
               text = '!/attachments/download/';
               text += attachment.id;
-              text += '/';
-              text += encodeURIComponent(blob.name);
+              text += '/#';
+              text += blob.name;
               text += '!';
 
             } else {
