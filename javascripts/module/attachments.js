@@ -85,7 +85,7 @@ define([
               text = '!/attachments/download/';
               text += attachment.id;
               text += '/#';
-              text += blob.name;
+              text += blob.name.replace(' ', '%20');
               text += '!';
 
             } else {
