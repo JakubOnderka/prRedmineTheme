@@ -31,7 +31,7 @@ define([
       uploadBlob = function (blob, uploadUrl, attachmentId, options) {
         var output = proxied.apply(this, arguments);
         output.done(function () {
-          self.uploaded(attachmentId);
+          self.uploaded(attachmentId, blob);
         });
         return output;
       };
@@ -64,11 +64,11 @@ define([
       }
     },
 
-    uploaded: function (attachmentId) {
-      this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId));
+    uploaded: function (attachmentId, blob) {
+      this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId), blob);
     },
 
-    processAttachment: function ($attachment) {
+    processAttachment: function ($attachment, blob) {
       var redmineApi = new RedmineApi(),
         attachmentId = $attachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
         self = this;
@@ -80,11 +80,14 @@ define([
           $('<a href="#">' + _('Add to editor') + '</a>').appendTo($attachment).click(function () {
 
             var text;
-            if (attachment.filename.indexOf(' ') !== -1) {
-              // Filename contains space, so we must use full url to attachment (it is Redmine bug)
-              var parser = document.createElement('a');
-              parser.href = attachment.content_url;
-              text = '!' + parser.pathname + '!';
+            if (attachment.filename.indexOf('%') !== -1) {
+              // Filename contains special character, so we must use full url to attachment (it is Redmine bug)
+              text = '!/attachments/download/';
+              text += attachment.id;
+              text += '/';
+              text += encodeURIComponent(blob.name);
+              text += '!';
+
             } else {
               text = '!' + attachment.filename  + '!';
             }

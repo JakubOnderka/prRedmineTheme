@@ -5088,7 +5088,7 @@ templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":func
 
   return "<h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Last issue",{"name":"_","hash":{},"data":data}))
-    + "</h3>\n<a href=\"/issues/"
+    + "</h3>\n<p><a href=\"/issues/"
     + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
     + "\">#"
     + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
@@ -5096,7 +5096,7 @@ templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":func
     + alias2(((helper = (helper = helpers.projectName || (depth0 != null ? depth0.projectName : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"projectName","hash":{},"data":data}) : helper)))
     + ": "
     + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
-    + "</a>";
+    + "</a></p>";
 },"useData":true});
 templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));
@@ -5695,39 +5695,6 @@ define('module/better_header',[],function () {
 });
 
 
-define('module/last_issue',[
-  'lib/page_property_miner',
-  'lib/issue_property_miner',
-  'lib/local_storage',
-  'templates'
-], function (ppp, ipm, ls, templates) {
-  return {
-    init: function () {
-      if (!ls.get('enabled:lastIssue')) {
-        return;
-      }
-
-      var properties = ipm();
-      if (properties) {
-        ls.set('last_issue', JSON.stringify({
-          id: properties.id,
-          projectName: properties.id,
-          title: properties.title
-        }));
-      }
-
-      if (ppp.matchPage('welcome', 'index')) {
-        var lastIssue = ls.get('last_issue');
-        if (lastIssue) {
-          var template = templates['last_issue'](JSON.parse(lastIssue));
-          $('#content .splitcontentright').prepend(template);
-        }
-      }
-    }
-  }
-});
-
-
 define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], function (ppp, ls, moment) {
 
   function lsKey(cellSelector) {
@@ -6086,6 +6053,39 @@ define('module/issues',[
 });
 
 
+define('module/last_issue',[
+  'lib/page_property_miner',
+  'lib/issue_property_miner',
+  'lib/local_storage',
+  'templates'
+], function (ppp, ipm, ls, templates) {
+  return {
+    init: function () {
+      if (!ls.get('enabled:lastIssue')) {
+        return;
+      }
+
+      var properties = ipm();
+      if (properties) {
+        ls.set('last_issue', JSON.stringify({
+          id: properties.id,
+          projectName: properties.projectName,
+          title: properties.title
+        }));
+      }
+
+      if (ppp.matchPage('welcome', 'index')) {
+        var lastIssue = ls.get('last_issue');
+        if (lastIssue) {
+          var template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+      }
+    }
+  }
+});
+
+
 define('module/localize',['lib/page_property_miner', 'lib/local_storage', 'lib/replace_issue_form_proxy'], function (ppp, ls, proxy) {
   var lang = $('html').attr('lang');
 
@@ -6441,7 +6441,7 @@ define('module/attachments',[
       uploadBlob = function (blob, uploadUrl, attachmentId, options) {
         var output = proxied.apply(this, arguments);
         output.done(function () {
-          self.uploaded(attachmentId);
+          self.uploaded(attachmentId, blob);
         });
         return output;
       };
@@ -6474,11 +6474,11 @@ define('module/attachments',[
       }
     },
 
-    uploaded: function (attachmentId) {
-      this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId));
+    uploaded: function (attachmentId, blob) {
+      this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId), blob);
     },
 
-    processAttachment: function ($attachment) {
+    processAttachment: function ($attachment, blob) {
       var redmineApi = new RedmineApi(),
         attachmentId = $attachment.find('a.remove-upload').attr('href').split('?')[0].split('/')[2].split('.')[0],
         self = this;
@@ -6490,11 +6490,14 @@ define('module/attachments',[
           $('<a href="#">' + _('Add to editor') + '</a>').appendTo($attachment).click(function () {
 
             var text;
-            if (attachment.filename.indexOf(' ') !== -1) {
-              // Filename contains space, so we must use full url to attachment (it is Redmine bug)
-              var parser = document.createElement('a');
-              parser.href = attachment.content_url;
-              text = '!' + parser.pathname + '!';
+            if (attachment.filename.indexOf('%') !== -1) {
+              // Filename contains special character, so we must use full url to attachment (it is Redmine bug)
+              text = '!/attachments/download/';
+              text += attachment.id;
+              text += '/';
+              text += encodeURIComponent(blob.name);
+              text += '!';
+              
             } else {
               text = '!' + attachment.filename  + '!';
             }
@@ -6540,8 +6543,8 @@ require([
   'module/datepicker_focus',
   'module/cmd_enter_form_submit',
   'module/better_header',
-  'module/last_issue',
   'module/issues',
+  'module/last_issue',
   'module/localize',
   'module/alternate_cell_format',
   'module/paste_issue_number',

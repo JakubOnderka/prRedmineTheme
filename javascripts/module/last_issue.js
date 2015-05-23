@@ -16,7 +16,7 @@ define([
       if (properties) {
         ls.set('last_issue', JSON.stringify({
           id: properties.id,
-          projectName: properties.id,
+          projectName: properties.projectName,
           title: properties.title
         }));
       }
