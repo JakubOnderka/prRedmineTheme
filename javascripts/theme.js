@@ -5093,7 +5093,7 @@ templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":func
     + "\">#"
     + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
     + " – "
-    + alias2(((helper = (helper = helpers.projectName || (depth0 != null ? depth0.projectName : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"projectName","hash":{},"data":data}) : helper)))
+    + alias2(((helper = (helper = helpers.projectTitle || (depth0 != null ? depth0.projectTitle : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"projectTitle","hash":{},"data":data}) : helper)))
     + ": "
     + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
     + "</a></p>";
@@ -5579,7 +5579,10 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
       return null;
     }
 
-    var h2Content = $('h2').text(),
+    var h1ChildNodes = $('h1')[0].childNodes,
+      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].replace(' » ', ''),
+      rootProjectTitle = $('h1 .root').text(),
+      h2Content = $('h2').text(),
       $issueDiv = $('div.issue'),
       title = $issueDiv.find('h3').text(),
       authorLinks = $issueDiv.find('p.author a'),
@@ -5608,7 +5611,12 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
     return properties = {
       id: h2Content.substr(h2Content.indexOf('#') + 1),
       title: title,
+
       projectName: ppp.getProjectName(),
+      projectTitle: projectTitle,
+
+      topProjectName: ppp.getTopProjectName(),
+      topProjectTitle: rootProjectTitle,
 
       createdBy: getIdAndName($(authorLinks[0])),
       assignedTo: assignedTo,
@@ -6067,17 +6075,29 @@ define('module/last_issue',[
 
       var properties = ipm();
       if (properties) {
-        ls.set('last_issue', JSON.stringify({
+        var lastIssueJson = JSON.stringify({
           id: properties.id,
-          projectName: properties.projectName,
+          projectTitle: properties.projectTitle,
           title: properties.title
-        }));
+        });
+
+        ls.set('last_issue', lastIssueJson, 168);
+        ls.set('last_issue[' + properties.projectName + ']', lastIssueJson, 168)
       }
 
+      var lastIssue, template;
+
       if (ppp.matchPage('welcome', 'index')) {
-        var lastIssue = ls.get('last_issue');
+        lastIssue = ls.get('last_issue');
         if (lastIssue) {
-          var template = templates['last_issue'](JSON.parse(lastIssue));
+          template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+
+      } else if (ppp.matchPage('projects', 'show')) {
+        lastIssue = ls.get('last_issue[' + ppp.getProjectName() +']');
+        if (lastIssue) {
+          template = templates['last_issue'](JSON.parse(lastIssue));
           $('#content .splitcontentright').prepend(template);
         }
       }

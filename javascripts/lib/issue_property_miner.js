@@ -26,7 +26,10 @@ define(['lib/page_property_miner'], function (ppp) {
       return null;
     }
 
-    var h2Content = $('h2').text(),
+    var h1ChildNodes = $('h1')[0].childNodes,
+      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].replace(' » ', ''),
+      rootProjectTitle = $('h1 .root').text(),
+      h2Content = $('h2').text(),
       $issueDiv = $('div.issue'),
       title = $issueDiv.find('h3').text(),
       authorLinks = $issueDiv.find('p.author a'),
@@ -55,7 +58,12 @@ define(['lib/page_property_miner'], function (ppp) {
     return properties = {
       id: h2Content.substr(h2Content.indexOf('#') + 1),
       title: title,
+
       projectName: ppp.getProjectName(),
+      projectTitle: projectTitle,
+
+      topProjectName: ppp.getTopProjectName(),
+      topProjectTitle: rootProjectTitle,
 
       createdBy: getIdAndName($(authorLinks[0])),
       assignedTo: assignedTo,

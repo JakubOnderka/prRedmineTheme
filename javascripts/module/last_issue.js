@@ -14,17 +14,29 @@ define([
 
       var properties = ipm();
       if (properties) {
-        ls.set('last_issue', JSON.stringify({
+        var lastIssueJson = JSON.stringify({
           id: properties.id,
-          projectName: properties.projectName,
+          projectTitle: properties.projectTitle,
           title: properties.title
-        }));
+        });
+
+        ls.set('last_issue', lastIssueJson, 168);
+        ls.set('last_issue[' + properties.projectName + ']', lastIssueJson, 168)
       }
 
+      var lastIssue, template;
+
       if (ppp.matchPage('welcome', 'index')) {
-        var lastIssue = ls.get('last_issue');
+        lastIssue = ls.get('last_issue');
         if (lastIssue) {
-          var template = templates['last_issue'](JSON.parse(lastIssue));
+          template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+
+      } else if (ppp.matchPage('projects', 'show')) {
+        lastIssue = ls.get('last_issue[' + ppp.getProjectName() +']');
+        if (lastIssue) {
+          template = templates['last_issue'](JSON.parse(lastIssue));
           $('#content .splitcontentright').prepend(template);
         }
       }
