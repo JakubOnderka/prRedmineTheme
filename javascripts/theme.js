@@ -5580,7 +5580,7 @@ define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
     }
 
     var h1ChildNodes = $('h1')[0].childNodes,
-      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].replace(' » ', ''),
+      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
       rootProjectTitle = $('h1 .root').text(),
       h2Content = $('h2').text(),
       $issueDiv = $('div.issue'),
