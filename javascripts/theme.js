@@ -6069,10 +6069,6 @@ define('module/last_issue',[
 ], function (ppp, ipm, ls, templates) {
   return {
     init: function () {
-      if (!ls.get('enabled:lastIssue')) {
-        return;
-      }
-
       var properties = ipm();
       if (properties) {
         var lastIssueJson = JSON.stringify({
