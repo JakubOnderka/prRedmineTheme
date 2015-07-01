@@ -3990,7 +3990,7 @@ define('translation/cs',{
   'Add to editor': 'Přidat do editoru',
 
   // Last issue
-  'Last issue': 'Poslední úkol'
+  'Last viewed issue': 'Poslední zobrazený úkol'
 });
 define('translation/en',{
 
@@ -5087,7 +5087,7 @@ templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":func
     var helper, alias1=helpers.helperMissing, alias2=this.escapeExpression, alias3="function";
 
   return "<h3>"
-    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Last issue",{"name":"_","hash":{},"data":data}))
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Last viewed issue",{"name":"_","hash":{},"data":data}))
     + "</h3>\n<p><a href=\"/issues/"
     + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"id","hash":{},"data":data}) : helper)))
     + "\">#"

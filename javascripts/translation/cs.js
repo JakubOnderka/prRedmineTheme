@@ -32,5 +32,5 @@ define({
   'Add to editor': 'Přidat do editoru',
 
   // Last issue
-  'Last issue': 'Poslední úkol'
+  'Last viewed issue': 'Poslední zobrazený úkol'
 });
