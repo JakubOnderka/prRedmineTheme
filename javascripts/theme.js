@@ -6032,8 +6032,7 @@ define('module/issues',[
     welcome: function() {
       $('#content .splitcontentright')
         .prepend(templates['issues_welcome']())
-        .css('width', '60%')
-        .css('margin-top', '-30px');
+        .css('width', '60%');
 
       $('#content .splitcontentleft')
         .css('width', '38%');
