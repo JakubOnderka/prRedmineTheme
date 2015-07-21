@@ -15,7 +15,7 @@ define({
   // Absences
   maybe: 'možná',
   'Show details': 'Zobrazit detaily',
-  'Planned absences': 'Plánované absence',
+  'Planned absences': 'Plánované nepřítomnosti',
   refresh: 'obnovit',
   'Not available from %0 to %1': 'Nedostupný od %0 do %1',
   'Not available %0': 'Nedostupný %0',

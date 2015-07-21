@@ -38,7 +38,7 @@ define([
       } else if (ppp.matchPage('issues', 'index')) {
         $('#sidebar').append('<div id="plannedAbsences"></div>');
 
-      } else if (ppp.matchPage('issues', 'show')) {
+      } else if (ppp.matchPage('issues', 'show') || ppp.matchPage('issues', 'new')) {
         this.loadWithCache(function(absences) {
           self.markAbsencedUsers(absences);
         });

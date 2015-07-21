@@ -3973,7 +3973,7 @@ define('translation/cs',{
   // Absences
   maybe: 'možná',
   'Show details': 'Zobrazit detaily',
-  'Planned absences': 'Plánované absence',
+  'Planned absences': 'Plánované nepřítomnosti',
   refresh: 'obnovit',
   'Not available from %0 to %1': 'Nedostupný od %0 do %1',
   'Not available %0': 'Nedostupný %0',
@@ -5278,7 +5278,7 @@ define('module/absences',[
       } else if (ppp.matchPage('issues', 'index')) {
         $('#sidebar').append('<div id="plannedAbsences"></div>');
 
-      } else if (ppp.matchPage('issues', 'show')) {
+      } else if (ppp.matchPage('issues', 'show') || ppp.matchPage('issues', 'new')) {
         this.loadWithCache(function(absences) {
           self.markAbsencedUsers(absences);
         });
@@ -6527,6 +6527,69 @@ define('module/attachments',[
 });
 
 
+define('module/issue_update_form',['lib/page_property_miner','lib/local_storage'], function (ppp, ls) {
+
+  return {
+    init: function () {
+      if (!ppp.matchPage('issues', 'show')) {
+        return;
+      }
+
+      var $update = $('#update');
+
+      function toggleUpdateForm() {
+        if ($update.hasClass('minimized')) {
+          $update.removeClass('minimized');
+          ls.remove('updateFormMinimized');
+        } else {
+          $update.addClass('minimized');
+          ls.set('updateFormMinimized', true);
+        }
+      }
+
+      $update.find('#issue_subject').closest('fieldset').addClass('issueAttributes');
+      $update.find("#time_entry_hours").closest('fieldset').addClass('timeLogging');
+      $update.find('#issue_notes').closest('fieldset').addClass('issueJournalNotes');
+
+      // hide logging part of the form
+      $update.find(".timeLogging").closest('fieldset').hide();
+
+      // better functioning update, mainly on mobile
+      $('.icon-edit').filter(function () {
+        return $(this).attr('onclick') === 'showAndScrollTo("update", "issue_notes"); return false;';
+      }).addClass('updateButton').attr('onclick', '');
+
+      $('.updateButton').click(function (e) {
+        e.preventDefault();
+        $update.show();
+        $('#issue_notes').focus();
+
+        if (!$update.hasClass('minimized')) {
+          $('html, body').animate({scrollTop: $('#issue-form').offset().top}, 100);
+        }
+      });
+
+
+      $update.prepend('<span class="minimize"><span class="glyphicon glyphicon-minus"></span> <span class="glyphicon glyphicon-plus"></span></span>');
+      $update.find('span.minimize').click(function () {
+        toggleUpdateForm();
+        return false;
+      });
+      if (ls.get('updateFormMinimized')) {
+        $update.find('span.minimize').click();
+      }
+
+      // Remove delimiter for minimized form
+      $('#issue-form')
+        .contents()
+        .filter(function() { return this.nodeType === 3 && this.textContent.trim() === '|'})
+        .remove();
+      $('<span class="delimiter"> | </span>').insertBefore('#issue-form a:last');
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6566,7 +6629,8 @@ require([
   'module/checkbox',
   'module/cl_ly',
   'module/auto_return_to_owner',
-  'module/attachments'
+  'module/attachments',
+  'module/issue_update_form'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -6591,7 +6655,6 @@ require(['lib/local_storage'], function (module) {
 var ProofReasonRedmineTheme = {
   init: function () {
     this.BetterSidebar.init();
-    this.BetterUpdateForm.init();
     this.BetterTimeline.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
@@ -6781,63 +6844,6 @@ var ProofReasonRedmineTheme = {
         $('table.list.issues td.subject').each(function () {
           $(this).html($(this).find('a').html($(this).text()));
         });
-      }
-    }
-  },
-
-  BetterUpdateForm: {
-    init: function () {
-      this.tools = ProofReasonRedmineTheme.tools;
-
-      var $update = $('#update');
-
-      $update.find('#issue_subject').closest('fieldset').addClass('issueAttributes');
-      $update.find("#time_entry_hours").closest('fieldset').addClass('timeLogging');
-      $update.find('#issue_notes').closest('fieldset').addClass('issueJournalNotes');
-
-      // hide logging part of the form
-      $update.find(".timeLogging").closest('fieldset').hide();
-
-      // better functioning update, mainly on mobile
-      $('.icon-edit').filter(function () {
-        return $(this).attr('onclick') === 'showAndScrollTo("update", "issue_notes"); return false;';
-      }).addClass('updateButton').attr('onclick', '');
-
-      $('.updateButton').click(function (e) {
-        e.preventDefault();
-        $update.show();
-        $('#issue_notes').focus();
-
-        if (!$update.hasClass('minimized')) {
-          $('html, body').animate({scrollTop: $('#issue-form').offset().top}, 100);
-        }
-      });
-
-
-      $update.prepend('<span class="minimize"><span class="glyphicon glyphicon-minus"></span> <span class="glyphicon glyphicon-plus"></span></span>');
-      $update.find('span.minimize').click(function () {
-        ProofReasonRedmineTheme.BetterUpdateForm.toggleUpdateForm();
-        return false;
-      });
-      if (this.tools.cookie('updateFormMinimized')) {
-        $update.find('span.minimize').click();
-      }
-
-      // Remove delimiter for minimized form
-      $('#issue-form')
-        .contents()
-        .filter(function() { return this.nodeType === 3 && this.textContent.trim() === '|'})
-        .remove();
-      $('<span class="delimiter"> | </span>').insertBefore('#issue-form a:last');
-    },
-
-    toggleUpdateForm: function () {
-      if ($('#update').hasClass('minimized')) {
-        $('#update').removeClass('minimized');
-        this.tools.removeCookie('updateFormMinimized');
-      } else {
-        $('#update').addClass('minimized');
-        this.tools.cookie('updateFormMinimized', true);
       }
     }
   },
