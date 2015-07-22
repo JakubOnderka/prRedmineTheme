@@ -5211,13 +5211,25 @@ define('module/related_issues_header',['lib/page_property_miner', 'templates'], 
         $issueTree = $issue.find('#issue_tree table.list.issues'),
         $issueRelations = $issue.find('#relations table.list.issues');
 
-      if ($issueTree.length) {
-        $issueTree.prepend(templates['issue_tree_header']());
+      function update() {
+        if ($issueTree.length && $issueTree.find('thead').length === 0) {
+          $issueTree.prepend(templates['issue_tree_header']());
+        }
+
+        if ($issueRelations.length && $issueRelations.find('thead').length === 0) {
+          $issueRelations.prepend(templates['relations_header']());
+        }
       }
 
-      if ($issueRelations.length) {
-        $issueRelations.prepend(templates['relations_header']());
-      }
+      update();
+
+      $('#new-relation-form').on('ajax:success', function () {
+        update();
+      });
+
+      $('#relation_issue_to_id').on('change', function () {
+        update();
+      });
     }
   }
 });
