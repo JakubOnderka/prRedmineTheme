@@ -98,22 +98,21 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
           }
         });
 
-        /*key('left', function() {
-         $('#content .next-prev-links a').each(function() {
-         if ($(this).text() == '« Předchozí') {
-         window.location.href = $(this).attr('href');
-         }
-         });
-         return false;
-         });
-         key('right', function() {
-         $('#content .next-prev-links a').each(function() {
-         if ($(this).text() == 'Další »') {
-         window.location.href = $(this).attr('href');
-         }
-         });
-         return false;
-         });*/
+        key('left', function () {
+          var $first = $('#content .next-prev-links *').slice(0, 1);
+          if ($first.is('a')) {
+            window.location.href = $first.attr('href');
+          }
+          return false;
+        });
+
+        key('right', function () {
+          var $last = $('#content .next-prev-links *').slice(-1);
+          if ($last.is('a')) {
+            window.location.href = $last.attr('href');
+          }
+          return false;
+        });
 
       } else if (ppp.matchPage('issues', 'index')) {
         /*key('esc', function() {
