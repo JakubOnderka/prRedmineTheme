@@ -25,6 +25,31 @@ define([
     });
   }
 
+  function myIssues(data, withProject) {
+    sortIssues(data.issues);
+
+    var html = templates['issues']({
+      issues: data.issues,
+      withProject: withProject,
+      withAssigned: false,
+      count: data.total_count
+    });
+
+    var $myIssues = $('#my-issues');
+
+    $myIssues.find('.content').html(html);
+    $myIssues.find('.count').html(data.total_count);
+    $myIssues.find('.select-random').click(function() {
+      var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
+        issueId = data.issues[issuePosition].id,
+        url = '/issues/' + issueId;
+
+      $(this).attr('href', url);
+    });
+
+    alternateCellFormat.init();
+  }
+
   var redmineApi = new RedmineApi();
 
   return {
@@ -61,17 +86,7 @@ define([
           sort: 'due_date:desc,updated_on:desc',
           limit: 20
         }, function (data) {
-          sortIssues(data.issues);
-
-          var html = templates['issues']({
-            issues: data.issues,
-            withProject: false,
-            withAssigned: false
-          });
-
-          $('#my-issues-content').html(html);
-
-          alternateCellFormat.init();
+          myIssues(data, false);
         });
 
         redmineApi.getIssuesWithCache({
@@ -88,7 +103,7 @@ define([
             withAssigned: true
           });
 
-          $('#due-date-issues-content').html(html);
+          $('#due-date-issues .content').html(html);
 
           alternateCellFormat.init();
         });
@@ -107,17 +122,7 @@ define([
         sort: 'due_date:desc,updated_on:desc',
         limit: 20
       }, function(data) {
-        sortIssues(data.issues);
-
-        var html = templates['issues']({
-          issues: data.issues,
-          withProject: true,
-          withAssigned: false
-        });
-
-        $('#my-issues-content').html(html);
-
-        alternateCellFormat.init();
+        myIssues(data, true);
       });
     }
   }

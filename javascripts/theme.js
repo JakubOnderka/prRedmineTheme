@@ -5072,16 +5072,16 @@ templates['issues'] = template({"1":function(depth0,helpers,partials,data,blockP
 templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var alias1=helpers.helperMissing, alias2=this.escapeExpression;
 
-  return "<div class=\"box issues\">\n    <h3>"
+  return "<div class=\"box issues\" id=\"my-issues\">\n    <h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
-    + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>\n\n<div class=\"box issues\">\n    <h3>"
+    + " <span class=\"count\"></span></h3>\n    <a href=\"#\" class=\"select-random\">select random</a>\n    <div class=\"content\"></div>\n</div>\n\n<div class=\"box issues\"  id=\"due-date-issues\">\n    <h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Overdue issues",{"name":"_","hash":{},"data":data}))
-    + "</h3>\n    <div id=\"due-date-issues-content\"></div>\n</div>";
+    + "</h3>\n    <div class=\"content\"></div>\n</div>";
 },"useData":true});
 templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<div class=\"box issues\">\n    <h3>"
+    return "<div class=\"box issues\" id=\"my-issues\">\n    <h3>"
     + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
-    + "</h3>\n    <div id=\"my-issues-content\"></div>\n</div>";
+    + " <span class=\"count\"></span></h3>\n    <div class=\"content\"></div>\n</div>";
 },"useData":true});
 templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2=this.escapeExpression, alias3="function";
@@ -5973,6 +5973,31 @@ define('module/issues',[
     });
   }
 
+  function myIssues(data, withProject) {
+    sortIssues(data.issues);
+
+    var html = templates['issues']({
+      issues: data.issues,
+      withProject: withProject,
+      withAssigned: false,
+      count: data.total_count
+    });
+
+    var $myIssues = $('#my-issues');
+
+    $myIssues.find('.content').html(html);
+    $myIssues.find('.count').html(data.total_count);
+    $myIssues.find('.select-random').click(function() {
+      var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
+        issueId = data.issues[issuePosition].id,
+        url = '/issues/' + issueId;
+
+      $(this).attr('href', url);
+    });
+
+    alternateCellFormat.init();
+  }
+
   var redmineApi = new RedmineApi();
 
   return {
@@ -6009,17 +6034,7 @@ define('module/issues',[
           sort: 'due_date:desc,updated_on:desc',
           limit: 20
         }, function (data) {
-          sortIssues(data.issues);
-
-          var html = templates['issues']({
-            issues: data.issues,
-            withProject: false,
-            withAssigned: false
-          });
-
-          $('#my-issues-content').html(html);
-
-          alternateCellFormat.init();
+          myIssues(data, false);
         });
 
         redmineApi.getIssuesWithCache({
@@ -6036,7 +6051,7 @@ define('module/issues',[
             withAssigned: true
           });
 
-          $('#due-date-issues-content').html(html);
+          $('#due-date-issues .content').html(html);
 
           alternateCellFormat.init();
         });
@@ -6055,17 +6070,7 @@ define('module/issues',[
         sort: 'due_date:desc,updated_on:desc',
         limit: 20
       }, function(data) {
-        sortIssues(data.issues);
-
-        var html = templates['issues']({
-          issues: data.issues,
-          withProject: true,
-          withAssigned: false
-        });
-
-        $('#my-issues-content').html(html);
-
-        alternateCellFormat.init();
+        myIssues(data, true);
       });
     }
   }
