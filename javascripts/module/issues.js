@@ -35,11 +35,19 @@ define([
       count: data.total_count
     });
 
-    var $myIssues = $('#my-issues');
+    var $myIssues = $('#my-issues'),
+      $selectRandom = $myIssues.find('.select-random');
 
     $myIssues.find('.content').html(html);
     $myIssues.find('.count').html(data.total_count);
-    $myIssues.find('.select-random').click(function() {
+
+    if (data.total_count === 0) {
+      $selectRandom.hide();
+    } else {
+      $selectRandom.show();
+    }
+
+    $selectRandom.click(function() {
       var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
         issueId = data.issues[issuePosition].id,
         url = '/issues/' + issueId;

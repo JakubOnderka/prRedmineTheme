@@ -5982,6 +5982,11 @@ define('module/issues',[
 
     $myIssues.find('.content').html(html);
     $myIssues.find('.count').html(data.total_count);
+
+    if (data.total_count === 0) {
+      $myIssues.find('.select-random').hide();
+    }
+
     $myIssues.find('.select-random').click(function() {
       var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
         issueId = data.issues[issuePosition].id,
