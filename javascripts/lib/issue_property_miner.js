@@ -29,7 +29,7 @@ define(['lib/page_property_miner'], function (ppp) {
     var h1ChildNodes = $('h1')[0].childNodes,
       projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
       rootProjectTitle = $('h1 .root').text(),
-      h2Content = $('h2').text(),
+      h2Content = $('h2:eq(0)').text(),
       $issueDiv = $('div.issue'),
       title = $issueDiv.find('h3').text(),
       authorLinks = $issueDiv.find('p.author a'),
