@@ -4740,7 +4740,7 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
       var $q = $('#q');
 
       if (!ls.get('enabled:keyShortcuts')) {
-        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show')) {
+        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show') && !this.isTouchDevice()) {
           $q.focus();
         }
 
@@ -4753,13 +4753,17 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
         window.location.href = href;
       }
 
-      function linkFromMainMenu(type) {
-        var href = $mainMenu.find('.' + type).attr('href');
+      function link($element) {
+        var href = $element.attr('href');
         if (href) {
           goTo(href);
           return false;
         }
         return true;
+      }
+
+      function linkFromMainMenu(type) {
+        return link($mainMenu.find('.' + type));
       }
 
       $q.keypress(function (e) {
@@ -4799,6 +4803,14 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
         return linkFromMainMenu('wiki');
       });
 
+      key('n', 'go', function() {
+        return linkFromMainMenu('new-issue');
+      });
+
+      key('a', 'go', function() {
+        return linkFromMainMenu('activity');
+      });
+
       // Focus search input
       key('s', function () {
         $q.focus();
@@ -4813,14 +4825,14 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
 
       if (ppp.matchPage('issues', 'show')) {
         // Show edit issue form
-        key('e', function() {
+        key('e', function () {
           $('.updateButton:eq(0)').click();
           return false;
         });
 
         // Hide update form on escape
 
-        key('esc', function() {
+        key('esc', function () {
           $('#update').hide();
           return false;
         });
@@ -4837,7 +4849,7 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
         key('left', function () {
           var $first = $('#content .next-prev-links *').slice(0, 1);
           if ($first.is('a')) {
-            window.location.href = $first.attr('href');
+            return link($first);
           }
           return false;
         });
@@ -4845,7 +4857,7 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
         key('right', function () {
           var $last = $('#content .next-prev-links *').slice(-1);
           if ($last.is('a')) {
-            window.location.href = $last.attr('href');
+            return link($last);
           }
           return false;
         });
@@ -4857,36 +4869,20 @@ define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'l
          window.location.href = $link.attr('href');
          return false;
          }
-         });
-
-         key('left', function() {
-         var href = $('ul.pagination .prev').attr('href');
-         if (href) {
-         window.location.href = href;
-         }
-         return false;
-         });
-
-         key('right', function() {
-         var href = $('ul.pagination .next').attr('href');
-         if (href) {
-         window.location.href = href;
-         }
-         return false;
          });*/
+
+        key('left', function () {
+          return link($('ul.pagination .prev'));
+        });
+
+        key('right', function () {
+          return link($('ul.pagination .next'));
+        });
       }
+    },
 
-      /*
-
-       key('n', function() {
-       return linkFromMainMenu('new-issue');
-       });
-
-
-
-       key('a', function() {
-       return linkFromMainMenu('activity');
-       });*/
+    isTouchDevice: function () {
+      return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
     }
   }
 });
