@@ -40,7 +40,8 @@ require([
   'module/cl_ly',
   'module/auto_return_to_owner',
   'module/attachments',
-  'module/issue_update_form'
+  'module/issue_update_form',
+  'module/single_click_select'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -71,7 +72,6 @@ var ProofReasonRedmineTheme = {
     this.MobileRedmine.init();
     this.MakeMoney.init();
     this.ClickableIssueNames.init();
-    this.SingleClickSelect.init();
   },
 
   tools: {
@@ -349,67 +349,6 @@ var ProofReasonRedmineTheme = {
       $('body').removeClass('mobileRedmine');
       $('head meta[name="viewport"]').remove();
       $('#project_quick_jump_box').select2();
-    }
-  },
-
-  SingleClickSelect: {
-    init: function () {
-      this.issueId();
-      this.codeElement();
-    },
-
-    issueId: function () {
-      if (ProofReasonRedmineTheme.PagePropertyMiner.matchPage('issues', 'show')) {
-        $('#content h2').click(function () {
-          for (var i = 0; i < this.childNodes.length; i++) {
-            if (this.childNodes[i] instanceof Text) {
-              var element = this.childNodes[i],
-                startChar = element.nodeValue.indexOf('#'),
-                endChar = element.nodeValue.length,
-                range = document.createRange();
-
-              range.setStart(element, startChar);
-              range.setEnd(element, endChar);
-
-              window.getSelection().removeAllRanges();
-              window.getSelection().addRange(range);
-              break;
-            }
-          }
-        });
-      }
-    },
-
-    codeElement: function () {
-      var lastMouseDownX = null,
-        lastMouseDownY = null,
-        $body = $('body');
-
-      $body.on('mousedown', 'code', function (event) {
-        lastMouseDownX = event.clientX;
-        lastMouseDownY = event.clientY;
-      });
-
-      $body.on('mouseup', 'code', function (event) {
-        if (lastMouseDownX === null || lastMouseDownX !== event.clientX || lastMouseDownY !== event.clientY) {
-          return;
-        }
-
-        var element = this.childNodes[0];
-
-        if (!element.nodeValue) {
-          return;
-        }
-
-        var range = document.createRange();
-        range.setStart(element, 0);
-        range.setEnd(element, element.nodeValue.length);
-
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-
-        lastMouseDownX = lastMouseDownY = null;
-      });
     }
   }
 };
