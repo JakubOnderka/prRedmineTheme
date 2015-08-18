@@ -36,6 +36,24 @@ define([
           $('#content .splitcontentright').prepend(template);
         }
       }
-    }
+    },
+
+    getLastIssue: function () {
+      var lastIssue,
+        projectName = ppp.getProjectName();
+
+      if (projectName) {
+        lastIssue = ls.get('last_issue[' + projectName +']');
+        if (lastIssue) {
+          return lastIssue;
+        }
+
+      } else {
+        lastIssue = ls.get('last_issue');
+        if (lastIssue) {
+          return lastIssue;
+        }
+      }
+    },
   }
 });

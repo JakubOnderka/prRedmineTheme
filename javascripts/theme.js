@@ -3985,6 +3985,8 @@ define('translation/cs',{
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
   'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
+  'select random': 'zobrazit náhodný',
+  'show all': 'zobrazit všechny',
 
   // Attachments
   'Add to editor': 'Přidat do editoru',
@@ -4734,156 +4736,92 @@ define('vendor/keymaster',['require','exports','module'],function(require, expor
 
   })(this);
 });
-define('module/key_shortcuts',['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], function (ppp, key, ls) {
-  return {
-    init: function () {
-      var $q = $('#q');
+define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
 
-      if (!ls.get('enabled:keyShortcuts')) {
-        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show') && !this.isTouchDevice()) {
-          $q.focus();
-        }
-
-        return;
-      }
-
-      var $mainMenu = $('#main-menu');
-
-      function goTo(href) {
-        window.location.href = href;
-      }
-
-      function link($element) {
-        var href = $element.attr('href');
-        if (href) {
-          goTo(href);
-          return false;
-        }
-        return true;
-      }
-
-      function linkFromMainMenu(type) {
-        return link($mainMenu.find('.' + type));
-      }
-
-      $q.keypress(function (e) {
-        if (e.keyCode === 27) { // esc
-          $(this).blur();
-          return false;
-        }
-      });
-
-      /*
-      Go
-       */
-      key('g', function() {
-        key.setScope('go');
-
-        setTimeout(function () {
-          key.setScope('all');
-        }, 1000);
-
-        return false;
-      });
-
-      key('p', 'go', function () {
-        goTo('/projects');
-        return false;
-      });
-
-      key('o', 'go', function() {
-        return linkFromMainMenu('overview');
-      });
-
-      key('i', 'go', function() {
-        return linkFromMainMenu('issues');
-      });
-
-      key('w', 'go', function() {
-        return linkFromMainMenu('wiki');
-      });
-
-      key('n', 'go', function() {
-        return linkFromMainMenu('new-issue');
-      });
-
-      key('a', 'go', function() {
-        return linkFromMainMenu('activity');
-      });
-
-      // Focus search input
-      key('s', function () {
-        $q.focus();
-        return false;
-      });
-
-      // Focus project select
-      key('p', function () {
-        $('#s2id_project_quick_jump_box').select2('open');
-        return false;
-      });
-
-      if (ppp.matchPage('issues', 'show')) {
-        // Show edit issue form
-        key('e', function () {
-          $('.updateButton:eq(0)').click();
-          return false;
-        });
-
-        // Hide update form on escape
-
-        key('esc', function () {
-          $('#update').hide();
-          return false;
-        });
-
-        var $issueNotes = $('#issue_notes');
-        $issueNotes.keypress(function (e) {
-          if (e.keyCode === 27) { // esc
-            $('#update').hide();
-            $issueNotes.blur();
-            return false;
-          }
-        });
-
-        key('left', function () {
-          var $first = $('#content .next-prev-links *').slice(0, 1);
-          if ($first.is('a')) {
-            return link($first);
-          }
-          return false;
-        });
-
-        key('right', function () {
-          var $last = $('#content .next-prev-links *').slice(-1);
-          if ($last.is('a')) {
-            return link($last);
-          }
-          return false;
-        });
-
-      } else if (ppp.matchPage('issues', 'index')) {
-        /*key('esc', function() {
-         var $link = $('.buttons .icon-reload');
-         if ($link.length > 0) {
-         window.location.href = $link.attr('href');
-         return false;
-         }
-         });*/
-
-        key('left', function () {
-          return link($('ul.pagination .prev'));
-        });
-
-        key('right', function () {
-          return link($('ul.pagination .next'));
-        });
-      }
-    },
-
-    isTouchDevice: function () {
-      return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+  function getIdAndName($link) {
+    if ($link.length === 0) {
+      return null;
     }
+
+    var href = $link.attr('href'),
+      id = href.split('/')[2];
+
+    return {
+      id: id,
+      name: $link.text()
+    }
+  }
+
+  var properties;
+
+  return function () {
+    if (typeof properties !== 'undefined') {
+      return properties;
+    }
+
+    if (!ppp.matchPage('issues', 'show')) {
+      properties = null;
+      return null;
+    }
+
+    var h1ChildNodes = $('h1')[0].childNodes,
+      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
+      rootProjectTitle = $('h1 .root').text(),
+      h2Content = $('h2:eq(0)').text(),
+      $issueDiv = $('div.issue'),
+      title = $issueDiv.find('h3').text(),
+      authorLinks = $issueDiv.find('p.author a'),
+      issueDivClassList = $issueDiv[0].className.split(/\s+/),
+      dueDate = $issueDiv.find('td.due-date').text(),
+      startDate = $issueDiv.find('td.start-date').text(),
+      assignedTo = getIdAndName($issueDiv.find('td.assigned-to a'));
+
+    var trackerId, statusId, priorityId, priorityType;
+    for (var i = 0; i < issueDivClassList.length; i++) {
+      var className = issueDivClassList[i];
+      if (className.indexOf('tracker-') === 0) {
+        trackerId = className.replace('tracker-', '');
+      } else if (className.indexOf('status-') === 0) {
+        statusId = className.replace('status-', '');
+      } else if (className.indexOf('priority-') === 0) {
+        var after = className.replace('priority-', '');
+        if (/\d/.test(after)) {
+          priorityId = after;
+        } else {
+          priorityType = after;
+        }
+      }
+    }
+
+    return properties = {
+      id: h2Content.substr(h2Content.indexOf('#') + 1),
+      title: title,
+
+      projectName: ppp.getProjectName(),
+      projectTitle: projectTitle,
+
+      topProjectName: ppp.getTopProjectName(),
+      topProjectTitle: rootProjectTitle,
+
+      createdBy: getIdAndName($(authorLinks[0])),
+      assignedTo: assignedTo,
+
+      isCreatedByMe: $issueDiv.hasClass('created-by-me'),
+      isAssignedToMe: $issueDiv.hasClass('assigned-to-me'),
+      isOverDueDate: $issueDiv.hasClass('overdue'),
+
+      trackerId: trackerId,
+      statusId: statusId,
+      priority: {
+        id: priorityId,
+        type: priorityType
+      },
+
+      addedAt: authorLinks[1].title,
+      actualizedAt: authorLinks[2] ? authorLinks[2].title : null,
+      startDate: startDate,
+      dueDate: dueDate
+    };
   }
 });
 define('templates',['vendor/handlebars.runtime'], function(Handlebars) {
@@ -5069,14 +5007,22 @@ templates['issues_project'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":
 
   return "<div class=\"box issues\" id=\"my-issues\">\n    <h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
-    + " <span class=\"count\"></span></h3>\n    <a href=\"#\" class=\"select-random\">select random</a>\n    <div class=\"content\"></div>\n</div>\n\n<div class=\"box issues\"  id=\"due-date-issues\">\n    <h3>"
+    + " <span class=\"count\"></span></h3>\n    <a href=\"#\" class=\"select-random\" style=\"display: none;\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"select random",{"name":"_","hash":{},"data":data}))
+    + "</a>\n    <div class=\"content\"></div>\n</div>\n\n<div class=\"box issues\"  id=\"due-date-issues\">\n    <h3>"
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Overdue issues",{"name":"_","hash":{},"data":data}))
     + "</h3>\n    <div class=\"content\"></div>\n</div>";
 },"useData":true});
 templates['issues_welcome'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
-    return "<div class=\"box issues\" id=\"my-issues\">\n    <h3>"
-    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
-    + " <span class=\"count\"></span></h3>\n    <div class=\"content\"></div>\n</div>";
+    var alias1=helpers.helperMissing, alias2=this.escapeExpression;
+
+  return "<div class=\"box issues\" id=\"my-issues\">\n    <h3>"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"My issues",{"name":"_","hash":{},"data":data}))
+    + " <span class=\"count\"></span></h3>\n    <a href=\"#\" class=\"select-random\" style=\"display: none;\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"select random",{"name":"_","hash":{},"data":data}))
+    + "</a>\n    <div class=\"content\"></div>\n    <a href=\"/issues?assigned_to_id=me&amp;set_filter=1&amp;sort=priority%3Adesc%2Cupdated_on%3Adesc\">"
+    + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"show all",{"name":"_","hash":{},"data":data}))
+    + "</a>\n</div>";
 },"useData":true});
 templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper, alias1=helpers.helperMissing, alias2=this.escapeExpression, alias3="function";
@@ -5136,6 +5082,273 @@ templates['timey_loger'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":fun
     + "\"></iframe>\n</div>";
 },"useData":true});
 return templates;
+});
+
+
+define('module/last_issue',[
+  'lib/page_property_miner',
+  'lib/issue_property_miner',
+  'lib/local_storage',
+  'templates'
+], function (ppp, ipm, ls, templates) {
+  return {
+    init: function () {
+      var properties = ipm();
+      if (properties) {
+        var lastIssueJson = JSON.stringify({
+          id: properties.id,
+          projectTitle: properties.projectTitle,
+          title: properties.title
+        });
+
+        ls.set('last_issue', lastIssueJson, 168);
+        ls.set('last_issue[' + properties.projectName + ']', lastIssueJson, 168)
+      }
+
+      var lastIssue, template;
+
+      if (ppp.matchPage('welcome', 'index')) {
+        lastIssue = ls.get('last_issue');
+        if (lastIssue) {
+          template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+
+      } else if (ppp.matchPage('projects', 'show')) {
+        lastIssue = ls.get('last_issue[' + ppp.getProjectName() +']');
+        if (lastIssue) {
+          template = templates['last_issue'](JSON.parse(lastIssue));
+          $('#content .splitcontentright').prepend(template);
+        }
+      }
+    },
+
+    getLastIssue: function () {
+      var lastIssue,
+        projectName = ppp.getProjectName();
+
+      if (projectName) {
+        lastIssue = ls.get('last_issue[' + projectName +']');
+        if (lastIssue) {
+          return lastIssue;
+        }
+
+      } else {
+        lastIssue = ls.get('last_issue');
+        if (lastIssue) {
+          return lastIssue;
+        }
+      }
+    },
+  }
+});
+define('lib/textarea_insert_at_cursor',[],function() {
+  return function (myField, toAdd) {
+    // IE support
+    if (document.selection) {
+      myField.focus();
+      var sel = document.selection.createRange();
+      sel.text = toAdd;
+
+    } else if (myField.selectionStart || myField.selectionStart == '0') {
+      var startPos = myField.selectionStart,
+        endPos = myField.selectionEnd,
+        value = myField.value;
+
+      if (startPos > 1 && value.substring(startPos - 1, startPos) != "\n") {
+        toAdd = "\n" + toAdd;
+      }
+
+      myField.value = value.substring(0, startPos)
+        + toAdd
+        + value.substring(endPos, value.length);
+
+      myField.selectionStart = myField.selectionEnd = startPos + toAdd.length;
+
+    } else {
+      myField.value += toAdd;
+    }
+  }
+});
+define('module/key_shortcuts',[
+  'lib/page_property_miner',
+  'vendor/keymaster',
+  'lib/local_storage',
+  'module/last_issue',
+  'lib/textarea_insert_at_cursor'
+], function (ppp, key, ls, lastIssue, insertAtCursor) {
+  return {
+    init: function () {
+      var $q = $('#q');
+
+      if (!ls.get('enabled:keyShortcuts')) {
+        if ($(window).width() > 640 && !ppp.matchPage('issues', 'show') && !this.isTouchDevice()) {
+          $q.focus();
+        }
+
+        return;
+      }
+
+      var $mainMenu = $('#main-menu');
+
+      function goTo(href) {
+        window.location.href = href;
+      }
+
+      function link($element) {
+        var href = $element.attr('href');
+        if (href) {
+          goTo(href);
+          return false;
+        }
+        return true;
+      }
+
+      function linkFromMainMenu(type) {
+        return link($mainMenu.find('.' + type));
+      }
+
+      $q.keypress(function (e) {
+        if (e.keyCode === 27) { // esc
+          $(this).blur();
+          return false;
+        }
+      });
+
+      /*
+      Go
+       */
+      key('g', function() {
+        key.setScope('go');
+
+        setTimeout(function () {
+          key.setScope('all');
+        }, 1000);
+
+        return false;
+      });
+
+      key('p', 'go', function () {
+        goTo('/projects');
+        return false;
+      });
+
+      key('o', 'go', function() {
+        return linkFromMainMenu('overview');
+      });
+
+      key('i', 'go', function() {
+        return linkFromMainMenu('issues');
+      });
+
+      key('w', 'go', function() {
+        return linkFromMainMenu('wiki');
+      });
+
+      key('n', 'go', function() {
+        return linkFromMainMenu('new-issue');
+      });
+
+      key('a', 'go', function() {
+        return linkFromMainMenu('activity');
+      });
+
+      key('l', 'go', function () {
+        var lastIssue = lastIssue.getLastIssue();
+        if (lastIssue) {
+          goTo('/issues/' + lastIssue.id);
+          return false;
+        }
+        return true;
+      });
+
+      // Focus search input
+      key('s', function () {
+        $q.focus();
+        return false;
+      });
+
+      // Focus project select
+      key('p', function () {
+        $('#s2id_project_quick_jump_box').select2('open');
+        return false;
+      });
+
+      if (ppp.matchPage('issues', 'show')) {
+        // Show edit issue form
+        key('e', function () {
+          $('.updateButton:eq(0)').click();
+          return false;
+        });
+
+        // Hide update form on escape
+        key('esc', function () {
+          $('#update').hide();
+          return false;
+        });
+
+        var $issueNotes = $('#issue_notes');
+        $issueNotes.keypress(function (e) {
+          if (e.keyCode === 27) { // esc
+            $('#update').hide();
+            $issueNotes.blur();
+            return false;
+          }
+        });
+
+        // Previous issue
+        key('left', function () {
+          var $first = $('#content .next-prev-links *').slice(0, 1);
+          if ($first.is('a')) {
+            return link($first);
+          }
+          return false;
+        });
+
+        // Next issue
+        key('right', function () {
+          var $last = $('#content .next-prev-links *').slice(-1);
+          if ($last.is('a')) {
+            return link($last);
+          }
+          return false;
+        });
+
+        // Reply
+        key('r', function () {
+          var text = window.getSelection().toString();
+          if (text) {
+            text = text.split("\n").join("\n> ");
+
+            $('.updateButton:eq(0)').click(); // open update form
+            insertAtCursor(document.getElementById('issue_notes'), '> ' + text + "\n\n");
+            return false;
+          }
+        });
+
+      } else if (ppp.matchPage('issues', 'index')) {
+        /*key('esc', function() {
+         var $link = $('.buttons .icon-reload');
+         if ($link.length > 0) {
+         window.location.href = $link.attr('href');
+         return false;
+         }
+         });*/
+
+        key('left', function () {
+          return link($('ul.pagination .prev'));
+        });
+
+        key('right', function () {
+          return link($('ul.pagination .next'));
+        });
+      }
+    },
+
+    isTouchDevice: function () {
+      return ('ontouchstart' in window) || window.DocumentTouch && document instanceof DocumentTouch;
+    }
+  }
 });
 
 
@@ -5559,94 +5772,6 @@ define('module/absences',[
     }
   }
 });
-define('lib/issue_property_miner',['lib/page_property_miner'], function (ppp) {
-
-  function getIdAndName($link) {
-    if ($link.length === 0) {
-      return null;
-    }
-
-    var href = $link.attr('href'),
-      id = href.split('/')[2];
-
-    return {
-      id: id,
-      name: $link.text()
-    }
-  }
-
-  var properties;
-
-  return function () {
-    if (typeof properties !== 'undefined') {
-      return properties;
-    }
-
-    if (!ppp.matchPage('issues', 'show')) {
-      properties = null;
-      return null;
-    }
-
-    var h1ChildNodes = $('h1')[0].childNodes,
-      projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
-      rootProjectTitle = $('h1 .root').text(),
-      h2Content = $('h2:eq(0)').text(),
-      $issueDiv = $('div.issue'),
-      title = $issueDiv.find('h3').text(),
-      authorLinks = $issueDiv.find('p.author a'),
-      issueDivClassList = $issueDiv[0].className.split(/\s+/),
-      dueDate = $issueDiv.find('td.due-date').text(),
-      startDate = $issueDiv.find('td.start-date').text(),
-      assignedTo = getIdAndName($issueDiv.find('td.assigned-to a'));
-
-    var trackerId, statusId, priorityId, priorityType;
-    for (var i = 0; i < issueDivClassList.length; i++) {
-      var className = issueDivClassList[i];
-      if (className.indexOf('tracker-') === 0) {
-        trackerId = className.replace('tracker-', '');
-      } else if (className.indexOf('status-') === 0) {
-        statusId = className.replace('status-', '');
-      } else if (className.indexOf('priority-') === 0) {
-        var after = className.replace('priority-', '');
-        if (/\d/.test(after)) {
-          priorityId = after;
-        } else {
-          priorityType = after;
-        }
-      }
-    }
-
-    return properties = {
-      id: h2Content.substr(h2Content.indexOf('#') + 1),
-      title: title,
-
-      projectName: ppp.getProjectName(),
-      projectTitle: projectTitle,
-
-      topProjectName: ppp.getTopProjectName(),
-      topProjectTitle: rootProjectTitle,
-
-      createdBy: getIdAndName($(authorLinks[0])),
-      assignedTo: assignedTo,
-
-      isCreatedByMe: $issueDiv.hasClass('created-by-me'),
-      isAssignedToMe: $issueDiv.hasClass('assigned-to-me'),
-      isOverDueDate: $issueDiv.hasClass('overdue'),
-
-      trackerId: trackerId,
-      statusId: statusId,
-      priority: {
-        id: priorityId,
-        type: priorityType
-      },
-
-      addedAt: authorLinks[1].title,
-      actualizedAt: authorLinks[2] ? authorLinks[2].title : null,
-      startDate: startDate,
-      dueDate: dueDate
-    };
-  }
-});
 
 
 define('module/assign_select_author',[
@@ -5978,16 +6103,19 @@ define('module/issues',[
       count: data.total_count
     });
 
-    var $myIssues = $('#my-issues');
+    var $myIssues = $('#my-issues'),
+      $selectRandom = $myIssues.find('.select-random');
 
     $myIssues.find('.content').html(html);
     $myIssues.find('.count').html(data.total_count);
 
     if (data.total_count === 0) {
-      $myIssues.find('.select-random').hide();
+      $selectRandom.hide();
+    } else {
+      $selectRandom.show();
     }
 
-    $myIssues.find('.select-random').click(function() {
+    $selectRandom.click(function() {
       var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
         issueId = data.issues[issuePosition].id,
         url = '/issues/' + issueId;
@@ -6075,47 +6203,6 @@ define('module/issues',[
     }
   }
 
-});
-
-
-define('module/last_issue',[
-  'lib/page_property_miner',
-  'lib/issue_property_miner',
-  'lib/local_storage',
-  'templates'
-], function (ppp, ipm, ls, templates) {
-  return {
-    init: function () {
-      var properties = ipm();
-      if (properties) {
-        var lastIssueJson = JSON.stringify({
-          id: properties.id,
-          projectTitle: properties.projectTitle,
-          title: properties.title
-        });
-
-        ls.set('last_issue', lastIssueJson, 168);
-        ls.set('last_issue[' + properties.projectName + ']', lastIssueJson, 168)
-      }
-
-      var lastIssue, template;
-
-      if (ppp.matchPage('welcome', 'index')) {
-        lastIssue = ls.get('last_issue');
-        if (lastIssue) {
-          template = templates['last_issue'](JSON.parse(lastIssue));
-          $('#content .splitcontentright').prepend(template);
-        }
-
-      } else if (ppp.matchPage('projects', 'show')) {
-        lastIssue = ls.get('last_issue[' + ppp.getProjectName() +']');
-        if (lastIssue) {
-          template = templates['last_issue'](JSON.parse(lastIssue));
-          $('#content .splitcontentright').prepend(template);
-        }
-      }
-    }
-  }
 });
 
 
@@ -6276,6 +6363,14 @@ define('module/checkbox',['lib/page_property_miner'], function (ppp) {
             } else if (content.indexOf('[X]') === 0 || content.indexOf('[x]') === 0) {
               child.textContent = content.substring(3);
               element.insertBefore(createInputNode(checkboxId++, true), child);
+
+            } else if ( // Skip IDs for characters, which are not converted to checkbox
+              content.indexOf('[ ]') > 0 ||
+              content.indexOf('[]') > 0 ||
+              content.indexOf('[X]') > 0 ||
+              content.indexOf('[x]') > 0
+            ) {
+              checkboxId++;
             }
           } else {
             replaceWithCheckboxes(child);
@@ -6447,8 +6542,9 @@ define('module/attachments',[
   'lib/page_property_miner',
   'lib/local_storage',
   'lib/redmine_api',
-  'lib/translate'
-], function (ppp, ls, RedmineApi, _) {
+  'lib/translate',
+  'lib/textarea_insert_at_cursor'
+], function (ppp, ls, RedmineApi, _, insertAtCursor) {
   return {
     activeEditor: 'issue_notes',
 
@@ -6480,33 +6576,6 @@ define('module/attachments',[
       };
     },
 
-    insertAtCursor: function (myField, toAdd) {
-      // IE support
-      if (document.selection) {
-        myField.focus();
-        var sel = document.selection.createRange();
-        sel.text = toAdd;
-
-      } else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart,
-          endPos = myField.selectionEnd,
-          value = myField.value;
-
-        if (startPos > 1 && value.substring(startPos - 1, startPos) != "\n") {
-          toAdd = "\n" + toAdd;
-        }
-
-        myField.value = value.substring(0, startPos)
-          + toAdd
-          + value.substring(endPos, value.length);
-
-        myField.selectionStart = myField.selectionEnd = startPos + toAdd.length;
-
-      } else {
-        myField.value += toAdd;
-      }
-    },
-
     uploaded: function (attachmentId, blob) {
       this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId), blob);
     },
@@ -6535,7 +6604,7 @@ define('module/attachments',[
               text = '!' + attachment.filename  + '!';
             }
 
-            self.insertAtCursor(document.getElementById(self.activeEditor), text);
+            insertAtCursor(document.getElementById(self.activeEditor), text);
             return false;
           });
         }

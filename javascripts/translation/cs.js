@@ -27,6 +27,8 @@ define({
   'My issues': 'Mé úkoly',
   'No issues': 'Žádné úkoly',
   'Overdue issues': 'Úkoly s vypršeným Uzavřít do',
+  'select random': 'zobrazit náhodný',
+  'show all': 'zobrazit všechny',
 
   // Attachments
   'Add to editor': 'Přidat do editoru',

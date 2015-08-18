@@ -43,6 +43,14 @@ define(['lib/page_property_miner'], function (ppp) {
             } else if (content.indexOf('[X]') === 0 || content.indexOf('[x]') === 0) {
               child.textContent = content.substring(3);
               element.insertBefore(createInputNode(checkboxId++, true), child);
+
+            } else if ( // Skip IDs for characters, which are not converted to checkbox
+              content.indexOf('[ ]') > 0 ||
+              content.indexOf('[]') > 0 ||
+              content.indexOf('[X]') > 0 ||
+              content.indexOf('[x]') > 0
+            ) {
+              checkboxId++;
             }
           } else {
             replaceWithCheckboxes(child);

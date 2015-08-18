@@ -1,4 +1,10 @@
-define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], function (ppp, key, ls) {
+define([
+  'lib/page_property_miner',
+  'vendor/keymaster',
+  'lib/local_storage',
+  'module/last_issue',
+  'lib/textarea_insert_at_cursor'
+], function (ppp, key, ls, lastIssue, insertAtCursor) {
   return {
     init: function () {
       var $q = $('#q');
@@ -75,6 +81,15 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         return linkFromMainMenu('activity');
       });
 
+      key('l', 'go', function () {
+        var lastIssue = lastIssue.getLastIssue();
+        if (lastIssue) {
+          goTo('/issues/' + lastIssue.id);
+          return false;
+        }
+        return true;
+      });
+
       // Focus search input
       key('s', function () {
         $q.focus();
@@ -95,7 +110,6 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
         });
 
         // Hide update form on escape
-
         key('esc', function () {
           $('#update').hide();
           return false;
@@ -110,6 +124,7 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
           }
         });
 
+        // Previous issue
         key('left', function () {
           var $first = $('#content .next-prev-links *').slice(0, 1);
           if ($first.is('a')) {
@@ -118,12 +133,25 @@ define(['lib/page_property_miner', 'vendor/keymaster', 'lib/local_storage'], fun
           return false;
         });
 
+        // Next issue
         key('right', function () {
           var $last = $('#content .next-prev-links *').slice(-1);
           if ($last.is('a')) {
             return link($last);
           }
           return false;
+        });
+
+        // Reply
+        key('r', function () {
+          var text = window.getSelection().toString();
+          if (text) {
+            text = text.split("\n").join("\n> ");
+
+            $('.updateButton:eq(0)').click(); // open update form
+            insertAtCursor(document.getElementById('issue_notes'), '> ' + text + "\n\n");
+            return false;
+          }
         });
 
       } else if (ppp.matchPage('issues', 'index')) {

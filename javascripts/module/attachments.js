@@ -4,8 +4,9 @@ define([
   'lib/page_property_miner',
   'lib/local_storage',
   'lib/redmine_api',
-  'lib/translate'
-], function (ppp, ls, RedmineApi, _) {
+  'lib/translate',
+  'lib/textarea_insert_at_cursor'
+], function (ppp, ls, RedmineApi, _, insertAtCursor) {
   return {
     activeEditor: 'issue_notes',
 
@@ -37,33 +38,6 @@ define([
       };
     },
 
-    insertAtCursor: function (myField, toAdd) {
-      // IE support
-      if (document.selection) {
-        myField.focus();
-        var sel = document.selection.createRange();
-        sel.text = toAdd;
-
-      } else if (myField.selectionStart || myField.selectionStart == '0') {
-        var startPos = myField.selectionStart,
-          endPos = myField.selectionEnd,
-          value = myField.value;
-
-        if (startPos > 1 && value.substring(startPos - 1, startPos) != "\n") {
-          toAdd = "\n" + toAdd;
-        }
-
-        myField.value = value.substring(0, startPos)
-          + toAdd
-          + value.substring(endPos, value.length);
-
-        myField.selectionStart = myField.selectionEnd = startPos + toAdd.length;
-
-      } else {
-        myField.value += toAdd;
-      }
-    },
-
     uploaded: function (attachmentId, blob) {
       this.processAttachment($('#attachments_fields').find('#attachments_' + attachmentId), blob);
     },
@@ -92,7 +66,7 @@ define([
               text = '!' + attachment.filename  + '!';
             }
 
-            self.insertAtCursor(document.getElementById(self.activeEditor), text);
+            insertAtCursor(document.getElementById(self.activeEditor), text);
             return false;
           });
         }
