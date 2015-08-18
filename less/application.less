@@ -17,9 +17,7 @@ html, body, #wrapper { background-color: #112631; height: 100%; }
     overflow: hidden;
 }
 
-body.controller-welcome #main,
-body.controller-projects #main,
-body.controller-my #main {
+body:not([class*="project-"]) #main {
     border-radius: 2px;
     margin-top: 0;
 }
