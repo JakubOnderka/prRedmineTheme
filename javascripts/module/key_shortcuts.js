@@ -4,7 +4,7 @@ define([
   'lib/local_storage',
   'module/last_issue',
   'lib/textarea_insert_at_cursor'
-], function (ppp, key, ls, lastIssue, insertAtCursor) {
+], function (ppp, key, ls, lastIssueModule, insertAtCursor) {
   return {
     init: function () {
       var $q = $('#q');
@@ -82,7 +82,7 @@ define([
       });
 
       key('l', 'go', function () {
-        var lastIssue = lastIssue.getLastIssue();
+        var lastIssue = lastIssueModule.getLastIssue();
         if (lastIssue) {
           goTo('/issues/' + lastIssue.id);
           return false;
