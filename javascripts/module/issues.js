@@ -48,7 +48,7 @@ define([
     }
 
     $selectRandom.click(function() {
-      var issuePosition = Math.floor(Math.random() * data.issues.length) - 1,
+      var issuePosition = Math.floor(Math.random() * data.issues.length),
         issueId = data.issues[issuePosition].id,
         url = '/issues/' + issueId;
 
