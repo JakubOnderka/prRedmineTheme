@@ -9,9 +9,21 @@ html, body, #wrapper { background-color: #112631; height: 100%; }
 	#loggedas, a { font-weight: normal; color: #5fbaed}
 	a:hover { color: white; }
 }
-#main { background: white; padding: 10px 0px; margin: 25px 20px; border-radius: 0 2px 2px 2px; overflow: hidden; }
+#main {
+    background: white;
+    padding: 10px 0;
+    margin: 25px 20px;
+    border-radius: 0 2px 2px 2px;
+    overflow: hidden;
+}
 
-body.controller-welcome #main { border-radius: 2px; margin-top: 0px; }
+body.controller-welcome #main,
+body.controller-projects #main,
+body.controller-my #main {
+    border-radius: 2px;
+    margin-top: 0;
+}
+
 #content, #main.nosidebar #content { background: #fff; border: 0; padding-left: 15px; width: auto; padding-right: 300px; }
 #main.nosidebar #content { padding-right: 15px; }
 #sidebar { width: 255px; background: #eee; border: 0; margin-top: -10px; padding: 15px; border-radius: 0 2px 0 2px;}
