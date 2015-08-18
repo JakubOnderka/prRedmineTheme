@@ -4,7 +4,15 @@
 html, body, #wrapper { background-color: #112631; height: 100%; }
 #wrapper2 { min-height: 100% }
 #header, #top-menu { margin: 0px; }
-#header {  background: #112631 url("./img/border.png") 0 0 repeat-x; padding: 20px 20px 0; height: 35px;}
+#header {
+    background-color: #112631;
+    background-position: 0 0;
+    background-repeat: repeat-x;
+    background-image: url("./img/border.png");
+    background-image: url("./img/border.svg"), none;
+    padding: 20px 20px 0;
+    height: 35px;
+}
 #top-menu {  background: #182f3c; padding: 7px 20px 3px;
 	#loggedas, a { font-weight: normal; color: #5fbaed}
 	a:hover { color: white; }
@@ -31,7 +39,7 @@ body:not([class*="project-"]) #main {
 h2, h3, h4, .wiki h1, .wiki h2, .wiki h3 { border-bottom: 0px; }
 
 #header h1 {
-    background: url("./img/pr.png");
+    background-image: url("./img/pr.png");
     background-image: url("./img/pr.svg"), none;
     background-size: 228px 22px;
     background-repeat: no-repeat;
@@ -883,3 +891,21 @@ body.controller-welcome.action-index #content > h2 {
 		clear: both;
 	}
 }
+
+/*#content div.issue {
+
+    td.spent-time:contains(-), td.category:contains(-), td.assigned-to:contains(-), td.fixed-version:contains(-)
+
+
+    td.category {
+        visibility: hidden;
+    }
+
+    td.category::before {
+        content: "⁓";
+        visibility: visible;
+        color: silver;
+        padding-left: 50px;
+    }
+
+}*/
