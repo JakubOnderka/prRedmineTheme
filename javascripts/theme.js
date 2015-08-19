@@ -5133,17 +5133,15 @@ define('module/last_issue',[
 
       if (projectName) {
         lastIssue = ls.get('last_issue[' + projectName +']');
-        if (lastIssue) {
-          return lastIssue;
-        }
 
       } else {
         lastIssue = ls.get('last_issue');
-        if (lastIssue) {
-          return lastIssue;
-        }
       }
-    },
+
+      if (lastIssue) {
+        return JSON.parse(lastIssue);
+      }
+    }
   }
 });
 define('lib/textarea_insert_at_cursor',[],function() {
