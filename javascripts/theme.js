@@ -4323,8 +4323,12 @@ define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
         }
 
         if (this.matchPage('timelog', 'new')) {
-          if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
+          var $issueId = $('#issue_id');
+          /*if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
             this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
+          }*/
+          if ($issueId.length) {
+            this.issueId = $issueId.val();
           }
         }
 
@@ -5368,7 +5372,9 @@ define('module/timey_integration',['lib/page_property_miner', 'templates'], func
 
       var self = this;
       $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        self.insertTimeyLogger();
+        if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
+          self.insertTimeyLogger();
+        }
         return false;
       });
     },

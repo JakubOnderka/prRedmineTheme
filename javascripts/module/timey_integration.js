@@ -16,7 +16,9 @@ define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
 
       var self = this;
       $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        self.insertTimeyLogger();
+        if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
+          self.insertTimeyLogger();
+        }
         return false;
       });
     },

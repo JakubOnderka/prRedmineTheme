@@ -64,8 +64,12 @@ define(['lib/redmine_api'], function(RedmineApi) {
         }
 
         if (this.matchPage('timelog', 'new')) {
-          if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
+          var $issueId = $('#issue_id');
+          /*if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
             this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
+          }*/
+          if ($issueId.length) {
+            this.issueId = $issueId.val();
           }
         }
 
