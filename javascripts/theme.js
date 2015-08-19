@@ -5074,7 +5074,7 @@ templates['relations_header'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main
     + alias2((helpers._ || (depth0 && depth0._) || alias1).call(depth0,"Due date",{"name":"_","hash":{},"data":data}))
     + "</th>\n    <th></th>\n</tr>\n</thead>";
 },"useData":true});
-templates['timey_loger'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+templates['timey_logger'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
     var helper;
 
   return "<div class=\"timeyLoggerWrapper\">\n    <span class=\"close\"><span class=\"glyphicon glyphicon-remove\"></span></span>\n    <iframe style=\"border:0; width: 100%; height: 220px\" src=\""
@@ -5385,7 +5385,7 @@ define('module/timey_integration',['lib/page_property_miner', 'templates'], func
         }
         url = url + '#/logs/new';
 
-        var timeyLogger = templates['timey_loger']({
+        var timeyLogger = templates['timey_logger']({
           url: url
         });
 

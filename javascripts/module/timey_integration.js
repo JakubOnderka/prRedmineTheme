@@ -33,7 +33,7 @@ define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
         }
         url = url + '#/logs/new';
 
-        var timeyLogger = templates['timey_loger']({
+        var timeyLogger = templates['timey_logger']({
           url: url
         });
 
