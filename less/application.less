@@ -50,10 +50,28 @@ h2, h3, h4, .wiki h1, .wiki h2, .wiki h3 { border-bottom: 0px; }
 	font-size: 18px;
 	margin: -20px auto 0;
 	color: #5fbaed;
+    position: relative;
+
+    .go-to-my-issues, .go-to-projects {
+        position: absolute;
+        top: 21px;
+        display: block;
+        height: 22px;
+    }
+
+    .go-to-my-issues {
+        left: 0;
+        width: 105px;
+    }
+
+    .go-to-projects {
+        left: 105px;
+        width: 125px;
+    }
 }
 
 body.controller-welcome.action-index #header h1 {
-    color: #112631;
+    text-indent: -9999px;
 }
 
 textarea, textarea.wiki-edit {
@@ -750,18 +768,6 @@ div.issue { border: 0; padding: 15px; }
 .contextual {
     font-size: 13px;
     a { margin-right: 5px; }
-}
-.go-to-my-issues {
-	display: none;
-	display: inline-block;
-	width: 105px; margin-left: -240px;
-	text-indent: -9999px;
-}
-.go-to-projects {
-	display: none;
-	display: inline-block;
-	width: 125px; margin-right: 10px;
-	text-indent: -9999px;
 }
 
 .wiki-page {
