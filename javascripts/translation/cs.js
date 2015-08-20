@@ -34,5 +34,8 @@ define({
   'Add to editor': 'Přidat do editoru',
 
   // Last issue
-  'Last viewed issue': 'Poslední zobrazený úkol'
+  'Last viewed issue': 'Poslední zobrazený úkol',
+
+  // Make money
+  'I wanna work!': 'Chci práci!'
 });

@@ -3992,7 +3992,10 @@ define('translation/cs',{
   'Add to editor': 'Přidat do editoru',
 
   // Last issue
-  'Last viewed issue': 'Poslední zobrazený úkol'
+  'Last viewed issue': 'Poslední zobrazený úkol',
+
+  // Make money
+  'I wanna work!': 'Chci práci!'
 });
 define('translation/en',{
 
@@ -5042,6 +5045,11 @@ templates['last_issue'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":func
     + ": "
     + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias1),(typeof helper === alias3 ? helper.call(depth0,{"name":"title","hash":{},"data":data}) : helper)))
     + "</a></p>";
+},"useData":true});
+templates['make_money'] = template({"compiler":[6,">= 2.0.0-beta.1"],"main":function(depth0,helpers,partials,data) {
+    return "<div id=\"makeMoney\" style=\"float: right\">\n    <a href=\"/projects/chci-praci/issues/new?issue[assigned_to_id]=79&issue[priority_id]=5\">"
+    + this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"I wanna work!",{"name":"_","hash":{},"data":data}))
+    + "</a>\n</div>";
 },"useData":true});
 templates['not_available_user'] = template({"1":function(depth0,helpers,partials,data) {
     return this.escapeExpression((helpers._ || (depth0 && depth0._) || helpers.helperMissing).call(depth0,"Not available %0",(depth0 != null ? depth0.from : depth0),{"name":"_","hash":{},"data":data}));
@@ -6885,105 +6893,6 @@ var ProofReasonRedmineTheme = {
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
-    this.MakeMoney.init();
-  },
-
-  debug: function () {
-    this.PagePropertyMiner.debug();
-  },
-
-  PagePropertyMiner: {
-    projectId: null,
-    issueId: null,
-    userId: null,
-    lang: null,
-
-    matchPage: function (controller, action) {
-      var body = $('body');
-
-      if (body.hasClass('controller-' + controller) && body.hasClass('action-' + action)) {
-        return true;
-      }
-
-      return false;
-    },
-
-    getProjectId: function (callback) {
-      if (this.projectId === null) {
-        if (this.matchPage('issues', 'show')) {
-          this.projectId = $('#issue_project_id option[selected="selected"]').val();
-          callback(this.projectId);
-        } else {
-          var redmineApi = new RedmineApi(),
-            url = $('#project_quick_jump_box option[selected="selected"]').val(),
-            textProjectId = url.split('/')[2].split('?')[0],
-            self = this;
-
-          redmineApi.getProject(textProjectId, function (data) {
-            self.projectId = data.project.id;
-            callback(self.projectId);
-          });
-        }
-      } else {
-        callback(this.projectId);
-      }
-    },
-
-    getIssueId: function () {
-      if (this.issueId === null) {
-
-        if (this.matchPage('issues', 'show')) {
-          if ($('h2').eq(0).text().match(/^.+\#([0-9]+)/)) {
-            this.issueId = /^.+\#([0-9]+)/.exec($('h2').eq(0).text()).pop();
-          }
-        }
-
-        if (this.matchPage('timelog', 'new')) {
-          if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
-            this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
-          }
-        }
-
-        console.log('issue id recognized: ' + this.issueId);
-      }
-
-      return this.issueId;
-    },
-
-    getUserId: function () {
-      if (this.userId === null) {
-        this.userId = /users\/([0-9]+)$/.exec($('#loggedas a').attr('href')).pop();
-
-        console.log('user id recognized: ' + this.userId);
-      }
-
-      return this.userId;
-    },
-
-    assessUsedLanguage: function () {
-      if (this.lang === null) {
-
-        if ($('#top-menu a.home').text() == 'Úvodní') {
-          this.lang = 'cs';
-        } else {
-          this.lang = 'en';
-        }
-
-        console.log('used language recognized: ' + this.lang);
-      }
-
-      return this.lang;
-    },
-
-    debug: function () {
-      this.getProjectId(function (projectId) {
-        console.log('Project ID recognized: ' + projectId);
-      });
-      this.getIssueId();
-      this.getUserId();
-      this.assessUsedLanguage();
-    }
-
   },
 
   BetterTimeline: {
@@ -7001,35 +6910,6 @@ var ProofReasonRedmineTheme = {
         $('.showStatusChanges').hide();
         return false;
       });
-    }
-  },
-
-  MakeMoney: {
-    ppm: null,
-
-    init: function () {
-      this.ppm = ProofReasonRedmineTheme.PagePropertyMiner;
-
-      $('<div id="makeMoney" style="float: right"><a href="/projects/chci-praci/issues/new?issue[assigned_to_id]=79&issue[priority_id]=5">Chci práci!</a></div>').insertBefore('#loggedas');
-
-      if ($('body').hasClass('project-chci-praci') && this.ppm.matchPage('issues', 'new')) {
-        var nextMonday = this.getNextMonday();
-        $('#issue_subject').val('Příští týden (od ' + nextMonday.getDate() + '. ' + (nextMonday.getMonth() + 1) + '.) mám X hodin času');
-
-        $('.splitcontentleft, .splitcontentright').css({'float': 'none', 'width': 'auto', 'margin': '0'});
-        $('#all_attributes p, #attachments_form, #watchers_form, input[name="continue"], a:contains("Preview")').hide();
-        $('#all_attributes #issue_subject').closest('p').show();
-        $('#all_attributes #issue_description_and_toolbar').closest('p').show();
-        $('#all_attributes #issue_description_and_toolbar textarea').attr('placeholder', 'Upřesněte případné detaily.');
-        $('#all_attributes #issue_due_date').closest('p').show();
-      }
-    },
-
-    getNextMonday: function () {
-      var today = new Date();
-      var weekday = today.getDay() || 7;
-      if (weekday !== 1) today.setDate(-(weekday) + 7);
-      return today;
     }
   },
 
