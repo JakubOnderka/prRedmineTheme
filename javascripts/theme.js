@@ -6845,7 +6845,7 @@ define('module/make_money',['lib/page_property_miner', 'templates', 'vendor/mome
       if ($('body').hasClass('project-chci-praci') && ppp.matchPage('issues', 'new')) {
         var nextMonday = moment().add(1, 'weeks').startOf('isoWeek').format('D. M.');
 
-        $('#issue_subject').val('Příští týden (od ' + nextMonday + '.) mám X hodin času');
+        $('#issue_subject').val('Příští týden (od ' + nextMonday + ') mám X hodin času');
 
         var $allAttributes = $('#all_attributes');
         $allAttributes.find('#issue_subject').closest('p').css('display', 'block');
