@@ -5889,7 +5889,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
           return;
         }
 
-        $this.data('format.' + 'originalFormat', text);
+        $this.data('format.originalFormat', text);
         $this.attr('title', text);
         $this.data('currentlyDisplayed', 'originalFormat');
 
@@ -5918,7 +5918,9 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
       var data = cell.data();
       var variants = [];
       for (var param in data) {
-        if (param.indexOf('format.') === 0) variants.push(param.substring(7));
+        if (param.indexOf('format.') === 0) {
+          variants.push(param.substring(7));
+        }
       }
 
       var currentFormat = $.inArray(cell.data('currentlyDisplayed'), variants);
@@ -6047,12 +6049,12 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
         };
 
         var types = {
-          'Požadavek': icons['request'],
-          'Feature Request': icons['request'],
-          'Error': icons['error'],
-          'Error (Baufinder)': icons['error'],
-          'Podpora': icons['support'],
-          'Development': icons['development']
+          'Požadavek': icons.request,
+          'Feature Request': icons.request,
+          'Error': icons.error,
+          'Error (Baufinder)': icons.error,
+          'Podpora': icons.support,
+          'Development': icons.development
         };
 
         if (value in types) {
