@@ -469,12 +469,3 @@ jQuery.fn.highlight = function () {
   return _;
 
 })();
-
-
-/*
- * Wraps up a common pattern used with this plugin whereby you take a String
- * representation of a Date, and want back a date object.
- */
-Date.fromString = function(str) {
-  return new Date(Date.parse(str));
-};
