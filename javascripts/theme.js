@@ -5859,6 +5859,8 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
     return 'alternateCellFormat:' + cellSelector.split(' ').join('').split('.').join('_');
   }
 
+  var clickEventBinded = false;
+
   return {
     init: function () {
       // Add class to issue tree table
@@ -5877,6 +5879,8 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
       });
       this.setFormatUp('table.issues .tracker', {shortIssueType: this.format.shortIssueType});
 
+      clickEventBinded = true;
+
       // Short titles
       /*
        TODO: Disabled for now
@@ -5886,35 +5890,40 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
     },
 
     setFormatUp: function (cellSelector, alternateFormats) {
-      this.prepareCells(cellSelector, alternateFormats);
+      var savedFormat = ls.get(lsKey(cellSelector));
+      this.prepareCells(cellSelector, alternateFormats, savedFormat);
 
-      if (ls.get(lsKey(cellSelector))) {
-        this.showAlternateFormat(cellSelector, ls.get(lsKey(cellSelector)));
+      if (!clickEventBinded) {
+        var self = this;
+        $('document').on('click', cellSelector, function () {
+          self.toggleFormats(cellSelector);
+        });
       }
     },
 
-    prepareCells: function (cells, alternateFormats) {
+    prepareCells: function (cells, alternateFormats, savedFormat) {
       $(cells).each(function () {
-        var $this = $(this),
-          text = $this.text();
+        var $this = $(this);
 
         if ($this.data('currentlyDisplayed')) {
           return;
         }
 
+        var text = $this.text();
         $this.data('format.originalFormat', text);
         $this.attr('title', text);
-        $this.data('currentlyDisplayed', 'originalFormat');
 
         for (var format in alternateFormats) {
           var procedure = alternateFormats[format];
           $this.data('format.' + format, procedure(text));
         }
-      });
 
-      var self = this;
-      $(cells).click(function () {
-        self.toggleFormats(cells);
+        if (savedFormat) {
+          $this.data('currentlyDisplayed', savedFormat);
+          $this.html($this.data('format.' + savedFormat));
+        } else {
+          $this.data('currentlyDisplayed', 'originalFormat');
+        }
       });
     },
 
