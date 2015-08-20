@@ -1,6 +1,6 @@
 "use strict";
 
-define(['lib/page_property_miner', 'templates', 'moment'], function (ppp, templates, moment) {
+define(['lib/page_property_miner', 'templates', 'vendor/moment'], function (ppp, templates, moment) {
   return {
     init: function () {
       $(templates['make_money']).insertBefore('#loggedas');

@@ -6822,6 +6822,51 @@ define('module/clickable_issue_names',['lib/page_property_miner'], function (ppp
 });
 
 
+define('module/make_money',['lib/page_property_miner', 'templates', 'vendor/moment'], function (ppp, templates, moment) {
+  return {
+    init: function () {
+      $(templates['make_money']).insertBefore('#loggedas');
+
+      if ($('body').hasClass('project-chci-praci') && ppp.matchPage('issues', 'new')) {
+        var nextMonday = moment().add(1, 'weeks').startOf('isoWeek').format('D. M.');
+
+        $('#issue_subject').val('Příští týden (od ' + nextMonday + '.) mám X hodin času');
+
+        var $allAttributes = $('#all_attributes');
+        $allAttributes.find('#issue_subject').closest('p').css('display', 'block');
+        $allAttributes.find('#issue_description_and_toolbar').closest('p').css('display', 'block');
+        $allAttributes.find('#issue_description_and_toolbar textarea').attr('placeholder', 'Upřesněte případné detaily.');
+      }
+    }
+  }
+});
+
+
+define('module/better_timeline',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function () {
+      if (ppp.matchPage('issues', 'show')) {
+        var $history = $('#history');
+
+        $(' <a href="#" class="showStatusChanges">(show all issue status changes)</a>')
+          .appendTo($history.find('h3'))
+          .click(function () {
+            $history.find('.peekable').removeClass('peekable');
+            $(this).remove();
+            return false;
+          });
+
+        $history.find('>.journal:not(.has-notes)')
+          .addClass('peekable')
+          .click(function () {
+            $(this).removeClass('peekable');
+          });
+      }
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6865,7 +6910,9 @@ require([
   'module/issue_update_form',
   'module/single_click_select',
   'module/better_sidebar',
-  'module/clickable_issue_names'
+  'module/clickable_issue_names',
+  'module/make_money',
+  'module/better_timeline'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -6889,28 +6936,9 @@ require(['lib/local_storage'], function (module) {
 
 var ProofReasonRedmineTheme = {
   init: function () {
-    this.BetterTimeline.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
-  },
-
-  BetterTimeline: {
-    init: function () {
-      //simplified timeline in issues
-      $('#history>.journal').addClass('peekable');
-      $('#history .wiki').closest('.journal').removeClass('peekable');
-      $('#history h3').append(' <a href="#" class="showStatusChanges">(show all issue status changes)</a>');
-      $('.peekable').click(function () {
-        $(this).removeClass('peekable');
-      });
-
-      $('#history h3 a').click(function () {
-        $('#history>.journal').removeClass('peekable');
-        $('.showStatusChanges').hide();
-        return false;
-      });
-    }
   },
 
   ZenMode: {
@@ -6964,13 +6992,6 @@ var ProofReasonRedmineTheme = {
 $(function() {
   ProofReasonRedmineTheme.init();
 });
-
-
-
-
-
-
-
 
 
 //    ##       #### ########   ######

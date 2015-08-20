@@ -43,7 +43,9 @@ require([
   'module/issue_update_form',
   'module/single_click_select',
   'module/better_sidebar',
-  'module/clickable_issue_names'
+  'module/clickable_issue_names',
+  'module/make_money',
+  'module/better_timeline'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -67,28 +69,9 @@ require(['lib/local_storage'], function (module) {
 
 var ProofReasonRedmineTheme = {
   init: function () {
-    this.BetterTimeline.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
-  },
-
-  BetterTimeline: {
-    init: function () {
-      //simplified timeline in issues
-      $('#history>.journal').addClass('peekable');
-      $('#history .wiki').closest('.journal').removeClass('peekable');
-      $('#history h3').append(' <a href="#" class="showStatusChanges">(show all issue status changes)</a>');
-      $('.peekable').click(function () {
-        $(this).removeClass('peekable');
-      });
-
-      $('#history h3 a').click(function () {
-        $('#history>.journal').removeClass('peekable');
-        $('.showStatusChanges').hide();
-        return false;
-      });
-    }
   },
 
   ZenMode: {
@@ -142,13 +125,6 @@ var ProofReasonRedmineTheme = {
 $(function() {
   ProofReasonRedmineTheme.init();
 });
-
-
-
-
-
-
-
 
 
 //    ##       #### ########   ######
