@@ -6799,6 +6799,21 @@ define('module/single_click_select',['lib/page_property_miner'], function (ppp) 
 });
 
 
+// Clickable issues names in related issues list
+define('module/clickable_issue_names',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function () {
+      if (ppp.matchPage('issues', 'show')) {
+        $('table.list.issues td.subject').each(function () {
+          var $this = $(this);
+          $this.html($this.find('a').html($this.text()));
+        });
+      }
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6841,7 +6856,8 @@ require([
   'module/attachments',
   'module/issue_update_form',
   'module/single_click_select',
-  'module/better_sidebar'
+  'module/better_sidebar',
+  'module/clickable_issue_names'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -6870,7 +6886,6 @@ var ProofReasonRedmineTheme = {
     this.ZenMode.init();
     this.MobileRedmine.init();
     this.MakeMoney.init();
-    this.ClickableIssueNames.init();
   },
 
   debug: function () {
@@ -6969,17 +6984,6 @@ var ProofReasonRedmineTheme = {
       this.assessUsedLanguage();
     }
 
-  },
-
-  ClickableIssueNames: {
-    init: function () {
-      this.ppm = ProofReasonRedmineTheme.PagePropertyMiner;
-      if (this.ppm.matchPage('issues', 'show')) {
-        $('table.list.issues td.subject').each(function () {
-          $(this).html($(this).find('a').html($(this).text()));
-        });
-      }
-    }
   },
 
   BetterTimeline: {
