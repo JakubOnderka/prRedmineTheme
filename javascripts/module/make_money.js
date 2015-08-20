@@ -3,7 +3,7 @@
 define(['lib/page_property_miner', 'templates', 'vendor/moment'], function (ppp, templates, moment) {
   return {
     init: function () {
-      $(templates['make_money']).insertBefore('#loggedas');
+      $(templates['make_money']()).insertBefore('#loggedas');
 
       if ($('body').hasClass('project-chci-praci') && ppp.matchPage('issues', 'new')) {
         var nextMonday = moment().add(1, 'weeks').startOf('isoWeek').format('D. M.');
