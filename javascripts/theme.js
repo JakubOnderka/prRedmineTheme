@@ -5918,7 +5918,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
           $this.data('format.' + format, procedure(text));
         }
 
-        if (savedFormat) {
+        if (savedFormat && savedFormat !== 'originalFormat') {
           $this.data('currentlyDisplayed', savedFormat);
           $this.html($this.data('format.' + savedFormat));
         } else {

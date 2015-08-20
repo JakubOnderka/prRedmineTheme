@@ -65,7 +65,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
           $this.data('format.' + format, procedure(text));
         }
 
-        if (savedFormat) {
+        if (savedFormat && savedFormat !== 'originalFormat') {
           $this.data('currentlyDisplayed', savedFormat);
           $this.html($this.data('format.' + savedFormat));
         } else {
