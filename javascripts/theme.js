@@ -6097,13 +6097,13 @@ define('module/better_sidebar',['lib/local_storage'], function (ls) {
     init: function () {
       if (this.getSidebar().children().length > 0) {
         this.getSidebar().before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
-      }
 
-      if (ls.get('sidebarHidden')) {
-        this.hideSidebar();
-      }
+        if (ls.get('sidebarHidden')) {
+          this.hideSidebar();
+        }
 
-      this.setListeners();
+        this.setListeners();
+      }
     },
 
     setListeners: function () {
