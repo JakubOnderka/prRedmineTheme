@@ -5895,7 +5895,7 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
 
       if (!clickEventBinded) {
         var self = this;
-        $('document').on('click', cellSelector, function () {
+        $('#content').on('click', cellSelector, function () {
           self.toggleFormats(cellSelector);
         });
       }

@@ -42,7 +42,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
 
       if (!clickEventBinded) {
         var self = this;
-        $('document').on('click', cellSelector, function () {
+        $('#content').on('click', cellSelector, function () {
           self.toggleFormats(cellSelector);
         });
       }
