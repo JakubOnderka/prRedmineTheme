@@ -5848,7 +5848,6 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
 
   return {
     init: function () {
-      this.tools = ProofReasonRedmineTheme.tools;
       this.convertOldFormat();
 
       // Add class to issue tree table

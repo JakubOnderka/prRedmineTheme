@@ -8,7 +8,6 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
 
   return {
     init: function () {
-      this.tools = ProofReasonRedmineTheme.tools;
       this.convertOldFormat();
 
       // Add class to issue tree table
