@@ -11,7 +11,7 @@ define(['lib/local_storage'], function (ls) {
         $sidebar.before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
       }
 
-      if (this.tools.cookie('sidebarHidden')) {
+      if (ls.get('sidebarHidden')) {
         this.hideSidebar();
       }
 
