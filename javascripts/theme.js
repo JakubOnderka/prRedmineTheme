@@ -5848,20 +5848,18 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
 
   return {
     init: function () {
-      this.convertOldFormat();
-
       // Add class to issue tree table
       $('#issue_tree').find('table.issues tr').each(function () {
         $(this).find('td:eq(2)').addClass('status');
       });
 
-      this.setFormatUp('table.issues .due_date', {'verbalDate': this.format.verbalDate});
-      this.setFormatUp('table.issues .updated_on', {'relativeTime': this.format.relativeTime});
+      this.setFormatUp('table.issues .due_date', {verbalDate: this.format.verbalDate});
+      this.setFormatUp('table.issues .updated_on', {relativeTime: this.format.relativeTime});
       this.setFormatUp('table.issues td.status', {
-        'newHighlighted': this.format.newIssuesHighlighted,
-        'statusIcon': this.format.statusIcon
+        newHighlighted: this.format.newIssuesHighlighted,
+        statusIcon: this.format.statusIcon
       });
-      this.setFormatUp('table.issues .tracker', {'shortIssueType': this.format.shortIssueType});
+      this.setFormatUp('table.issues .tracker', {shortIssueType: this.format.shortIssueType});
 
       // Short titles
       /*
@@ -5925,18 +5923,6 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
 
       ls.set(lsKey(cells), variants[nextFormat]);
       this.showAlternateFormat(cells, variants[nextFormat]);
-    },
-
-    convertOldFormat: function() {
-      var types = ['table.issues .due_date', 'table.issues .updated_on', 'table.issues td.status', 'table.issues .tracker'];
-      for (var i in types) {
-        var key = types[i];
-        var value = window.localStorage.getItem('theme.' + key);
-        if (value) {
-          ls.set(lsKey(key), value);
-          window.localStorage.removeItem('theme.' + key);
-        }
-      }
     },
 
     format: {
