@@ -6066,14 +6066,66 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
     }
   }
 });
+
+
+define('module/better_sidebar',['lib/local_storage'], function (ls) {
+  var $sidebar;
+
+  return {
+    init: function () {
+      $sidebar = $('#sidebar');
+
+      if ($sidebar.children().length > 0) {
+        $sidebar.before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
+      }
+
+      if (this.tools.cookie('sidebarHidden')) {
+        this.hideSidebar();
+      }
+
+      this.setListeners();
+    },
+
+    setListeners: function () {
+      var self = this;
+      $('.toggleSidebar').click(function() {
+        self.toggleSidebar();
+      });
+    },
+
+    toggleSidebar: function () {
+      if ($sidebar.is(':visible')) {
+        this.hideSidebar();
+        ls.set('sidebarHidden', true);
+
+      } else {
+        this.showSidebar();
+        ls.remove('sidebarHidden');
+      }
+    },
+
+    showSidebar: function () {
+      $sidebar.show();
+      $('.toggleSidebar .text').html('&times;');
+      $('#main').removeClass('nosidebar');
+    },
+
+    hideSidebar: function () {
+      $sidebar.hide();
+      $('.toggleSidebar .text').html('&larr;');
+      $('#main').addClass('nosidebar');
+    }
+  }
+});
 define('module/issues',[
   'vendor/moment',
   'lib/redmine_api',
   'lib/page_property_miner',
   'templates',
   'lib/local_storage',
-  'module/alternate_cell_format'
-], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat) {
+  'module/alternate_cell_format',
+  'module/better_sidebar'
+], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat, betterSidebar) {
 
   /**
    * Sort issues by due date and updated on
@@ -6154,7 +6206,7 @@ define('module/issues',[
         $('#content .splitcontentleft')
           .css('width', '28%');
 
-        ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
+        betterSidebar.hideSidebar();
 
         redmineApi.getIssuesWithCache({
           project_id: projectName,
@@ -6737,57 +6789,6 @@ define('module/single_click_select',['lib/page_property_miner'], function (ppp) 
 
         lastMouseDownX = lastMouseDownY = null;
       });
-    }
-  }
-});
-
-
-define('module/better_sidebar',['lib/local_storage'], function (ls) {
-  var $sidebar;
-
-  return {
-    init: function () {
-      $sidebar = $('#sidebar');
-
-      if ($sidebar.children().length > 0) {
-        $sidebar.before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
-      }
-
-      if (this.tools.cookie('sidebarHidden')) {
-        this.hideSidebar();
-      }
-
-      this.setListeners();
-    },
-
-    setListeners: function () {
-      var self = this;
-      $('.toggleSidebar').click(function() {
-        self.toggleSidebar();
-      });
-    },
-
-    toggleSidebar: function () {
-      if ($sidebar.is(':visible')) {
-        this.hideSidebar();
-        ls.set('sidebarHidden', true);
-
-      } else {
-        this.showSidebar();
-        ls.remove('sidebarHidden');
-      }
-    },
-
-    showSidebar: function () {
-      $sidebar.show();
-      $('.toggleSidebar .text').html('&times;');
-      $('#main').removeClass('nosidebar');
-    },
-
-    hideSidebar: function () {
-      $sidebar.hide();
-      $('.toggleSidebar .text').html('&larr;');
-      $('#main').addClass('nosidebar');
     }
   }
 });

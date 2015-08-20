@@ -4,8 +4,9 @@ define([
   'lib/page_property_miner',
   'templates',
   'lib/local_storage',
-  'module/alternate_cell_format'
-], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat) {
+  'module/alternate_cell_format',
+  'module/better_sidebar'
+], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat, betterSidebar) {
 
   /**
    * Sort issues by due date and updated on
@@ -86,7 +87,7 @@ define([
         $('#content .splitcontentleft')
           .css('width', '28%');
 
-        ProofReasonRedmineTheme.BetterSidebar.hideSidebar();
+        betterSidebar.hideSidebar();
 
         redmineApi.getIssuesWithCache({
           project_id: projectName,
