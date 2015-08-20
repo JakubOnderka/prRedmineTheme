@@ -14,7 +14,10 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
       });
 
       this.setFormatUp('table.issues .due_date', {verbalDate: this.format.verbalDate});
-      this.setFormatUp('table.issues .updated_on', {relativeTime: this.format.relativeTime});
+      this.setFormatUp('table.issues .updated_on', {
+        relativeTime: this.format.relativeTime,
+        relativeTimeMoment: this.format.relativeTimeMoment
+      });
       this.setFormatUp('table.issues td.status', {
         newHighlighted: this.format.newIssuesHighlighted,
         statusIcon: this.format.statusIcon
@@ -187,6 +190,12 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
         if (!value) return '';
         var date = moment(value).toDate();
         return date.toRelativeTime(new Date(), 5000, true);
+      },
+
+      // Testing
+      relativeTimeMoment: function (value) {
+        if (!value) return '';
+        return moment(value).fromNow();
       },
 
       shortIssueType: function (value) {
