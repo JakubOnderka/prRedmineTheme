@@ -41,7 +41,8 @@ require([
   'module/auto_return_to_owner',
   'module/attachments',
   'module/issue_update_form',
-  'module/single_click_select'
+  'module/single_click_select',
+  'module/better_sidebar'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {
@@ -65,44 +66,12 @@ require(['lib/local_storage'], function (module) {
 
 var ProofReasonRedmineTheme = {
   init: function () {
-    this.BetterSidebar.init();
     this.BetterTimeline.init();
     this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
     this.MakeMoney.init();
     this.ClickableIssueNames.init();
-  },
-
-  tools: {
-    cookie: function (key, value, expireInHours) {
-      var ls = window.localStorage;
-
-      if (value === undefined) {
-        if ((expirationTime = ls.getItem('theme.' + key + '.expire')) !== null) {
-          if (new Date() > new Date(expirationTime)) {
-            ls.removeItem('theme.' + key + '.expire');
-            ls.removeItem('theme.' + key);
-            return null;
-          }
-        }
-
-        return ls.getItem('theme.' + key);
-
-      } else {
-        if (expireInHours !== undefined) {
-          var expirationTime = new Date().getTime() + expireInHours * 3600 * 1000;
-          ls.setItem('theme.' + key + '.expire', new Date(expirationTime));
-        }
-
-        return ls.setItem('theme.' + key, value);
-      }
-    },
-
-    removeCookie: function (key) {
-      window.localStorage.removeItem('theme.' + key + '.expire');
-      return window.localStorage.removeItem('theme.' + key);
-    }
   },
 
   debug: function () {
@@ -201,50 +170,6 @@ var ProofReasonRedmineTheme = {
       this.assessUsedLanguage();
     }
 
-  },
-
-  BetterSidebar: {
-    init: function () {
-      this.tools = ProofReasonRedmineTheme.tools;
-
-      if ($('#sidebar').children().length > 0) {
-        $('#sidebar').before('<button type="button" class="toggleSidebar">&times;</button>');
-      }
-
-      if (this.tools.cookie('sidebarHidden')) {
-        this.hideSidebar();
-      }
-
-      this.setListeners();
-    },
-
-    setListeners: function () {
-      $('button.toggleSidebar').click(function () {
-        ProofReasonRedmineTheme.BetterSidebar.toggleSidebar();
-      });
-    },
-
-    toggleSidebar: function () {
-      if ($('#sidebar').is(':visible')) {
-        this.hideSidebar();
-        this.tools.cookie('sidebarHidden', true);
-      } else {
-        this.showSidebar();
-        this.tools.removeCookie('sidebarHidden');
-      }
-    },
-
-    showSidebar: function () {
-      $('#sidebar').show();
-      $('button.toggleSidebar').html('&times;');
-      $('#main').removeClass('nosidebar');
-    },
-
-    hideSidebar: function () {
-      $('#sidebar').hide();
-      $('button.toggleSidebar').html('&larr;');
-      $('#main').addClass('nosidebar');
-    }
   },
 
   ClickableIssueNames: {
@@ -372,15 +297,6 @@ $(function() {
 //    ##        ##  ##     ##       ##
 //    ##        ##  ##     ## ##    ##
 //    ######## #### ########   ######
-
-
-// http://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
-Date.prototype.yyyymmdd = function() {
-  var yyyy = this.getFullYear().toString();
-  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-  var dd  = this.getDate().toString();
-  return yyyy + '-' + (mm[1]?mm:"0"+mm[0]) + '-' + (dd[1]?dd:"0"+dd[0]); // padding
-};
 
 //http://stackoverflow.com/questions/2627473/how-to-calculate-the-number-of-days-between-two-dates-using-javascript
 function daysFromToday(date) {

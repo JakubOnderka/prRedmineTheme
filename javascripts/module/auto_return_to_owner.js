@@ -4,8 +4,9 @@
 define([
   'lib/page_property_miner',
   'lib/replace_issue_form_proxy',
-  'lib/issue_property_miner'
-], function (ppp, proxy, ipm) {
+  'lib/issue_property_miner',
+  'vendor/moment'
+], function (ppp, proxy, ipm, moment) {
   return {
     init: function () {
 
@@ -24,7 +25,7 @@ define([
       setClosingDate = function () {
         var $issueCustomFieldValues24 = $('#issue_custom_field_values_24');
         if ($issueCustomFieldValues24.size() > 0) {
-          $issueCustomFieldValues24.val((new Date).yyyymmdd());
+          $issueCustomFieldValues24.val(moment().format('YYYY-MM-DD'));
           $issueCustomFieldValues24.prev('label').highlight();
         }
       };
