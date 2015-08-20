@@ -5,10 +5,8 @@ define(['lib/local_storage'], function (ls) {
 
   return {
     init: function () {
-      $sidebar = $('#sidebar');
-
-      if ($sidebar.children().length > 0) {
-        $sidebar.before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
+      if (this.getSidebar().children().length > 0) {
+        this.getSidebar().before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
       }
 
       if (ls.get('sidebarHidden')) {
@@ -26,7 +24,7 @@ define(['lib/local_storage'], function (ls) {
     },
 
     toggleSidebar: function () {
-      if ($sidebar.is(':visible')) {
+      if (this.getSidebar().is(':visible')) {
         this.hideSidebar();
         ls.set('sidebarHidden', true);
 
@@ -37,15 +35,23 @@ define(['lib/local_storage'], function (ls) {
     },
 
     showSidebar: function () {
-      $sidebar.show();
+      this.getSidebar().show();
       $('.toggleSidebar .text').html('&times;');
       $('#main').removeClass('nosidebar');
     },
 
     hideSidebar: function () {
-      $sidebar.hide();
+      this.getSidebar().hide();
       $('.toggleSidebar .text').html('&larr;');
       $('#main').addClass('nosidebar');
+    },
+
+    getSidebar: function () {
+      if (!$sidebar) {
+        $sidebar = $('#sidebar');
+      }
+
+      return $sidebar;
     }
   }
 });
