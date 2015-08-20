@@ -5235,6 +5235,11 @@ define('module/key_shortcuts',[
         return false;
       });
 
+      key('h', 'go', function() {
+        goTo('/');
+        return false;
+      });
+
       key('o', 'go', function() {
         return linkFromMainMenu('overview');
       });
