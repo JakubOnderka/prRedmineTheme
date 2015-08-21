@@ -4270,8 +4270,13 @@ define('lib/page_property_miner',['lib/redmine_api'], function(RedmineApi) {
     lang: null,
 
     matchPage: function (controller, action) {
-      var $body = $('body');
+      // For browser with support classList
+      var bodyClassList = document.body.classList;
+      if (bodyClassList) {
+        return bodyClassList.contains('controller-' + controller) && bodyClassList.contains('action-' + action);
+      }
 
+      var $body = $('body');
       return $body.hasClass('controller-' + controller) && $body.hasClass('action-' + action);
     },
 
@@ -4413,27 +4418,57 @@ define('module/high_res_gravatars',{
 });
 
 
-/**
- * Auto login when password is filled in login form when page is loaded
- */
-define('module/autologin',['lib/page_property_miner'], function (ppp) {
+define('module/better_sidebar',['lib/local_storage'], function (ls) {
+  var $sidebar;
+
   return {
-    init: function() {
-      if (!ppp.matchPage('account', 'login')) {
-        return;
+    init: function () {
+      if (this.getSidebar().children().length > 0) {
+        if (ls.get('sidebarHidden')) {
+          this.hideSidebar();
+        }
+
+        this.getSidebar().before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
+        this.setListeners();
+      }
+    },
+
+    setListeners: function () {
+      var self = this;
+      $('.toggleSidebar').click(function() {
+        self.toggleSidebar();
+      });
+    },
+
+    toggleSidebar: function () {
+      if (this.getSidebar().is(':visible')) {
+        this.hideSidebar();
+        ls.set('sidebarHidden', true);
+
+      } else {
+        this.showSidebar();
+        ls.remove('sidebarHidden');
+      }
+    },
+
+    showSidebar: function () {
+      this.getSidebar().show();
+      $('.toggleSidebar .text').html('&times;');
+      $('#main').removeClass('nosidebar');
+    },
+
+    hideSidebar: function () {
+      this.getSidebar().hide();
+      $('.toggleSidebar .text').html('&larr;');
+      $('#main').addClass('nosidebar');
+    },
+
+    getSidebar: function () {
+      if (!$sidebar) {
+        $sidebar = $('#sidebar');
       }
 
-      // Login credentials are invalid, do not log again
-      if (document.getElementById('flash_error')) {
-        return;
-      }
-
-      if (
-        document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
-        document.getElementById('password').value
-      ) {
-        document.querySelector('#login-form form').submit();
-      }
+      return $sidebar;
     }
   }
 });
@@ -5379,15 +5414,16 @@ define('module/timey_integration',['lib/page_property_miner', 'templates'], func
       } else if (ppp.matchPage('timelog', 'index')) {
         $('#context-menu').remove();
         $('td.buttons').hide();
-      }
 
-      var self = this;
-      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
-          self.insertTimeyLogger();
-        }
-        return false;
-      });
+      } else if (ppp.matchPage('issues', 'show')) {
+        var self = this;
+        $('#main > #content > .contextual .icon-time-add').click(function () {
+          if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
+            self.insertTimeyLogger();
+          }
+          return false;
+        });
+      }
     },
 
     insertTimeyLogger: function () {
@@ -5448,14 +5484,6 @@ define('module/related_issues_header',['lib/page_property_miner', 'templates'], 
       }
 
       update();
-
-      $relations.on('ajax:success', '#new-relation-form', function () {
-        update();
-      });
-
-      $relations.on('change', '#relation_issue_to_id', function () {
-        update();
-      });
     }
   }
 });
@@ -5825,23 +5853,6 @@ define('module/datepicker_focus',[],function () {
 });
 
 
-define('module/cmd_enter_form_submit',[],function () {
-  return {
-    init: function () {
-      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description, #issue-form input', function (event) {
-        if (event.keyCode === 13 && (event.metaKey || event.ctrlKey)) {
-          // Disable showing warning message
-          window.onbeforeunload = null;
-
-          $(this).parents('form').submit();
-          event.preventDefault();
-        }
-      });
-    }
-  }
-});
-
-
 define('module/better_header',[],function () {
   return {
     init: function () {
@@ -6085,63 +6096,6 @@ define('module/alternate_cell_format',['lib/page_property_miner', 'lib/local_sto
           return value;
         }
       }
-    }
-  }
-});
-
-
-define('module/better_sidebar',['lib/local_storage'], function (ls) {
-  var $sidebar;
-
-  return {
-    init: function () {
-      if (this.getSidebar().children().length > 0) {
-        this.getSidebar().before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
-
-        if (ls.get('sidebarHidden')) {
-          this.hideSidebar();
-        }
-
-        this.setListeners();
-      }
-    },
-
-    setListeners: function () {
-      var self = this;
-      $('.toggleSidebar').click(function() {
-        self.toggleSidebar();
-      });
-    },
-
-    toggleSidebar: function () {
-      if (this.getSidebar().is(':visible')) {
-        this.hideSidebar();
-        ls.set('sidebarHidden', true);
-
-      } else {
-        this.showSidebar();
-        ls.remove('sidebarHidden');
-      }
-    },
-
-    showSidebar: function () {
-      this.getSidebar().show();
-      $('.toggleSidebar .text').html('&times;');
-      $('#main').removeClass('nosidebar');
-    },
-
-    hideSidebar: function () {
-      this.getSidebar().hide();
-      $('.toggleSidebar .text').html('&larr;');
-      $('#main').addClass('nosidebar');
-    },
-
-    getSidebar: function () {
-      if (!$sidebar) {
-        $sidebar = $('#sidebar');
-      }
-
-      return $sidebar;
     }
   }
 });
@@ -6882,6 +6836,49 @@ define('module/better_timeline',['lib/page_property_miner'], function (ppp) {
 });
 
 
+/**
+ * Auto login when password is filled in login form when page is loaded
+ */
+define('module/autologin',['lib/page_property_miner'], function (ppp) {
+  return {
+    init: function() {
+      if (!ppp.matchPage('account', 'login')) {
+        return;
+      }
+
+      // Login credentials are invalid, do not log again
+      if (document.getElementById('flash_error')) {
+        return;
+      }
+
+      if (
+        document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
+        document.getElementById('password').value
+      ) {
+        document.querySelector('#login-form form').submit();
+      }
+    }
+  }
+});
+
+
+define('module/cmd_enter_form_submit',[],function () {
+  return {
+    init: function () {
+      $(document).on('keydown', 'textarea#issue_notes, textarea#issue_description, #issue-form input', function (event) {
+        if (event.keyCode === 13 && (event.metaKey || event.ctrlKey)) {
+          // Disable showing warning message
+          window.onbeforeunload = null;
+
+          $(this).parents('form').submit();
+          event.preventDefault();
+        }
+      });
+    }
+  }
+});
+
+
 require(['vendor/moment'], function (moment) {
   var language = $('html').attr('lang');
   if (language === 'cs') {
@@ -6904,14 +6901,13 @@ require([
 require([
   'module/remove_issue_type_from_title',
   'module/high_res_gravatars',
-  'module/autologin',
+  'module/better_sidebar',
   'module/key_shortcuts',
   'module/timey_integration',
   'module/related_issues_header',
   'module/absences',
   'module/assign_select_author',
   'module/datepicker_focus',
-  'module/cmd_enter_form_submit',
   'module/better_header',
   'module/issues',
   'module/last_issue',
@@ -6924,10 +6920,11 @@ require([
   'module/attachments',
   'module/issue_update_form',
   'module/single_click_select',
-  'module/better_sidebar',
   'module/clickable_issue_names',
   'module/make_money',
-  'module/better_timeline'
+  'module/better_timeline',
+  'module/autologin',
+  'module/cmd_enter_form_submit'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

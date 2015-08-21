@@ -12,15 +12,16 @@ define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
       } else if (ppp.matchPage('timelog', 'index')) {
         $('#context-menu').remove();
         $('td.buttons').hide();
-      }
 
-      var self = this;
-      $('#main>#content>.contextual .icon-time-add, .timeySwitch').click(function () {
-        if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
-          self.insertTimeyLogger();
-        }
-        return false;
-      });
+      } else if (ppp.matchPage('issues', 'show')) {
+        var self = this;
+        $('#main > #content > .contextual .icon-time-add').click(function () {
+          if (!$('.timeyLoggerWrapper').length) { // insert only if logger not exists
+            self.insertTimeyLogger();
+          }
+          return false;
+        });
+      }
     },
 
     insertTimeyLogger: function () {

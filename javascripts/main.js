@@ -22,14 +22,13 @@ require([
 require([
   'module/remove_issue_type_from_title',
   'module/high_res_gravatars',
-  'module/autologin',
+  'module/better_sidebar',
   'module/key_shortcuts',
   'module/timey_integration',
   'module/related_issues_header',
   'module/absences',
   'module/assign_select_author',
   'module/datepicker_focus',
-  'module/cmd_enter_form_submit',
   'module/better_header',
   'module/issues',
   'module/last_issue',
@@ -42,10 +41,11 @@ require([
   'module/attachments',
   'module/issue_update_form',
   'module/single_click_select',
-  'module/better_sidebar',
   'module/clickable_issue_names',
   'module/make_money',
-  'module/better_timeline'
+  'module/better_timeline',
+  'module/autologin',
+  'module/cmd_enter_form_submit'
 ], function () {
 
   for (var i = 0; i < arguments.length; i++) {

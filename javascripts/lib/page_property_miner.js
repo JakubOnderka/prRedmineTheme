@@ -8,8 +8,13 @@ define(['lib/redmine_api'], function(RedmineApi) {
     lang: null,
 
     matchPage: function (controller, action) {
-      var $body = $('body');
+      // For browser with support classList
+      var bodyClassList = document.body.classList;
+      if (bodyClassList) {
+        return bodyClassList.contains('controller-' + controller) && bodyClassList.contains('action-' + action);
+      }
 
+      var $body = $('body');
       return $body.hasClass('controller-' + controller) && $body.hasClass('action-' + action);
     },
 

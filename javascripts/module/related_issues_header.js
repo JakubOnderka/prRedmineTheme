@@ -23,14 +23,6 @@ define(['lib/page_property_miner', 'templates'], function (ppp, templates) {
       }
 
       update();
-
-      $relations.on('ajax:success', '#new-relation-form', function () {
-        update();
-      });
-
-      $relations.on('change', '#relation_issue_to_id', function () {
-        update();
-      });
     }
   }
 });
