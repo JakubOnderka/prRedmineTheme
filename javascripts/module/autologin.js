@@ -3,7 +3,7 @@
 /**
  * Auto login when password is filled in login form when page is loaded
  */
-define(['lib/page_property_miner'], function (ppp) {
+define(['lib/page_property_miner', 'lib/local_storage'], function (ppp, ls) {
   return {
     init: function() {
       if (!ppp.matchPage('account', 'login')) {
@@ -15,12 +15,26 @@ define(['lib/page_property_miner'], function (ppp) {
         return;
       }
 
-      if (
-        document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
-        document.getElementById('password').value
-      ) {
-        document.querySelector('#login-form form').submit();
+      function login() {
+        if (
+          document.getElementById('username') &&
+          document.getElementById('username').value === 'jakub' && // TODO: Currently only for me
+          document.getElementById('password').value
+        ) {
+          document.querySelector('#login-form form').submit();
+        }
       }
+
+      if (ls.get('autoLogin')) {
+        login();
+        setTimeout(function () {
+          login();
+        }, 100);
+      }
+
+      $('#account .logout').click(function () {
+        ls.remove('autoLogin');
+      });
     }
   }
 });
