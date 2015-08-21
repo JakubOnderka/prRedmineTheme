@@ -45,6 +45,7 @@ define(['lib/redmine_api'], function(RedmineApi) {
         if (this.matchPage('issues', 'show')) {
           this.projectId = $('#issue_project_id option[selected="selected"]').val();
           callback(this.projectId);
+
         } else {
           var redmineApi = new RedmineApi(),
             self = this;
@@ -66,9 +67,8 @@ define(['lib/redmine_api'], function(RedmineApi) {
           if ($('h2').eq(0).text().match(/^.+\#([0-9]+)/)) {
             this.issueId = /^.+\#([0-9]+)/.exec($('h2').eq(0).text()).pop();
           }
-        }
 
-        if (this.matchPage('timelog', 'new')) {
+        } else if (this.matchPage('timelog', 'new')) {
           var $issueId = $('#issue_id');
           /*if ($('input[name="back_url"]').attr('value').match(/^.+issues\/([0-9]+)\/?$/)) {
             this.issueId = /^.+issues\/([0-9]+)\/?$/.exec($('input[name="back_url"]').attr('value')).pop();
