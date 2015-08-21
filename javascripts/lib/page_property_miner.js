@@ -94,28 +94,12 @@ define(['lib/redmine_api'], function(RedmineApi) {
       return this.userId;
     },
 
-    assessUsedLanguage: function () {
-      if (this.lang === null) {
-
-        if ($('#top-menu a.home').text() == 'Úvodní') {
-          this.lang = 'cs';
-        } else {
-          this.lang = 'en';
-        }
-
-        if (console) console.log('used language recognized: ' + this.lang);
-      }
-
-      return this.lang;
-    },
-
     debug: function () {
       this.getProjectId(function (projectId) {
         if (console) console.log('Project ID recognized: ' + projectId);
       });
       this.getIssueId();
       this.getUserId();
-      this.assessUsedLanguage();
     }
   }
 });
