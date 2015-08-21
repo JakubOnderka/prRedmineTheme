@@ -1,11 +1,11 @@
 "use strict";
 
 require(['vendor/moment'], function (moment) {
-  var language = $('html').attr('lang');
+  var language = document.documentElement.lang;
   if (language === 'cs') {
     moment.locale(language);
   }
-});
+}, null, true);
 
 // Register handlebars helpers
 require([
@@ -17,19 +17,17 @@ require([
   'template/helper/isNotEmpty',
   'template/helper/monthFromDate',
   'template/helper/redmineTime'
-]);
+], null, null, true);
 
 require([
   'module/remove_issue_type_from_title',
   'module/high_res_gravatars',
   'module/better_sidebar',
-  'module/key_shortcuts',
   'module/timey_integration',
   'module/related_issues_header',
   'module/absences',
-  'module/assign_select_author',
-  'module/datepicker_focus',
   'module/better_header',
+  'module/key_shortcuts',
   'module/issues',
   'module/last_issue',
   'module/localize',
@@ -37,34 +35,58 @@ require([
   'module/paste_issue_number',
   'module/checkbox',
   'module/cl_ly',
-  'module/auto_return_to_owner',
   'module/attachments',
   'module/issue_update_form',
-  'module/single_click_select',
   'module/clickable_issue_names',
   'module/make_money',
-  'module/better_timeline',
-  'module/autologin',
-  'module/cmd_enter_form_submit'
+  'module/better_timeline'
 ], function () {
+  var modules = arguments;
 
-  for (var i = 0; i < arguments.length; i++) {
-    (function(module) {
+  $(function () {
+    for (var i = 0; i < modules.length; i++) {
+      var module = modules[i];
       if (module && module.init) {
-        $(function () {
-          module.init();
-        });
+        module.init();
       }
-    })(arguments[i]);
-  }
+    }
+
+    if (console) console.log('Initialized all modules');
+  });
+}, null, true);
+
+// Can wait modules
+require([
+  'module/single_click_select',
+  'module/autologin',
+  'module/auto_return_to_owner',
+  'module/cmd_enter_form_submit',
+  'module/assign_select_author',
+  'module/datepicker_focus'
+], function () {
+  var modules = arguments;
+
+  $(function () {
+    for (var i = 0; i < modules.length; i++) {
+      var module = modules[i];
+      if (module && module.init) {
+        module.init();
+      }
+    }
+
+    if (console) console.log('Initialized can wait modules');
+  });
 });
 
-require(['lib/local_storage'], function (module) {
-  if (Math.random() > 0.9) {
-    if (console) console.log('Deleted expired cached entries in localStorage.');
-    module.removeExpired();
-  }
-});
+// Deleting expired cache can wait
+setTimeout(function () {
+  require(['lib/local_storage'], function (module) {
+    if (Math.random() > 0.9) {
+      if (console) console.log('Deleted expired cached entries in localStorage.');
+      module.removeExpired();
+    }
+  });
+}, 100);
 
 
 var ProofReasonRedmineTheme = {
@@ -83,8 +105,8 @@ var ProofReasonRedmineTheme = {
       $('body').on('click', '#enterZenMode', function () {
         $('body').addClass('zenMode');
         return false;
-      });
-      $('body').on('click', '#exitZenMode', function () {
+
+      }).on('click', '#exitZenMode', function () {
         $('body').removeClass('zenMode');
         return false;
       });
@@ -122,8 +144,9 @@ var ProofReasonRedmineTheme = {
   }
 };
 
-$(function() {
+$(function () {
   ProofReasonRedmineTheme.init();
+  if (console) console.log('Initialized old theme');
 });
 
 

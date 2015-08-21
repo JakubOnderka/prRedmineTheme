@@ -1,13 +1,15 @@
 "use strict";
 
 define(['lib/page_property_miner', 'lib/local_storage', 'lib/replace_issue_form_proxy'], function (ppp, ls, proxy) {
-  var lang = $('html').attr('lang');
+  var lang;
 
   return {
     init: function () {
       if (!ls.get('enabled:localize')) {
         return;
       }
+
+      lang = document.documentElement.lang;
 
       var self = this;
 
