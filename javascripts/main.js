@@ -44,6 +44,8 @@ require([
   var modules = arguments;
 
   $(function () {
+    if (console) console.log('DOM ready');
+
     for (var i = 0; i < modules.length; i++) {
       var module = modules[i];
       if (module && module.init) {

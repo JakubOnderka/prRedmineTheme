@@ -13,7 +13,7 @@ define([
    * @param issues
    */
   function sortIssues(issues) {
-    issues.sort(function(a, b) {
+    issues.sort(function (a, b) {
       if (!a.due_date && !b.due_date) {
         return moment(b.updated_on).diff(a.updated_on);
       } else if (!a.due_date) {
@@ -48,7 +48,7 @@ define([
       $selectRandom.show();
     }
 
-    $selectRandom.click(function() {
+    $selectRandom.click(function () {
       var issuePosition = Math.floor(Math.random() * data.issues.length),
         issueId = data.issues[issuePosition].id,
         url = '/issues/' + issueId;
@@ -62,7 +62,7 @@ define([
   var redmineApi = new RedmineApi();
 
   return {
-    init: function() {
+    init: function () {
 
       if (!ls.get('enabled:issues_project')) {
         return;
@@ -77,60 +77,59 @@ define([
     },
 
     project: function () {
-        var projectName = ppp.getProjectName();
-
-        $('#content .splitcontentright')
-          .prepend(templates['issues_project']())
-          .css('width', '70%')
-          .css('margin-top', '-30px');
-
-        $('#content .splitcontentleft')
-          .css('width', '28%');
-
-        betterSidebar.hideSidebar();
-
-        redmineApi.getIssuesWithCache({
-          project_id: projectName,
-          assigned_to_id: 'me',
-          sort: 'due_date:desc,updated_on:desc',
-          limit: 20
-        }, function (data) {
-          myIssues(data, false);
-        });
-
-        redmineApi.getIssuesWithCache({
-          project_id: projectName,
-          due_date: '<=' + moment().format('YYYY-MM-DD'),
-          sort: 'due_date:desc',
-          limit: 20
-        }, function(data) {
-          sortIssues(data.issues);
-
-          var html = templates['issues']({
-            issues: data.issues,
-            withProject: false,
-            withAssigned: true
-          });
-
-          $('#due-date-issues .content').html(html);
-
-          alternateCellFormat.init();
-        });
-    },
-
-    welcome: function() {
-      $('#content .splitcontentright')
-        .prepend(templates['issues_welcome']())
-        .css('width', '60%');
+      betterSidebar.hideSidebar();
 
       $('#content .splitcontentleft')
+        .css('width', '28%');
+
+      $('#content .splitcontentright')
+        .css('width', '70%')
+        .css('margin-top', '-30px')
+        .prepend(templates['issues_project']());
+
+      var projectName = ppp.getProjectName();
+      redmineApi.getIssuesWithCache({
+        project_id: projectName,
+        assigned_to_id: 'me',
+        sort: 'due_date:desc,updated_on:desc',
+        limit: 20
+      }, function (data) {
+        myIssues(data, false);
+      });
+
+      redmineApi.getIssuesWithCache({
+        project_id: projectName,
+        due_date: '<=' + moment().format('YYYY-MM-DD'),
+        sort: 'due_date:desc',
+        limit: 20
+      }, function (data) {
+        sortIssues(data.issues);
+
+        var html = templates['issues']({
+          issues: data.issues,
+          withProject: false,
+          withAssigned: true
+        });
+
+        $('#due-date-issues .content').html(html);
+
+        alternateCellFormat.init();
+      });
+    },
+
+    welcome: function () {
+      $('#content .splitcontentleft')
         .css('width', '38%');
+
+      $('#content .splitcontentright')
+        .css('width', '60%')
+        .prepend(templates['issues_welcome']());
 
       redmineApi.getIssuesWithCache({
         assigned_to_id: ppp.getUserId(),
         sort: 'due_date:desc,updated_on:desc',
         limit: 20
-      }, function(data) {
+      }, function (data) {
         myIssues(data, true);
       });
     }

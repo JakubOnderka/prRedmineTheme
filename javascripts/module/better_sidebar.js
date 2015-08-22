@@ -1,15 +1,26 @@
 "use strict";
 
-define(['lib/local_storage'], function (ls) {
-  var $sidebar;
+define(['lib/local_storage', 'lib/add_style'], function (ls, addStyle) {
+  var $sidebar,
+    hiddenOnLoad = ls.get('sidebarHidden'),
+    style;
+
+  if (hiddenOnLoad) {
+    // For faster hide sidebar
+    style = addStyle('#sidebar {display:none}#main #content{padding-right:15px}');
+  }
 
   return {
     init: function () {
       if (this.getSidebar().children().length > 0) {
         this.getSidebar().before('<div class="toggleSidebar"><div class="border"></div><div class="text">&times;</div></div>');
 
-        if (ls.get('sidebarHidden')) {
+        if (hiddenOnLoad) {
           this.hideSidebar();
+        }
+
+        if (style) {
+          style.parentNode.removeChild(style);
         }
 
         this.setListeners();
@@ -42,8 +53,8 @@ define(['lib/local_storage'], function (ls) {
 
     hideSidebar: function () {
       this.getSidebar().hide();
-      $('.toggleSidebar .text').html('&larr;');
       $('#main').addClass('nosidebar');
+      $('.toggleSidebar .text').html('&larr;');
     },
 
     getSidebar: function () {
