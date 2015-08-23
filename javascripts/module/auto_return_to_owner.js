@@ -7,6 +7,35 @@ define([
   'lib/issue_property_miner',
   'vendor/moment'
 ], function (ppp, proxy, ipm, moment) {
+
+  function highlight($element) {
+    $element.each(function () {
+      var el = $(this);
+
+      if (!el.is(':visible')) {
+        return;
+      }
+
+      var fadingEl = $("<div/>")
+        .width(el.outerWidth())
+        .height(el.outerHeight())
+        .css({
+          "position": "absolute",
+          "left": el.offset().left,
+          "top": el.offset().top,
+          "background-color": "#ffff99",
+          "opacity": ".7",
+          "z-index": "9999999"
+        }).appendTo('body');
+
+      setTimeout(function () {
+        fadingEl.fadeOut(1500).queue(function () {
+          fadingEl.remove();
+        });
+      }, 1000);
+    });
+  }
+
   return {
     init: function () {
 
@@ -15,20 +44,20 @@ define([
       }
 
       var returnToOwner = function () {
-        var author = ipm().createdBy.id;
+          var author = ipm().createdBy.id,
+            $issueAssignedToId = $('select#issue_assigned_to_id');
 
-        var $issueAssignedToId = $('select#issue_assigned_to_id');
-        $issueAssignedToId.val(author);
-        $issueAssignedToId.prev('label').highlight();
-      },
+          $issueAssignedToId.val(author);
+          highlight($issueAssignedToId.prev('label'));
+        },
 
-      setClosingDate = function () {
-        var $issueCustomFieldValues24 = $('#issue_custom_field_values_24');
-        if ($issueCustomFieldValues24.size() > 0) {
-          $issueCustomFieldValues24.val(moment().format('YYYY-MM-DD'));
-          $issueCustomFieldValues24.prev('label').highlight();
-        }
-      };
+        setClosingDate = function () {
+          var $issueCustomFieldValues24 = $('#issue_custom_field_values_24');
+          if ($issueCustomFieldValues24.size() > 0) {
+            $issueCustomFieldValues24.val(moment().format('YYYY-MM-DD'));
+            highlight($issueCustomFieldValues24.prev('label'));
+          }
+        };
 
       var $allAttributes = $('#all_attributes'),
         assignedToChanged = false;

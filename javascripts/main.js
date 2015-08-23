@@ -150,52 +150,6 @@ $(function () {
 //    ##        ##  ##     ## ##    ##
 //    ######## #### ########   ######
 
-//http://stackoverflow.com/questions/2627473/how-to-calculate-the-number-of-days-between-two-dates-using-javascript
-function daysFromToday(date) {
-
-    // The number of milliseconds in one day
-    var ONE_DAY = 1000 * 60 * 60 * 24;
-
-    // Convert both dates to milliseconds
-    var date1_ms = (new Date()).getTime();
-    var date2_ms = date.getTime();
-
-    // Calculate the difference in milliseconds
-    var difference_ms = date2_ms - date1_ms;
-
-    // Convert back to days and return
-    return Math.round(difference_ms/ONE_DAY) + 1;
-
-}
-
-//http://stackoverflow.com/questions/848797/yellow-fade-effect-with-jquery/13106698#13106698
-jQuery.fn.highlight = function () {
-    $(this).each(function () {
-        var el = $(this);
-
-        if (!el.is(':visible')) {
-          return;
-        }
-
-        var fadingEl = $("<div/>")
-        .width(el.outerWidth())
-        .height(el.outerHeight())
-        .css({
-            "position": "absolute",
-            "left": el.offset().left,
-            "top": el.offset().top,
-            "background-color": "#ffff99",
-            "opacity": ".7",
-            "z-index": "9999999"
-        }).appendTo('body');
-
-        setTimeout(function () {
-          fadingEl.fadeOut(1500).queue(function () {
-            fadingEl.remove();
-          });
-        }, 1000);
-    });
-};
 
 // JavaScript Relative Time Helpers
 // The MIT License

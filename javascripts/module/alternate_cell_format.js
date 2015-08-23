@@ -15,16 +15,23 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
         $(this).find('td:eq(2)').addClass('status');
       });
 
-      this.setFormatUp('table.issues .due_date', {verbalDate: this.format.verbalDate});
+      this.setFormatUp('table.issues .due_date', {
+        verbalDate: this.format.verbalDate
+      });
+
       this.setFormatUp('table.issues .updated_on', {
         relativeTime: this.format.relativeTime,
         relativeTimeMoment: this.format.relativeTimeMoment
       });
+
       this.setFormatUp('table.issues td.status', {
         newHighlighted: this.format.newIssuesHighlighted,
         statusIcon: this.format.statusIcon
       });
-      this.setFormatUp('table.issues .tracker', {shortIssueType: this.format.shortIssueType});
+
+      this.setFormatUp('table.issues .tracker', {
+        shortIssueType: this.format.shortIssueType
+      });
 
       clickEventBinded = true;
 
@@ -164,11 +171,14 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
       verbalDate: function (value) {
         var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-        if (!value) return '';
-        else {
-          var date = moment(value).toDate();
-          var daysCount = daysFromToday(date);
-          var textualDueDate = '';
+        if (!value) {
+          return '';
+
+        } else {
+          var momentDate = moment(value),
+            date = momentDate.toDate(),
+            daysCount = moment().diff(momentDate, 'days'),
+            textualDueDate = '';
 
           switch (daysCount) {
             case 0:
