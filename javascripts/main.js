@@ -64,7 +64,8 @@ require([
   'module/auto_return_to_owner',
   'module/cmd_enter_form_submit',
   'module/assign_select_author',
-  'module/datepicker_focus'
+  'module/datepicker_focus',
+  'module/fix_contextual_menu'
 ], function () {
   var modules = arguments;
 
@@ -93,7 +94,6 @@ setTimeout(function () {
 
 var ProofReasonRedmineTheme = {
   init: function () {
-    this.BetterIssuesContextualMenu.init();
     this.ZenMode.init();
     this.MobileRedmine.init();
   },
@@ -112,16 +112,6 @@ var ProofReasonRedmineTheme = {
         $('body').removeClass('zenMode');
         return false;
       });
-    }
-  },
-
-  BetterIssuesContextualMenu: {
-    init: function () {
-      var menu = document.getElementById('context-menu');
-      if (menu) {
-        menu.parentNode.removeChild(menu);
-        document.body.appendChild(menu);
-      }
     }
   },
 
