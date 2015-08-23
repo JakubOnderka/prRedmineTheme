@@ -5,8 +5,19 @@ define([
   'templates',
   'lib/local_storage',
   'module/alternate_cell_format',
-  'module/better_sidebar'
-], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat, betterSidebar) {
+  'module/better_sidebar',
+  'lib/add_style'
+], function (moment, RedmineApi, ppp, templates, ls, alternateCellFormat, betterSidebar, addStyle) {
+
+  if (ls.get('enabled:issues_project')) {
+    var style = [
+      'body.controller-projects.action-show #content .splitcontentleft {width:28%}',
+      'body.controller-projects.action-show #content .splitcontentright {width:70%;margin-top-30px}',
+      'body.controller-welcome.action-index #content .splitcontentleft {width:38%;}',
+      'body.controller-welcome.action-index #content .splitcontentright {width:60%;}'
+    ];
+    addStyle(style.join(''));
+  }
 
   /**
    * Sort issues by due date and updated on
@@ -59,14 +70,15 @@ define([
     alternateCellFormat.init();
   }
 
-  var redmineApi = new RedmineApi();
+  var redmineApi;
 
   return {
     init: function () {
-
       if (!ls.get('enabled:issues_project')) {
         return;
       }
+
+      redmineApi = new RedmineApi();
 
       if (ppp.matchPage('projects', 'show')) {
         this.project();
@@ -79,13 +91,7 @@ define([
     project: function () {
       betterSidebar.hideSidebar();
 
-      $('#content .splitcontentleft')
-        .css('width', '28%');
-
-      $('#content .splitcontentright')
-        .css('width', '70%')
-        .css('margin-top', '-30px')
-        .prepend(templates['issues_project']());
+      $('#content .splitcontentright').prepend(templates['issues_project']());
 
       var projectName = ppp.getProjectName();
       redmineApi.getIssuesWithCache({
@@ -118,12 +124,7 @@ define([
     },
 
     welcome: function () {
-      $('#content .splitcontentleft')
-        .css('width', '38%');
-
-      $('#content .splitcontentright')
-        .css('width', '60%')
-        .prepend(templates['issues_welcome']());
+      $('#content .splitcontentright').prepend(templates['issues_welcome']());
 
       redmineApi.getIssuesWithCache({
         assigned_to_id: ppp.getUserId(),
@@ -134,5 +135,4 @@ define([
       });
     }
   }
-
 });
