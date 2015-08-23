@@ -12,7 +12,7 @@ define([
   if (ls.get('enabled:issues_project')) {
     var style = [
       'body.controller-projects.action-show #content .splitcontentleft {width:28%}',
-      'body.controller-projects.action-show #content .splitcontentright {width:70%;margin-top:30px}',
+      'body.controller-projects.action-show #content .splitcontentright {width:70%;margin-top:-30px}',
       'body.controller-welcome.action-index #content .splitcontentleft {width:38%;}',
       'body.controller-welcome.action-index #content .splitcontentright {width:60%;}'
     ];
