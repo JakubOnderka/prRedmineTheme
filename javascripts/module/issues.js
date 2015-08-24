@@ -19,6 +19,38 @@ define([
     addStyle(style.join(''));
   }
 
+  function loadScript(url, callback) {
+    var head = document.getElementsByTagName('head')[0],
+      script = document.createElement('script');
+
+    script.type = 'text/javascript';
+    script.src = url;
+    script.async = true;
+
+    script.onreadystatechange = callback;
+    script.onload = callback;
+
+    head.appendChild(script);
+  }
+
+  function loadStyle(url) {
+    var head = document.getElementsByTagName('head')[0],
+      link = document.createElement('link');
+
+    link.rel = 'stylesheet';
+    link.media = 'screen';
+    link.href = url;
+
+    head.appendChild(link);
+  }
+
+  function initContextual() {
+    loadScript('/javascripts/context_menu.js', function () {
+      contextMenuInit('/issues/context_menu');
+    });
+    loadStyle('/stylesheets/context_menu.css');
+  }
+
   /**
    * Sort issues by due date and updated on
    * @param issues

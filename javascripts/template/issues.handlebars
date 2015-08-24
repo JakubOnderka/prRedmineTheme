@@ -1,30 +1,32 @@
 {{#isNotEmpty issues}}
-<table class="list issues">
-    <thead>
-    <tr>
-        <th>#</th>
-        {{#if withProject}}<th>{{_ "Project"}}</th>{{/if}}
-        {{#if withAssigned}}<th>{{_ "Assigned to"}}</th>{{/if}}
-        <th>{{_ "Status"}}</th>
-        <th>{{_ "Subject"}}</th>
-        <th>{{_ "Updated on"}}</th>
-        <th>{{_ "Due date"}}</th>
-    </tr>
-    </thead>
-    <tbody>
-    {{#each issues}}
-        <tr class="issue {{#isEven @index}}even{{else}}odd{{/isEven}} priority-{{priority.id}}">
-            <td class="id"><a href="/issues/{{id}}">{{id}}</a></td>
-            {{#if ../withProject}}<td class="project"><a href="/projects/{{project.id}}">{{project.name}}</a></td>{{/if}}
-            {{#if ../withAssigned}}<td class="assigned_to">{{assigned_to.name}}</td>{{/if}}
-            <td class="status" title="{{status.name}}">{{status.name}}</td>
-            <td class="subject"><a href="/issues/{{id}}">{{subject}}</a></td>
-            <td class="updated_on">{{redmineTime updated_on}}</td>
-            <td class="due_date">{{due_date}}</td>
+<form>
+    <table class="list issues">
+        <thead>
+        <tr>
+            <th>#</th>
+            {{#if withProject}}<th>{{_ "Project"}}</th>{{/if}}
+            {{#if withAssigned}}<th>{{_ "Assigned to"}}</th>{{/if}}
+            <th>{{_ "Status"}}</th>
+            <th>{{_ "Subject"}}</th>
+            <th>{{_ "Updated on"}}</th>
+            <th>{{_ "Due date"}}</th>
         </tr>
-    {{/each}}
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        {{#each issues}}
+            <tr class="hascontextmenu issue {{#isEven @index}}even{{else}}odd{{/isEven}} priority-{{priority.id}}">
+                <td class="id"><input name="ids[]" type="checkbox" value="{{id}}" style="display: none"><a href="/issues/{{id}}">{{id}}</a></td>
+                {{#if ../withProject}}<td class="project"><a href="/projects/{{project.id}}">{{project.name}}</a></td>{{/if}}
+                {{#if ../withAssigned}}<td class="assigned_to">{{assigned_to.name}}</td>{{/if}}
+                <td class="status" title="{{status.name}}">{{status.name}}</td>
+                <td class="subject"><a href="/issues/{{id}}">{{subject}}</a></td>
+                <td class="updated_on">{{redmineTime updated_on}}</td>
+                <td class="due_date">{{due_date}}</td>
+            </tr>
+        {{/each}}
+        </tbody>
+    </table>
+</form>
 {{else}}
 {{_ "No issues"}}
 {{/isNotEmpty}}
