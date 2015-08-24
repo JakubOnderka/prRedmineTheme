@@ -22,12 +22,12 @@ define(['lib/page_property_miner'], function (ppp) {
     init: function () {
       if (ppp.matchPage('issues', 'show')) {
         // Fix date in issue header
-        var $issue = $('#content .issue');
+        var $issue = $('.issue');
         fixDateInLink($issue.find('.author a:eq(1)'));
         fixDateInLink($issue.find('.author a:eq(2)'));
 
         // Fix date in history
-        $('#history h4').each(function() {
+        $('#history').find('h4').each(function() {
           var $a = $(this).find('a').last();
           fixDateInLink($a);
         });

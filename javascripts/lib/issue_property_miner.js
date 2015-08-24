@@ -30,13 +30,13 @@ define(['lib/page_property_miner'], function (ppp) {
       projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
       rootProjectTitle = $('h1 .root').text(),
       h2Content = $('h2:eq(0)').text(),
-      $issueDiv = $('div.issue'),
-      title = $issueDiv.find('h3').text(),
-      authorLinks = $issueDiv.find('p.author a'),
-      issueDivClassList = $issueDiv[0].className.split(/\s+/),
-      dueDate = $issueDiv.find('td.due-date').text(),
-      startDate = $issueDiv.find('td.start-date').text(),
-      assignedTo = getIdAndName($issueDiv.find('td.assigned-to a'));
+      $issue = $('.issue'),
+      title = $issue.find('h3').text(),
+      authorLinks = $issue.find('p.author a'),
+      issueDivClassList = $issue[0].className.split(/\s+/),
+      dueDate = $issue.find('td.due-date').text(),
+      startDate = $issue.find('td.start-date').text(),
+      assignedTo = getIdAndName($issue.find('td.assigned-to a'));
 
     var trackerId, statusId, priorityId, priorityType;
     for (var i = 0; i < issueDivClassList.length; i++) {
@@ -68,9 +68,9 @@ define(['lib/page_property_miner'], function (ppp) {
       createdBy: getIdAndName($(authorLinks[0])),
       assignedTo: assignedTo,
 
-      isCreatedByMe: $issueDiv.hasClass('created-by-me'),
-      isAssignedToMe: $issueDiv.hasClass('assigned-to-me'),
-      isOverDueDate: $issueDiv.hasClass('overdue'),
+      isCreatedByMe: $issue.hasClass('created-by-me'),
+      isAssignedToMe: $issue.hasClass('assigned-to-me'),
+      isOverDueDate: $issue.hasClass('overdue'),
 
       trackerId: trackerId,
       statusId: statusId,
