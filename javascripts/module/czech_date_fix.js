@@ -1,6 +1,6 @@
 "use strict";
 
-define(['lib/page_property_miner'], function (ppp) {
+define(['lib/page_property_miner', 'vendor/moment'], function (ppp, moment) {
   if (document.documentElement.lang !== 'cs') {
     return;
   }
