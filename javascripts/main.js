@@ -39,7 +39,8 @@ require([
   'module/issue_update_form',
   'module/clickable_issue_names',
   'module/make_money',
-  'module/better_timeline'
+  'module/better_timeline',
+  'module/czech_date_fix'
 ], function () {
   var modules = arguments;
 
