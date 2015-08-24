@@ -113,9 +113,11 @@ define([
       redmineApi = new RedmineApi();
 
       if (ppp.matchPage('projects', 'show')) {
+        initContextual();
         this.project();
 
       } else if (ppp.matchPage('welcome', 'index')) {
+        initContextual();
         this.welcome();
       }
     },
