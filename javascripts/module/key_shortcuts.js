@@ -151,7 +151,7 @@ define([
         key('r', function () {
           var text = window.getSelection().toString();
           if (text) {
-            text = text.split("\n").join("\n> ");
+            text = text.trim().split("\n").join("\n> ");
 
             $('.updateButton:eq(0)').click(); // open update form
             insertAtCursor(document.getElementById('issue_notes'), '> ' + text + "\n\n");
