@@ -1,5 +1,5 @@
 define(function () {
-  if (contextMenuCreate) {
+  if (typeof contextMenuCreate !== "undefined") {
     if (console) console.log("Replaced function 'contextMenuCreate'.");
 
     contextMenuCreate = function () {
