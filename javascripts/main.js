@@ -66,7 +66,7 @@ require([
   'module/cmd_enter_form_submit',
   'module/assign_select_author',
   'module/datepicker_focus',
-  'module/fix_contextual_menu'
+  'module/fix_context_menu'
 ], function () {
   var modules = arguments;
 
