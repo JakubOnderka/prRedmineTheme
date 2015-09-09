@@ -710,8 +710,14 @@ table.issues {
 	td.estimated_hours, td.spent_hours, td.updated_on, td.due_date { text-align: right; }
 	td.assigned_to { text-align: left; }
 
+    td.id { font-weight: bold }
 
-	td.project { text-align: left; max-width: 100px; overflow: hidden; font-weight: bold !important; }
+	td.project {
+        text-align: left;
+        max-width: 100px;
+        overflow: hidden;
+    }
+
 	th[title='Sort by "Status"'], td.status { width: 30px; overflow: hidden; }
 
 	td.status .glyphicon {
