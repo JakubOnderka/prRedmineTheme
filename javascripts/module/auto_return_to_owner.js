@@ -68,7 +68,7 @@ define([
 
       $allAttributes.on('change', 'select#issue_status_id', function () {
         var value = $(this).val();
-        if (value == 3) { // Solved
+        if (value == 3 || value == 23) { // Solved or Done
           if (!assignedToChanged) {
             proxy(function () {
               returnToOwner();
