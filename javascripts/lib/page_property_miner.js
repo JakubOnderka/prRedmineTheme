@@ -86,7 +86,7 @@ define(['lib/redmine_api'], function(RedmineApi) {
 
     getUserId: function () {
       if (this.userId === null) {
-        this.userId = /users\/([0-9]+)$/.exec($('#loggedas a').attr('href')).pop();
+        this.userId = /people\/([0-9]+)$/.exec($('#loggedas a').attr('href')).pop();
 
         if (console) console.log('user id recognized: ' + this.userId);
       }
