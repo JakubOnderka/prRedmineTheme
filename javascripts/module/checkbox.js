@@ -7,10 +7,6 @@ define(['lib/page_property_miner'], function (ppp) {
         return;
       }
 
-      if (ppp.getTopProjectName() !== 'baufinder') {
-        return;
-      }
-
       var checkboxId = 1,
         $description = $('#issue_description'),
         hasDescription = $description.size() > 0,
