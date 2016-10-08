@@ -76,26 +76,28 @@ define(['lib/page_property_miner'], function (ppp) {
         $description.data('changed', 'changed');
       }
 
-      replaceWithCheckboxes($wiki[0]);
+      if ($wiki.size()) {
+        replaceWithCheckboxes($wiki[0]);
 
-      $wiki.on('change', '[name="todo"]', function (e) {
-        var id = e.target.value,
-          checked = e.target.checked;
+        $wiki.on('change', '[name="todo"]', function (e) {
+          var id = e.target.value,
+            checked = e.target.checked;
 
-        changeDescription(id, checked);
+          changeDescription(id, checked);
 
-        $('#issue_description_and_toolbar').show().prev().hide();
+          $('#issue_description_and_toolbar').show().prev().hide();
 
-        if ($wiki.find('#saveCheckbox').length == 0) {
-          $wiki.css('position', 'relative');
-          $wiki.append('<input type="submit" value="Uložit" id="saveCheckbox" style="position: absolute; right: 10px; bottom: 10px;">');
-        }
-      });
+          if ($wiki.find('#saveCheckbox').length == 0) {
+            $wiki.css('position', 'relative');
+            $wiki.append('<input type="submit" value="Uložit" id="saveCheckbox" style="position: absolute; right: 10px; bottom: 10px;">');
+          }
+        });
 
-      $wiki.on('click', '#saveCheckbox', function () {
-        $('#issue-form').submit();
-        return false;
-      });
+        $wiki.on('click', '#saveCheckbox', function () {
+          $('#issue-form').submit();
+          return false;
+        });
+      }
     }
   }
 });
