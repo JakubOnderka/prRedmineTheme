@@ -11,11 +11,21 @@ define({
       $('.gravatar').each(function () {
         var img = this;
 
-        img.src = img.src.replace(/size=([0-9]*)/, function (match, contents) {
-          img.width = contents;
-          img.height = contents;
+        img.src = img.src.replace(/size=([0-9]*)(x([0-9]*))?/, function (match, p1, p2, p3) {
+          // People module
+          if (p3) {
+            img.width = p1;
+            img.height = p3;
 
-          return 'size=' + (contents * 2);
+            return 'size=' + (p1 * 2) + 'x' + (p3 * 2);
+
+          // Gravatar
+          } else {
+            img.width = p1;
+            img.height = p1;
+
+            return 'size=' + (p1 * 2);
+          }
         });
       })
     }
