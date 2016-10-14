@@ -2,7 +2,6 @@
 
 define(['lib/page_property_miner'], function (ppp) {
   function createInputNode(id, checked, isDisabled) {
-    isDisabled = isDisabled || false;
     var input = document.createElement('input');
     input.type = 'checkbox';
     input.name = 'todo';
@@ -20,11 +19,11 @@ define(['lib/page_property_miner'], function (ppp) {
 
         if (content.indexOf('[ ]') === 0) {
           child.textContent = content.substring(3);
-          element.insertBefore(createInputNode(checkboxId++, disabledCheckboxes), child);
+          element.insertBefore(createInputNode(checkboxId++, false, disabledCheckboxes), child);
 
         } else if (content.indexOf('[]') === 0) {
           child.textContent = content.substring(2);
-          element.insertBefore(createInputNode(checkboxId++, disabledCheckboxes), child);
+          element.insertBefore(createInputNode(checkboxId++, false, disabledCheckboxes), child);
 
         } else if (content.indexOf('[X]') === 0 || content.indexOf('[x]') === 0) {
           child.textContent = content.substring(3);
@@ -101,10 +100,18 @@ define(['lib/page_property_miner'], function (ppp) {
       } else if (ppp.matchPage('issues', 'new')) {
         var target = document.getElementById('preview');
         var observer = new MutationObserver(function () {
-          replaceHtmlWithCheckboxes(target, 1, true);
+          replaceHtmlWithCheckboxes(target, 1);
         });
         var config = { attributes: true, childList: true, characterData: true };
         observer.observe(target, config);
+
+        $(target).on('change', '[name="todo"]', function (e) {
+          var $description = $('#issue_description'),
+            id = e.target.value,
+            checked = e.target.checked;
+
+          changeDescription($description, id, checked);
+        });
       }
     }
   }
