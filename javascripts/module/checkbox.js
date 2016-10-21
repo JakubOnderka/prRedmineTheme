@@ -39,9 +39,11 @@ define(['lib/page_property_miner'], function (ppp) {
           checkboxId++;
         }
       } else {
-        replaceHtmlWithCheckboxes(child, checkboxId, disabledCheckboxes);
+        checkboxId = replaceHtmlWithCheckboxes(child, checkboxId, disabledCheckboxes);
       }
     }
+
+    return checkboxId;
   }
 
   function changeDescription($description, id, checked) {
@@ -100,18 +102,18 @@ define(['lib/page_property_miner'], function (ppp) {
       } else if (ppp.matchPage('issues', 'new')) {
         var target = document.getElementById('preview');
         var observer = new MutationObserver(function () {
-          replaceHtmlWithCheckboxes(target, 1);
+          replaceHtmlWithCheckboxes(target, 1, false);
         });
         var config = { attributes: true, childList: true, characterData: true };
         observer.observe(target, config);
 
-        $(target).on('change', '[name="todo"]', function (e) {
+       /* $(target).on('change', '[name="todo"]', function (e) {
           var $description = $('#issue_description'),
             id = e.target.value,
             checked = e.target.checked;
 
           changeDescription($description, id, checked);
-        });
+        });*/
       }
     }
   }
