@@ -18,6 +18,12 @@ define(['lib/page_property_miner', 'vendor/moment', 'lib/date_format'], function
     $a.text(relativePastDate(ago));
   }
 
+  function fixDueDate(momentDate) {
+    var cloned = moment(momentDate);
+    cloned.hour(16);
+    return cloned;
+  }
+
   return {
     init: function () {
       if (ppp.matchPage('issues', 'show')) {
@@ -39,6 +45,13 @@ define(['lib/page_property_miner', 'vendor/moment', 'lib/date_format'], function
         if (dateFormat.isTextDate($startDateTd.text())) {
           var startDate = moment($startDateTd.text());
           $startDateTd.text(dateFormat.formatFullDateWithRelative(startDate));
+        }
+
+        // Fix date in due date
+        var $dueDate = $issueAttributes.find('td.due-date');
+        if (dateFormat.isTextDate($dueDate.text())) {
+          var dueDate = fixDueDate(moment($dueDate.text()));
+          $dueDate.text(dateFormat.formatFullDateWithRelative(dueDate));
         }
       }
     }
