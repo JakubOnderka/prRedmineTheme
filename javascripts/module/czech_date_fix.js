@@ -1,6 +1,6 @@
 "use strict";
 
-define(['lib/page_property_miner', 'vendor/moment'], function (ppp, moment) {
+define(['lib/page_property_miner', 'vendor/moment', 'lib/date_format'], function (ppp, moment, dateFormat) {
   if (document.documentElement.lang !== 'cs') {
     return;
   }
@@ -31,6 +31,15 @@ define(['lib/page_property_miner', 'vendor/moment'], function (ppp, moment) {
           var $a = $(this).find('a').last();
           fixDateInLink($a);
         });
+
+        var $issueAttributes = $issue.find('table.attributes');
+
+        // Fix date in start date
+        var $startDateTd = $issueAttributes.find('td.start-date');
+        if (dateFormat.isTextDate($startDateTd.text())) {
+          var startDate = moment($startDateTd.text());
+          $startDateTd.text(dateFormat.formatFullDateWithRelative(startDate));
+        }
       }
     }
   }
