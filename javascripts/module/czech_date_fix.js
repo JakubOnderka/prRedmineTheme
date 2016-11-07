@@ -1,6 +1,11 @@
 "use strict";
 
-define(['lib/page_property_miner', 'vendor/moment', 'lib/date_format'], function (ppp, moment, dateFormat) {
+define([
+  'lib/page_property_miner',
+  'vendor/moment',
+  'lib/date_format',
+  'lib/issue_property_miner'
+], function (ppp, moment, dateFormat, ipm) {
   if (document.documentElement.lang !== 'cs') {
     return;
   }
@@ -38,19 +43,19 @@ define(['lib/page_property_miner', 'vendor/moment', 'lib/date_format'], function
           fixDateInLink($a);
         });
 
-        var $issueAttributes = $issue.find('table.attributes');
+        var properties = ipm();
 
         // Fix date in start date
-        var $startDateTd = $issueAttributes.find('td.start-date');
-        if (dateFormat.isTextDate($startDateTd.text())) {
-          var startDate = moment($startDateTd.text());
+        if (dateFormat.isTextDate(properties.startDate)) {
+          var startDate = moment(properties.startDate);
+          var $startDateTd = $issue.find('td.start-date');
           $startDateTd.text(dateFormat.formatFullDateWithRelative(startDate));
         }
 
         // Fix date in due date
-        var $dueDate = $issueAttributes.find('td.due-date');
-        if (dateFormat.isTextDate($dueDate.text())) {
-          var dueDate = fixDueDate(moment($dueDate.text()));
+        if (dateFormat.isTextDate(properties.dueDate)) {
+          var dueDate = fixDueDate(moment(properties.dueDate));
+          var $dueDate = $issue.find('td.due-date');
           $dueDate.text(dateFormat.formatFullDateWithRelative(dueDate));
         }
       }
