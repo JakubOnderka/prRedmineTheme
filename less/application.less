@@ -241,9 +241,9 @@ body.controller-issues.action-show #content > .issue {
     }
 
     /* Issue priority icons */
-    &.priority-3 td.priority:before,
-    &.priority-4 td.priority:before,
-    &.priority-5 td.priority:before {
+    &.priority-3 .priority .value:before,
+    &.priority-4 .priority .value:before,
+    &.priority-5 .priority .value:before {
         font-size: 19px;
         padding-right: 10px;
         line-height: 12px;
@@ -251,19 +251,19 @@ body.controller-issues.action-show #content > .issue {
     }
 
     // Low
-    &.priority-3 td.priority:before {
+    &.priority-3 .priority .value:before {
         content: "●";
         color: rgb(150,150,150);
     }
 
     // Normal
-    &.priority-4 td.priority:before {
+    &.priority-4 .priority .value:before {
         content: "●";
         color: rgb(47,120,190);
     }
 
     // High
-    &.priority-5 td.priority:before {
+    &.priority-5 .priority .value:before {
         content: "!";
         color:rgb(166,40,27);
         font-family: Helvetica;
@@ -271,23 +271,23 @@ body.controller-issues.action-show #content > .issue {
         padding-left:7px;
         padding-right: 13px;
     }
-    &.priority-5 td.priority {
+    &.priority-5 .priority .value {
         color: rgb(166,40,27);
         font-weight: bold;
         line-height: 1
     }
 
     /* Issue status icons */
-    &.status-1 .attributes td.status:before,
-    &.status-2 .attributes td.status:before,
-    &.status-3 .attributes td.status:before,
-    &.status-4 .attributes td.status:before,
-    &.status-5 .attributes td.status:before,
-    &.status-7 .attributes td.status:before,
-    &.status-8 .attributes td.status:before,
-    &.status-10 .attributes td.status:before,
-    &.status-16 .attributes td.status:before,
-    &.status-17 .attributes td.status:before {
+    &.status-1 .attributes .status .value:before,
+    &.status-2 .attributes .status .value:before,
+    &.status-3 .attributes .status .value:before,
+    &.status-4 .attributes .status .value:before,
+    &.status-5 .attributes .status .value:before,
+    &.status-7 .attributes .status .value:before,
+    &.status-8 .attributes .status .value:before,
+    &.status-10 .attributes .status .value:before,
+    &.status-16 .attributes .status .value:before,
+    &.status-17 .attributes .status .value:before {
         font-family: 'Glyphicons Halflings';
         padding: 3px 4px;
         margin-right: 6px;
@@ -298,67 +298,67 @@ body.controller-issues.action-show #content > .issue {
     }
 
     // --- Red group
-    &.status-1 .attributes td.status:before {
+    &.status-1 .attributes .status .value:before {
         background-color: red;
     }
 
     // New
-    &.status-1 .attributes td.status:before {
+    &.status-1 .attributes .status .value:before {
         content: "\e028";
     }
 
     // --- Blue group
-    &.status-3 .attributes td.status:before,
-    &.status-8 .attributes td.status:before,
-    &.status-10 .attributes td.status:before {
+    &.status-3 .attributes .status .value:before,
+    &.status-8 .attributes .status .value:before,
+    &.status-10 .attributes .status .value:before {
         background-color: blue;
     }
 
     // Solved
-    &.status-3 .attributes td.status:before {
+    &.status-3 .attributes .status .value:before {
         content: "\e013";
     }
 
     // Feedback
-    &.status-8 .attributes td.status:before {
+    &.status-8 .attributes .status .value:before {
         content: "\e111";
     }
 
     // Needs explanation
-    &.status-10 .attributes td.status:before {
+    &.status-10 .attributes .status .value:before {
         content: "\e085";
     }
 
     // --- Green group
-    &.status-2 .attributes td.status:before,
-    &.status-2 .attributes td.status:before {
+    &.status-2 .attributes .status .value:before,
+    &.status-2 .attributes .status .value:before {
         background-color: green;
     }
 
     // Assigned
-    &.status-2 .attributes td.status:before {
+    &.status-2 .attributes .status .value:before {
         content: "\e092";
     }
 
     // --- Gray group
     // Waiting
-    &.status-4 .attributes td.status:before {
+    &.status-4 .attributes .status .value:before {
         content: "\e031";
     }
 
     // Postponed
-    &.status-7 .attributes td.status:before {
+    &.status-7 .attributes .status .value:before {
         content: "\e074";
     }
 
     // Needs review
-    &.status-16 .attributes td.status:before {
+    &.status-16 .attributes .status .value:before {
         content: "\e105";
     }
 
     // Closed
-    &.status-5 .attributes td.status:before,
-    &.status-17 .attributes td.status:before {
+    &.status-5 .attributes .status .value:before,
+    &.status-17 .attributes .status .value:before {
         content: "\e021";
     }
 }
