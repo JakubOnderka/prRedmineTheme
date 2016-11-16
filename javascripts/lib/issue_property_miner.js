@@ -34,9 +34,9 @@ define(['lib/page_property_miner'], function (ppp) {
       title = $issue.find('h3').text(),
       authorLinks = $issue.find('p.author a'),
       issueDivClassList = $issue[0].className.split(/\s+/),
-      dueDate = $issue.find('td.due-date').text(),
-      startDate = $issue.find('td.start-date').text(),
-      assignedTo = getIdAndName($issue.find('td.assigned-to a'));
+      dueDate = $issue.find('.due-date .value').text(),
+      startDate = $issue.find('.start-date .value').text(),
+      assignedTo = getIdAndName($issue.find('.assigned-to .value a'));
 
     var trackerId, statusId, priorityId, priorityType;
     for (var i = 0; i < issueDivClassList.length; i++) {
