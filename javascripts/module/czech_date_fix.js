@@ -48,14 +48,14 @@ define([
         // Fix date in start date
         if (dateFormat.isTextDate(properties.startDate)) {
           var startDate = moment(properties.startDate);
-          var $startDateTd = $issue.find('td.start-date');
+          var $startDateTd = $issue.find('.start-date .value');
           $startDateTd.text(dateFormat.formatFullDateWithRelative(startDate));
         }
 
         // Fix date in due date
         if (dateFormat.isTextDate(properties.dueDate)) {
           var dueDate = fixDueDate(moment(properties.dueDate));
-          var $dueDate = $issue.find('td.due-date');
+          var $dueDate = $issue.find('.due-date .value');
           $dueDate.text(dateFormat.formatFullDateWithRelative(dueDate));
         }
       }
