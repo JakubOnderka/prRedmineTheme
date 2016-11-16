@@ -23,8 +23,8 @@ define(['lib/local_storage'], function (ls) {
     this.getRedmineApiKey = function (callback) {
       var redmineApiKey = ls.get('rma:redmineApiKey');
       if (!redmineApiKey) {
-        $.get('/my/account').done(function (html) {
-          redmineApiKey = $(html).find('#api-access-key').text();
+        $.get('/my/api_key').done(function (response) {
+          redmineApiKey = /html\('([^']*)'\)/g.exec(response)[1];
 
           if (!redmineApiKey) {
             throw new Error('Cannot find Redmine API access key in element #api-access-key on page /my/account.');
