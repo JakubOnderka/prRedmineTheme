@@ -107,19 +107,20 @@ define(['vendor/moment'], function (moment) {
     },
 
     betterFromNow: function(date) {
-      switch(dateDiffType(date)) {
-        case 'sameDay':
-          return 'dnes ' + date.fromNow();
+      if (moment.locale() == 'cs') {
+        switch (dateDiffType(date)) {
+          case 'sameDay':
+            return 'dnes ' + date.fromNow();
 
-        case 'prevDay':
-          return 'včera';
+          case 'prevDay':
+            return 'včera';
 
-        case 'nextDay':
-          return 'zítra';
-
-        default:
-          return date.fromNow();
+          case 'nextDay':
+            return 'zítra';
+        }
       }
+
+      return date.fromNow();
     }
   }
 });

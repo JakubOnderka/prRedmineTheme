@@ -1,6 +1,11 @@
 "use strict";
 
-define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], function (ppp, ls, moment) {
+define([
+  'lib/page_property_miner',
+  'lib/local_storage',
+  'vendor/moment',
+  'lib/date_format'
+], function (ppp, ls, moment, dateFormat) {
 
   function lsKey(cellSelector) {
     return 'alternateCellFormat:' + cellSelector.split(' ').join('').split('.').join('_');
@@ -16,7 +21,8 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
       });
 
       this.setFormatUp('table.issues .due_date', {
-        verbalDate: this.format.verbalDate
+        verbalDate: this.format.verbalDate,
+        verbalDateMoment: this.format.relativeTimeMoment
       });
 
       this.setFormatUp('table.issues .updated_on', {
@@ -216,7 +222,7 @@ define(['lib/page_property_miner', 'lib/local_storage', 'vendor/moment'], functi
       // Testing
       relativeTimeMoment: function (value) {
         if (!value) return '';
-        return moment(value).fromNow();
+        return dateFormat.betterFromNow(moment(value));
       },
 
       shortIssueType: function (value) {
