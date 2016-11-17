@@ -19,6 +19,72 @@ define(['vendor/moment'], function (moment) {
     return moment.isMoment(date);
   }
 
+  function getWeekType(date, compareTo) {
+    if (!isMoment(date)) {
+      throw new Error('`date` must be instance of moment.');
+    }
+
+    if (!compareTo) {
+      compareTo = moment();
+    } else if (!isMoment(compareTo)) {
+      throw new Error('`compareTo` must be instance of moment.');
+    }
+
+    var currentWeek = compareTo.week(),
+      currentYear = compareTo.year(),
+      week = date.week(),
+      year = date.year();
+
+    if (week === currentWeek && year === currentYear) {
+      return 'sameWeek';
+
+    } else if (
+      week === (currentWeek - 1) && year === currentYear ||
+      week === 52 && year === (currentYear - 1)
+    ) {
+      return 'prevWeek';
+
+    } else if (
+      week === (currentWeek + 1) && year === currentYear ||
+      week === 1 && year === (currentYear + 1)
+    ) {
+      return 'nextWeek;'
+    }
+
+    return 'sameElse';
+  }
+
+  function dateDiffType(date, compareTo) {
+    if (!isMoment(date)) {
+      throw new Error('`date` must be instance of moment.');
+    }
+
+    if (!compareTo) {
+      compareTo = moment();
+    } else if (!isMoment(compareTo)) {
+      throw new Error('`compareTo` must be instance of moment.');
+    }
+
+    var diff = date.diff(compareTo, 'days');
+
+    if (diff == 0) {
+      return 'sameDay';
+
+    } else if (diff == -1) {
+      return 'prevDay';
+
+    } else if (diff == 1) {
+      return 'nextDay';
+
+    } else {
+      return getWeekType(date, compareTo);
+    }
+  }
+
+  function monthInSecondCase(month) {
+    return monthsInSecondCase[month];
+  }
+
   return {
     isTextDate: function(text) {
       return text.split('-').length === 3;
@@ -29,13 +95,31 @@ define(['vendor/moment'], function (moment) {
         throw new Error('Date must be instance of moment.');
       }
 
-      var month = monthsInSecondCase[date.month()];
-      return date.format('D. [' + month + '] YYYY');
+      return date.format('D. [' + monthInSecondCase(date.month()) + '] YYYY');
     },
 
     formatFullDateWithRelative: function(date) {
-      var fullDate = this.formatFullDate(date);
-      return fullDate + ' (' + date.fromNow() + ')';
+      if (!isMoment(date)) {
+        throw new Error('Date must be instance of moment.');
+      }
+
+      return this.formatFullDate(date) + ' (' + this.betterFromNow(date) + ')';
+    },
+
+    betterFromNow: function(date) {
+      switch(dateDiffType(date)) {
+        case 'sameDay':
+          return 'dnes ' + date.fromNow();
+
+        case 'prevDay':
+          return 'včera';
+
+        case 'nextDay':
+          return 'zítra';
+
+        default:
+          return date.fromNow();
+      }
     }
   }
 });
