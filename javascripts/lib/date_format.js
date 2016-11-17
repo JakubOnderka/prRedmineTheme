@@ -65,7 +65,7 @@ define(['vendor/moment'], function (moment) {
       throw new Error('`compareTo` must be instance of moment.');
     }
 
-    var diff = date.diff(compareTo, 'days');
+    var diff = date.clone().startOf('day').diff(compareTo.clone().startOf('day'), 'days');
 
     if (diff == 0) {
       return 'sameDay';
