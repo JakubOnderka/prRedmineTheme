@@ -33,7 +33,7 @@ define([
         '/projects/pm/wiki/Holidays'; // production
 
       if (ppp.matchPage('welcome', 'index')) {
-        $('div.projects.box').after('<div id="plannedAbsences"></div>');
+        $('.splitcontentleft .wiki').after('<div id="plannedAbsences"></div>');
 
       } else if (ppp.matchPage('issues', 'index')) {
         $('#sidebar').append('<div id="plannedAbsences"></div>');
