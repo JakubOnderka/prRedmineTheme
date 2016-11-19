@@ -22,7 +22,7 @@ define([
 
       this.setFormatUp('table.issues .due_date', {
         verbalDate: this.format.verbalDate,
-        verbalDateMoment: this.format.relativeTimeMoment
+        verbalDateMoment: this.format.relativeTimeMomentDueDate
       });
 
       this.setFormatUp('table.issues .updated_on', {
@@ -223,6 +223,20 @@ define([
       relativeTimeMoment: function (value) {
         if (!value) return '';
         return dateFormat.betterFromNow(moment(value));
+      },
+
+      // Testing
+      relativeTimeMomentDueDate: function (value) {
+        if (!value) return '';
+
+        var momentValue = moment(value),
+          formattedValue = dateFormat.betterFromNow(momentValue);
+
+        if (momentValue.isBefore(moment())) {
+          return '<b style="color: red">' + formattedValue + "</b>";
+        }
+
+        return formattedValue;
       },
 
       shortIssueType: function (value) {

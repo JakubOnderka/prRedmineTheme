@@ -109,9 +109,6 @@ define(['vendor/moment'], function (moment) {
     betterFromNow: function(date) {
       if (moment.locale() == 'cs') {
         switch (dateDiffType(date)) {
-          case 'sameDay':
-            return 'dnes ' + date.fromNow();
-
           case 'prevDay':
             return 'včera';
 
