@@ -229,7 +229,7 @@ define([
       relativeTimeMomentDueDate: function (value) {
         if (!value) return '';
 
-        var momentValue = moment(value),
+        var momentValue = dateFormat.dueDateWithTime(moment(value)),
           formattedValue = dateFormat.betterFromNow(momentValue);
 
         if (momentValue.isBefore(moment())) {

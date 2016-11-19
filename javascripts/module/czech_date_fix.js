@@ -23,12 +23,6 @@ define([
     $a.text(relativePastDate(ago));
   }
 
-  function fixDueDate(momentDate) {
-    var cloned = moment(momentDate);
-    cloned.hour(16);
-    return cloned;
-  }
-
   return {
     init: function () {
       if (ppp.matchPage('issues', 'show')) {
@@ -54,7 +48,7 @@ define([
 
         // Fix date in due date
         if (dateFormat.isTextDate(properties.dueDate)) {
-          var dueDate = fixDueDate(moment(properties.dueDate));
+          var dueDate = dateFormat.dueDateWithTime(moment(properties.dueDate));
           var $dueDate = $issue.find('.due-date .value');
           $dueDate.text(dateFormat.formatFullDateWithRelative(dueDate));
         }

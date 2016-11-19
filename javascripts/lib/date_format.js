@@ -118,6 +118,16 @@ define(['vendor/moment'], function (moment) {
       }
 
       return date.fromNow();
+    },
+
+    dueDateWithTime: function(date) {
+      if (!isMoment(date)) {
+        throw new Error('Date must be instance of moment.');
+      }
+
+      var cloned = moment(date);
+      cloned.hour(16);
+      return cloned;
     }
   }
 });
