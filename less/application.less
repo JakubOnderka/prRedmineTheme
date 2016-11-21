@@ -51,6 +51,10 @@ h2, h3, h4, .wiki h1, .wiki h2, .wiki h3 { border-bottom: 0px; }
 	margin: -20px auto 0;
 	color: #5fbaed;
 
+	/* Fix bad H1 position in old Chrome */
+	overflow: auto;
+	white-space: normal;
+
     .go-to-my-issues, .go-to-projects {
         position: absolute;
         top: 21px;
