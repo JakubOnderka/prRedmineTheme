@@ -21,13 +21,13 @@ define([
       });
 
       this.setFormatUp('table.issues .due_date', {
-        verbalDate: this.format.verbalDate,
-        verbalDateMoment: this.format.relativeTimeMomentDueDate
+        //verbalDate: this.format.verbalDate,
+        verbalDate: this.format.relativeTimeMomentDueDate
       });
 
       this.setFormatUp('table.issues .updated_on', {
-        relativeTime: this.format.relativeTime,
-        relativeTimeMoment: this.format.relativeTimeMoment
+        //relativeTime: this.format.relativeTime,
+        relativeTime: this.format.relativeTimeMoment
       });
 
       this.setFormatUp('table.issues td.status', {
