@@ -206,7 +206,7 @@ define([
           }
 
           if (date < new Date()) {
-            return '<b style="color: red">' + date.toRelativeTime(new Date(), 5000, true) + '</b>';
+            return '<b class="overdue">' + date.toRelativeTime(new Date(), 5000, true) + '</b>';
           }
 
           return textualDueDate;
@@ -233,7 +233,7 @@ define([
           formattedValue = dateFormat.betterFromNow(momentValue);
 
         if (momentValue.isBefore(moment())) {
-          return '<b style="color: red">' + formattedValue + "</b>";
+          return '<b class="overdue">' + formattedValue + "</b>";
         }
 
         return formattedValue;
