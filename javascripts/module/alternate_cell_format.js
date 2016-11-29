@@ -21,13 +21,11 @@ define([
       });
 
       this.setFormatUp('table.issues .due_date', {
-        //verbalDate: this.format.verbalDate,
-        verbalDate: this.format.relativeTimeMomentDueDate
+        verbalDate: this.format.relativeTimeDueDate
       });
 
       this.setFormatUp('table.issues .updated_on', {
-        //relativeTime: this.format.relativeTime,
-        relativeTime: this.format.relativeTimeMoment
+        relativeTime: this.format.relativeTime
       });
 
       this.setFormatUp('table.issues td.status', {
@@ -174,59 +172,12 @@ define([
         } else return value;
       },
 
-      verbalDate: function (value) {
-        var weekday = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-
-        if (!value) {
-          return '';
-
-        } else {
-          var momentDate = moment(value),
-            date = momentDate.toDate(),
-            daysCount = moment().diff(momentDate, 'days'),
-            textualDueDate = '';
-
-          switch (daysCount) {
-            case 0:
-              textualDueDate = 'Yesterday';
-              break;
-            case 1:
-              textualDueDate = date.toRelativeTime(new Date(), 5000, true);
-              break;
-            case 2:
-              textualDueDate = 'Tomorrow';
-              break;
-            case 3:
-            case 4:
-            case 5:
-              textualDueDate = weekday[date.getDay()].substring(0, 3) + ' ' + date.getDate() + '. ' + (date.getMonth() + 1) + '.';
-              break;
-            default:
-              textualDueDate = date.getDate() + '. ' + (date.getMonth() + 1) + '.';
-          }
-
-          if (date < new Date()) {
-            return '<b class="overdue">' + date.toRelativeTime(new Date(), 5000, true) + '</b>';
-          }
-
-          return textualDueDate;
-        }
-      },
-
       relativeTime: function (value) {
-        if (!value) return '';
-        var date = moment(value).toDate();
-        return date.toRelativeTime(new Date(), 5000, true);
-      },
-
-      // Testing
-      relativeTimeMoment: function (value) {
         if (!value) return '';
         return dateFormat.betterFromNow(moment(value));
       },
 
-      // Testing
-      relativeTimeMomentDueDate: function (value) {
+      relativeTimeDueDate: function (value) {
         if (!value) return '';
 
         var momentValue = dateFormat.dueDateWithTime(moment(value)),
