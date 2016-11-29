@@ -40,7 +40,8 @@ require([
   'module/clickable_issue_names',
   'module/make_money',
   'module/better_timeline',
-  'module/czech_date_fix'
+  'module/czech_date_fix',
+  'module/issue_warnings'
 ], function () {
   var modules = arguments;
 
