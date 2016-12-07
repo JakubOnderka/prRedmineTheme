@@ -37,5 +37,11 @@ define({
   'Last viewed issue': 'Poslední zobrazený úkol',
 
   // Make money
-  'I wanna work!': 'Chci práci!'
+  'I wanna work!': 'Chci práci!',
+
+  // Issue
+  'Due date is near.': 'Blíží se termín dokončení.',
+  'Due date is over.': 'Vypršený termín dokončení.',
+  'This issue has to be done at': 'Tento úkol má být uzavřen',
+  'This issue should be done at': 'Tento úkol měl být uzavřen'
 });
