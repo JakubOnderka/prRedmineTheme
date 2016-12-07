@@ -42,6 +42,6 @@ define({
   // Issue
   'Due date is near.': 'Blíží se termín dokončení.',
   'Due date is over.': 'Vypršený termín dokončení.',
-  'This issue has to be done at': 'Tento úkol má být uzavřen',
-  'This issue should be done at': 'Tento úkol měl být uzavřen'
+  'This issue has to be done': 'Tento úkol má být uzavřen',
+  'This issue should be done': 'Tento úkol měl být uzavřen'
 });
