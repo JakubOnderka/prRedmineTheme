@@ -8,12 +8,19 @@ define({
     }
 
     if (window.devicePixelRatio === 2) {
+      var regexp = /size=([0-9]*)(x([0-9]*))?|\/([0-9]*)x([0-9]*)/;
+
       $('.gravatar').each(function () {
         var img = this;
 
-        img.src = img.src.replace(/(size=)?([0-9]*)(x([0-9]*))?/, function (match, size, p1, p2, p3) {
-          if (typeof size === 'undefined') {
-            size = '';
+        img.src = img.src.replace(regexp, function (match, p1, p2, p3, p4, p5) {
+          var prefix = '';
+          if (typeof p1 === 'undefined') {
+            p1 = p4;
+            p3 = p5;
+            prefix = '/';
+          } else {
+            prefix = 'size=';
           }
 
           // People module
@@ -21,14 +28,14 @@ define({
             img.width = p1;
             img.height = p3;
 
-            return size + (p1 * 2) + 'x' + (p3 * 2);
+            return prefix + (p1 * 2) + 'x' + (p3 * 2);
 
           // Gravatar
           } else {
             img.width = p1;
             img.height = p1;
 
-            return size + (p1 * 2);
+            return prefix + (p1 * 2);
           }
         });
       })
