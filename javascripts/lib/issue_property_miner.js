@@ -71,6 +71,7 @@ define(['lib/page_property_miner'], function (ppp) {
       isCreatedByMe: $issue.hasClass('created-by-me'),
       isAssignedToMe: $issue.hasClass('assigned-to-me'),
       isOverDueDate: $issue.hasClass('overdue'),
+      isClosed: $issue.hasClass('closed'),
 
       trackerId: trackerId,
       statusId: statusId,

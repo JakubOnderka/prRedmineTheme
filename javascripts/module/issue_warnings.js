@@ -18,7 +18,12 @@ define([
       var properties = ipm();
 
       // Due date
-      if (properties && properties.isAssignedToMe && dateFormat.isTextDate(properties.dueDate)) {
+      if (
+        properties &&
+        properties.isAssignedToMe &&
+        !properties.isClosed &&
+        dateFormat.isTextDate(properties.dueDate)
+      ) {
         var dueDate = dateFormat.dueDateWithTime(moment(properties.dueDate));
 
         if (dueDate.isBefore(moment())) {
