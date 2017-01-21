@@ -30,7 +30,7 @@ define(['lib/page_property_miner'], function (ppp) {
       projectTitle = h1ChildNodes[h1ChildNodes.length - 1].textContent.replace(' » ', ''),
       rootProjectTitle = $('h1 .root').text(),
       h2Content = $('h2:eq(0)').text(),
-      $issue = $('.issue'),
+      $issue = $('.issue:eq(0)'),
       title = $issue.find('h3').text(),
       authorLinks = $issue.find('p.author a'),
       issueDivClassList = $issue[0].className.split(/\s+/),
