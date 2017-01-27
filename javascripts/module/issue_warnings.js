@@ -31,7 +31,7 @@ define([
         } else {
           var diff = dueDate.diff(moment().startOf('day'), 'days');
           if (diff < 7) {
-            addFlash('notice', templates['issue_warning_duedate_near']({due_date: dateFormat.betterFromNow(dueDate)}));
+            addFlash('warning', templates['issue_warning_duedate_near']({due_date: dateFormat.betterFromNow(dueDate)}));
           }
         }
       }

@@ -835,48 +835,7 @@ div.issue { border: 0; padding: 15px; }
 	border-top: 1px solid #ddd;
 }
 
-/* Flash messages */
-div.flash {
-    padding: 10px 10px 10px 30px;
-    margin-bottom: 10px;
-    border-radius: 4px;
-    font-size: inherit;
-
-    &.notice {
-        border: 1px solid #d6e9c6;
-        color: #3c763d;
-        background-color: #dff0d8;
-        background-image: none;
-        font-size: inherit;
-
-        &::before {
-            content: "✔";
-            font-size: 150%;
-            font-weight: bold;
-            position: absolute;
-            margin-top: -5px;
-            margin-left: -20px;
-        }
-    }
-
-    &.error {
-        border: 1px solid #ebccd1;
-        color: #a94442;
-        background-color: #f2dede;
-        background-image: none;
-
-        &::before {
-            font-family: 'Glyphicons Halflings';
-            content:"\e101";
-            font-size: 120%;
-            position: absolute;
-            margin-top: -1px;
-            margin-left: -20px;
-        }
-    }
-}
-
-/* Code */
+@import 'flash';
 @import 'code';
 
 /* Zen mode */
